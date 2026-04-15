@@ -1,0 +1,388 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import {
+  StarIcon,
+  WalletIcon,
+  SearchIcon,
+  ShieldIcon,
+  CheckIcon,
+  BoltIcon,
+  GlobeIcon,
+  DollarCheckIcon,
+  HeadsetIcon,
+  RocketIcon,
+  BulbIcon,
+  TruckIcon
+} from "@/components/icons";
+import { PrimaryButton } from "@/components/ui/primary-button";
+
+const features = [
+  {
+    title: "Cakupan Luas",
+    description: "Jaringan distribusi yang kuat hingga ke tingkat kecamatan di seluruh Indonesia."
+  },
+  {
+    title: "Tarif Instan",
+    description: "Dapatkan perbandingan harga real-time tanpa biaya tersembunyi untuk efisiensi budget."
+  },
+  {
+    title: "Dukungan 24/7",
+    description: "Tim dukungan pelanggan profesional yang siap membantu Anda kapan saja tanpa libur."
+  },
+  {
+    title: "Akurasi Cepat",
+    description: "Sistem tracking presisi tinggi yang memastikan barang sampai tepat pada estimasi waktu."
+  }
+];
+
+const tips = [
+  "Gunakan kemasan yang pas dengan ukuran barang untuk menghindari biaya volume.",
+  "Bandingkan tarif antar ekspedisi secara real-time untuk menemukan harga termurah.",
+  "Manfaatkan layanan pick-up gratis untuk menghemat waktu dan biaya transportasi.",
+  "Pilih asuransi yang tepat sesuai nilai barang agar pengiriman tetap ekonomis namun aman."
+];
+
+const reviews = [
+  {
+    name: "Claudio",
+    role: "Pemilik UMKM Kuliner",
+    quote:
+      "SHIPIN GO membantu kami memantau semua kiriman tanpa drama. Tampilannya rapi dan sangat mudah dipahami."
+  },
+  {
+    name: "Nadya",
+    role: "Brand Fashion Lokal",
+    quote:
+      "Landing page publiknya informatif, sementara admin panelnya terasa fokus untuk operasional harian."
+  },
+  {
+    name: "Rizal",
+    role: "Supplier Peralatan",
+    quote:
+      "Transisi dari halaman publik ke dashboard admin terasa jelas. Cocok untuk tim kecil yang ingin serba praktis."
+  }
+];
+
+export function LandingPage() {
+  const featureIcons = [
+    {
+      icon: <GlobeIcon className="h-7 w-7" />,
+      iconBg: "bg-[#ddf4db]",
+      iconColor: "text-[#1d6a36]"
+    },
+    {
+      icon: <DollarCheckIcon className="h-7 w-7" />,
+      iconBg: "bg-[#d9f8cf]",
+      iconColor: "text-[#1b7a37]"
+    },
+    {
+      icon: <HeadsetIcon className="h-7 w-7" />,
+      iconBg: "bg-[#def6d9]",
+      iconColor: "text-[#2a7d38]"
+    },
+    {
+      icon: <RocketIcon className="h-7 w-7" />,
+      iconBg: "bg-[#f7f2c8]",
+      iconColor: "text-[#2a7d38]"
+    }
+  ];
+
+  return (
+    <main>
+      <section
+        id="beranda"
+        className="shell grid gap-10 py-10 lg:grid-cols-[1.02fr_0.86fr] lg:items-center lg:py-14"
+      >
+        <div className="rounded-[30px] bg-hero-glow p-5 sm:rounded-[34px] sm:p-8 lg:p-8 xl:p-10">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#d6efd3] bg-[#effbea] px-3.5 py-2 text-[11px] font-semibold text-shipin-deep shadow-[0_8px_18px_rgba(179,219,168,0.16)] sm:px-4 sm:text-[13px]">
+            <span className="h-2.5 w-2.5 rounded-full bg-shipin-deep" />
+            Revolusi Logistik Terpercaya
+          </div>
+          <h1 className="mt-7 max-w-[640px] text-[34px] font-extrabold leading-[0.98] tracking-[-0.05em] text-shipin-ink min-[390px]:text-[38px] sm:mt-10 sm:text-[54px] lg:text-[76px] xl:text-[88px]">
+            <span className="block">Kirim barang</span>
+            <span className="mt-2 block text-shipin-deep sm:mt-3">tanpa drama.</span>
+          </h1>
+          <p className="mt-5 max-w-[620px] text-[14px] leading-[1.7] text-[#666d68] min-[390px]:text-[15px] sm:mt-8 sm:text-[19px] lg:text-[20px]">
+            Pengalaman pengiriman modern yang transparan, aman, dan tepat waktu untuk
+            kebutuhan bisnis maupun individu Anda.
+          </p>
+          <div className="mt-7 flex max-w-[700px] flex-col gap-2.5 rounded-[24px] bg-white/94 p-2 shadow-[0_16px_34px_rgba(173,202,164,0.28)] sm:mt-10 sm:rounded-[30px] sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex flex-1 items-center gap-2.5 rounded-full border border-[#eceee4] bg-white px-4 py-3 text-[13px] text-[#b0b6ab] min-[390px]:text-[14px] sm:px-6 sm:text-[15px]">
+              <SearchIcon className="h-4 w-4 text-[#9fc4a0]" />
+              <span>Masukkan nomor resi Anda...</span>
+            </div>
+            <PrimaryButton className="h-[48px] min-w-[150px] px-5 text-[14px] sm:h-[52px] sm:min-w-[170px] sm:px-6 sm:text-[15px]">
+              Lacak Paket
+            </PrimaryButton>
+          </div>
+          <div className="mt-3.5 flex items-start gap-2 text-[12px] leading-5 text-[#767b76] min-[390px]:text-[13px] min-[390px]:leading-6 sm:items-center sm:text-[14px]">
+            <ShieldIcon className="h-3.5 w-3.5 text-[#7f857d]" />
+            <span>Integrasi ke 50+ kurir global & domestik secara real-time.</span>
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden rounded-[30px] bg-[#dcf5e2] p-4 shadow-soft sm:rounded-[34px] sm:p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.95),_transparent_32%)]" />
+          <div className="relative h-full min-h-[280px] rounded-[28px] bg-[#e7f7e5] p-3.5 sm:min-h-[420px] sm:rounded-[32px] sm:p-4 lg:min-h-[500px]">
+            <Image
+              src="/images/landing-hero.svg"
+              alt="Ilustrasi armada logistik SHIPIN GO"
+              fill
+              className="rounded-[28px] object-cover"
+              priority
+            />
+            <div className="absolute bottom-3 left-3 w-[175px] rounded-[20px] bg-white/95 p-3.5 shadow-[0_18px_34px_rgba(34,73,47,0.12)] min-[390px]:w-[190px] sm:bottom-8 sm:left-6 sm:w-[232px] sm:rounded-[24px] sm:p-5">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#91ee8f] text-shipin-ink sm:h-11 sm:w-11">
+                  <CheckIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-bold leading-4 text-[#2f3a33] min-[390px]:text-[14px] sm:text-[15px] sm:leading-5">
+                    Cakupan
+                    <br />
+                    Nasional
+                  </h3>
+                  <p className="mt-2 text-[11px] leading-5 text-[#6f766f] min-[390px]:text-[12px] sm:mt-3 sm:text-[13px] sm:leading-6">
+                    Menjangkau pelosok di 34 provinsi dengan efisiensi tingkat tinggi.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="shell py-8 lg:py-12">
+        <div className="max-w-xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-shipin-deep/70">
+            Kenapa harus SHIPIN GO?
+          </p>
+          <h2 className="mt-4 text-3xl font-extrabold leading-tight text-shipin-ink sm:text-4xl">
+            Solusi yang tetap ringan untuk publik, tapi kuat untuk admin.
+          </h2>
+        </div>
+        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {features.map((feature, index) => (
+            <article key={feature.title} className="min-h-[252px] rounded-[28px] border border-[#e7ebdf] bg-[#f8faef] px-6 py-7 shadow-[0_12px_30px_rgba(194,206,175,0.16)] sm:min-h-[348px] sm:rounded-[36px] sm:px-10 sm:py-10">
+              <div
+                className={`mb-7 inline-flex h-14 w-14 items-center justify-center rounded-full ${featureIcons[index]?.iconBg} ${featureIcons[index]?.iconColor} sm:mb-9 sm:h-16 sm:w-16`}
+              >
+                {featureIcons[index]?.icon}
+              </div>
+              <h3 className="text-[20px] font-bold tracking-[-0.03em] text-[#2d352f] min-[390px]:text-[21px] sm:text-[24px]">
+                {feature.title}
+              </h3>
+              <p className="mt-3 text-[14px] leading-[1.6] text-[#636a63] sm:mt-5 sm:text-[16px] sm:leading-[1.65]">
+                {feature.description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="cek-ongkir" className="shell grid gap-6 py-8 lg:grid-cols-2 lg:py-12">
+        <article className="relative overflow-hidden rounded-[32px] bg-white p-6 shadow-[0_22px_50px_rgba(158,184,154,0.28)] sm:p-7">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(203,244,210,0.28),_transparent_40%)]" />
+          <div className="absolute bottom-0 right-0 h-28 w-28 translate-x-3 translate-y-3 rounded-tl-[28px] bg-[#f3f7f0]" />
+          <div className="absolute bottom-6 right-6 text-[#e7eee5]">
+            <WalletIcon className="h-14 w-14 stroke-[1.5]" />
+          </div>
+          <div className="relative">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef4ea] text-shipin-ink">
+              <WalletIcon className="h-5 w-5" />
+            </div>
+            <h3 className="mt-5 text-[34px] font-extrabold leading-[1.02] tracking-[-0.03em] text-[#2a312d]">
+              Cek Ongkir
+            </h3>
+            <p className="mt-3 max-w-[320px] text-[15px] leading-6 text-[#70766f]">
+              Dapatkan transparansi harga dari puluhan ekspedisi terpercaya dalam satu layar dashboard.
+            </p>
+            <Link
+              href="#cek-ongkir"
+              className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-shipin-deep hover:text-[#12572f]"
+            >
+              Bandingkan Harga
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </article>
+        <article className="relative overflow-hidden rounded-[30px] border border-[#d7edd2] bg-[radial-gradient(circle_at_top_left,_rgba(211,247,199,0.7),_transparent_38%),linear-gradient(180deg,#ecfbe6_0%,#e6f8dc_100%)] px-6 py-7 shadow-[0_20px_50px_rgba(177,212,164,0.24)] sm:rounded-[44px] sm:px-12 sm:py-12">
+          <div className="absolute -bottom-3 -right-4 text-[#d7efd1]/90">
+            <TruckIcon className="h-24 w-24 stroke-[1.1] sm:h-44 sm:w-44" />
+          </div>
+          <div className="relative">
+            <div className="inline-flex h-[56px] w-[56px] items-center justify-center rounded-[18px] bg-[#d7f3cd] text-shipin-deep shadow-[0_14px_28px_rgba(166,220,155,0.18)] sm:h-[78px] sm:w-[78px] sm:rounded-[24px]">
+              <BulbIcon className="h-6 w-6 sm:h-9 sm:w-9" />
+            </div>
+            <h3 className="mt-6 text-[24px] font-extrabold tracking-[-0.04em] text-[#2b312e] min-[390px]:text-[26px] sm:mt-10 sm:text-[38px]">
+              Tips Menghemat Ongkir
+            </h3>
+          </div>
+          <ul className="relative mt-5 space-y-4 sm:mt-8 sm:space-y-6">
+            {tips.map((tip) => (
+              <li key={tip} className="flex gap-3 text-[14px] leading-[1.5] text-[#59605a] min-[390px]:text-[15px] sm:gap-4 sm:text-[17px] sm:leading-[1.55]">
+                <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#6ab86b] bg-white/60 text-shipin-deep sm:h-6 sm:w-6">
+                  <CheckIcon className="h-3.5 w-3.5" />
+                </span>
+                <span>{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      </section>
+
+      <section id="ulasan" className="shell py-8 lg:py-12">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-shipin-deep/75">
+              Ulasan
+            </p>
+            <h2 className="mt-4 text-3xl font-extrabold text-shipin-ink">Dipercaya bisnis yang butuh operasional ringkas.</h2>
+          </div>
+          <Link href="/login" className="text-sm font-semibold text-shipin-deep hover:text-[#12572f]">
+            Masuk ke admin untuk mengelola ulasan
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          {reviews.map((review) => (
+            <article key={review.name} className="card-surface p-6">
+              <div className="flex items-center gap-1 text-[#f5b700]">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <StarIcon key={index} className="h-4 w-4" />
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-7 text-shipin-text">"{review.quote}"</p>
+              <div className="mt-6">
+                <p className="font-semibold text-shipin-ink">{review.name}</p>
+                <p className="text-sm text-shipin-text">{review.role}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="shell grid gap-8 py-8 lg:grid-cols-[0.9fr_1.1fr] lg:py-12">
+        <div className="space-y-5">
+          <h2 className="max-w-[430px] text-[32px] font-extrabold leading-[0.98] tracking-[-0.05em] text-shipin-ink min-[390px]:text-[34px] sm:text-[56px] lg:text-[64px]">
+            <span className="block">Keunggulan</span>
+            <span className="block">Layanan</span>
+            <span className="mt-2 block text-shipin-deep sm:mt-3">Eksklusif SHIPIN</span>
+            <span className="block text-shipin-deep">GO</span>
+          </h2>
+          <p className="max-w-[440px] text-[14px] leading-7 text-shipin-text min-[390px]:text-[15px] sm:text-[16px] sm:leading-8">
+            Kami tidak hanya mengirimkan barang, kami memberikan ketenangan pikiran
+            bagi setiap pelanggan kami.
+          </p>
+          <div className="space-y-8 pt-2">
+            <div className="flex items-start gap-7">
+              <div className="flex h-[58px] w-[58px] shrink-0 items-center justify-center rounded-[18px] bg-[#93f089] text-[#176a3a] shadow-[0_14px_28px_rgba(147,240,137,0.22)] sm:h-[74px] sm:w-[74px] sm:rounded-[24px]">
+                <ShieldIcon className="h-8 w-8 sm:h-9 sm:w-9" />
+              </div>
+              <div className="pt-1">
+                <h3 className="text-[18px] font-bold tracking-[-0.02em] text-shipin-ink min-[390px]:text-[19px] sm:text-[24px]">
+                  Asuransi All-Risk
+                </h3>
+                <p className="mt-2 max-w-[470px] text-[14px] leading-7 text-shipin-text min-[390px]:text-[15px] sm:text-[16px] sm:leading-8">
+                  Keamanan adalah prioritas utama. Setiap pengiriman otomatis dilindungi
+                  asuransi premium tanpa proses klaim yang rumit.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-7">
+              <div className="flex h-[58px] w-[58px] shrink-0 items-center justify-center rounded-[18px] bg-[#93f089] text-[#176a3a] shadow-[0_14px_28px_rgba(147,240,137,0.22)] sm:h-[74px] sm:w-[74px] sm:rounded-[24px]">
+                <BoltIcon className="h-8 w-8 sm:h-9 sm:w-9" />
+              </div>
+              <div className="pt-1">
+                <h3 className="text-[18px] font-bold tracking-[-0.02em] text-shipin-ink min-[390px]:text-[19px] sm:text-[24px]">
+                  Layanan Same-Day
+                </h3>
+                <p className="mt-2 max-w-[470px] text-[14px] leading-7 text-shipin-text min-[390px]:text-[15px] sm:text-[16px] sm:leading-8">
+                  Pengiriman antar kota besar di Indonesia dengan jaminan sampai di hari
+                  yang sama atau maksimal 24 jam.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative min-h-[420px] overflow-hidden rounded-[34px] shadow-soft">
+          <Image
+            src="/images/login-truck.svg"
+            alt="Ilustrasi operasional logistik SHIPIN GO"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0e5f35]/70 via-[#176a3a]/55 to-[#1b4332]/88" />
+          <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
+            <p className="max-w-[260px] text-3xl font-extrabold leading-tight">
+              Logistik khusus untuk bisnis dan UMKM yang ingin tumbuh lebih rapi.
+            </p>
+            <div className="mt-8 inline-flex w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/90">
+              Operasional transparan
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer id="kontak" className="mt-10 bg-white/85">
+        <div className="shell py-12">
+          <div className="grid gap-10 border-b border-[#e8ebe4] pb-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr]">
+            <div>
+              <p className="text-[18px] font-extrabold tracking-[-0.03em] text-shipin-deep">SHIPIN GO</p>
+              <p className="mt-5 max-w-[360px] text-[15px] leading-8 text-shipin-text">
+                Solusi logistik terdepan di Indonesia. Menghubungkan orang dan bisnis
+                melalui sistem pengiriman yang cerdas dan efisien.
+              </p>
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-shipin-ink">Perusahaan</p>
+              <ul className="mt-5 space-y-4 text-[15px] text-shipin-text">
+                <li>Tentang Kami</li>
+                <li>Karir</li>
+                <li>Kontak</li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-[15px] font-bold text-shipin-ink">Dukungan</p>
+              <ul className="mt-5 space-y-4 text-[15px] text-shipin-text">
+                <li>Pusat Bantuan</li>
+                <li>Syarat &amp; Ketentuan</li>
+                <li>Kebijakan Privasi</li>
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 pt-7 text-[14px] text-shipin-text sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>
+            <div className="flex gap-6">
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-shipin-deep"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.linkedin.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-shipin-deep"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://x.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-shipin-deep"
+              >
+                Twitter
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
