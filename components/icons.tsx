@@ -176,3 +176,55 @@ export function BulbIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function ClipboardIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <rect x="6" y="5" width="12" height="15" rx="2.5" />
+      <path d="M9 5.5h6" />
+      <rect x="9" y="3" width="6" height="4" rx="1.5" />
+    </svg>
+  );
+}
+
+export function HistoryIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M3.5 12A8.5 8.5 0 1 0 6 6.1" />
+      <path d="M3.5 4.5v4h4" />
+      <path d="M12 8.5v4l2.8 1.8" />
+    </svg>
+  );
+}
+
+export function PrinterIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M7 8V4h10v4" />
+      <rect x="4" y="9" width="16" height="8" rx="2.5" />
+      <rect x="7" y="14" width="10" height="6" rx="1.5" />
+      <path d="M17 12h.01" />
+    </svg>
+  );
+}
+
+export function ChatBubbleIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <path d="M6.5 18.5 4 20v-4A6.5 6.5 0 0 1 4.5 3h15A1.5 1.5 0 0 1 21 4.5v9A5.5 5.5 0 0 1 15.5 19h-9Z" />
+      <path d="M8 9h8" />
+      <path d="M8 13h5" />
+    </svg>
+  );
+}
+
+export function MoneyIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
+      <rect x="3.5" y="6" width="17" height="12" rx="2.5" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M7 9.5h.01" />
+      <path d="M17 14.5h.01" />
+    </svg>
+  );
+}
