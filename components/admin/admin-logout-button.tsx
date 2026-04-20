@@ -9,7 +9,7 @@ export function AdminLogoutButton() {
 
   function handleLogout() {
     document.cookie = `${ADMIN_SESSION_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
-    router.push("/login");
+    router.push("/");
     router.refresh();
   }
 

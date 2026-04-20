@@ -6,8 +6,8 @@ export function LoginHeroPanel() {
   return (
     <section className="relative min-h-[360px] overflow-hidden rounded-[30px] bg-[#0f5b32] text-white shadow-soft lg:min-h-[760px]">
       <Image
-        src="/images/login-truck.svg"
-        alt="Armada logistik SHIPIN GO"
+        src="/images/login-courier.jpg"
+        alt="Kurir SHIPIN GO"
         fill
         className="object-cover"
         priority

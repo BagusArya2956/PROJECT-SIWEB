@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { ADMIN_SESSION_COOKIE } from "@/lib/auth";
+import { ADMIN_SESSION_COOKIE, isValidAdminCredential } from "@/lib/auth";
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, UserIcon } from "@/components/icons";
 import { InputField } from "@/components/ui/input-field";
 import { PrimaryButton } from "@/components/ui/primary-button";
@@ -21,11 +21,23 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
   const [name, setName] = useState("");
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const isRegister = mode === "register";
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
+
+    if (isRegister) {
+      setError("Pendaftaran admin dinonaktifkan. Gunakan akun admin yang tersedia.");
+      return;
+    }
+
+    if (!isValidAdminCredential(emailOrUsername.trim(), password)) {
+      setError("Username atau password admin tidak sesuai.");
+      return;
+    }
 
     const maxAge = remember ? 60 * 60 * 24 * 7 : 60 * 60 * 6;
     document.cookie = `${ADMIN_SESSION_COOKIE}=active; path=/; max-age=${maxAge}; SameSite=Lax`;
@@ -136,6 +148,8 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
           <PrimaryButton type="submit" className="mt-2 w-full text-base" icon={<ArrowRightIcon className="h-5 w-5" />}>
             {isRegister ? "Daftar Admin" : "Masuk Sekarang"}
           </PrimaryButton>
+
+          {error ? <p className="text-sm font-medium text-[#b42318]">{error}</p> : null}
 
           <p className="text-center text-sm text-[#72786e]">
             {isRegister ? "Sudah punya akun?" : "Belum punya akun?"}{" "}

@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import {
   StarIcon,
@@ -16,6 +20,7 @@ import {
   TruckIcon
 } from "@/components/icons";
 import { PrimaryButton } from "@/components/ui/primary-button";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 const features = [
   {
@@ -65,6 +70,18 @@ const reviews = [
 ];
 
 export function LandingPage() {
+  const router = useRouter();
+  const [trackingResi, setTrackingResi] = useState("");
+
+  function handleTrackFromLanding() {
+    const keyword = trackingResi.toUpperCase().replace(/[^A-Z0-9-]/g, "").trim();
+    if (!keyword) {
+      router.push("/lacak-paket");
+      return;
+    }
+    router.push(`/lacak-paket?resi=${encodeURIComponent(keyword)}`);
+  }
+
   const featureIcons = [
     {
       icon: <GlobeIcon className="h-7 w-7" />,
@@ -90,11 +107,12 @@ export function LandingPage() {
 
   return (
     <main>
+      <ScrollReveal />
       <section
         id="beranda"
         className="shell grid gap-10 py-10 lg:grid-cols-[1.02fr_0.86fr] lg:items-center lg:py-14"
       >
-        <div className="rounded-[30px] bg-hero-glow p-5 sm:rounded-[34px] sm:p-8 lg:p-8 xl:p-10">
+        <div className="reveal-on-scroll rounded-[30px] bg-hero-glow p-5 sm:rounded-[34px] sm:p-8 lg:p-8 xl:p-10">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#d6efd3] bg-[#effbea] px-3.5 py-2 text-[11px] font-semibold text-shipin-deep shadow-[0_8px_18px_rgba(179,219,168,0.16)] sm:px-4 sm:text-[13px]">
             <span className="h-2.5 w-2.5 rounded-full bg-shipin-deep" />
             Revolusi Logistik Terpercaya
@@ -110,9 +128,22 @@ export function LandingPage() {
           <div className="mt-7 flex max-w-[700px] flex-col gap-2.5 rounded-[24px] bg-white/94 p-2 shadow-[0_16px_34px_rgba(173,202,164,0.28)] sm:mt-10 sm:rounded-[30px] sm:flex-row sm:items-center sm:gap-3">
             <div className="flex flex-1 items-center gap-2.5 rounded-full border border-[#eceee4] bg-white px-4 py-3 text-[13px] text-[#b0b6ab] min-[390px]:text-[14px] sm:px-6 sm:text-[15px]">
               <SearchIcon className="h-4 w-4 text-[#9fc4a0]" />
-              <span>Masukkan nomor resi Anda...</span>
+              <input
+                value={trackingResi}
+                onChange={(event) => setTrackingResi(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleTrackFromLanding();
+                  }
+                }}
+                className="w-full bg-transparent text-[#38423e] outline-none placeholder:text-[#b0b6ab]"
+                placeholder="Masukkan nomor resi Anda..."
+              />
             </div>
-            <PrimaryButton className="h-[48px] min-w-[150px] px-5 text-[14px] sm:h-[52px] sm:min-w-[170px] sm:px-6 sm:text-[15px]">
+            <PrimaryButton
+              onClick={handleTrackFromLanding}
+              className="h-[48px] min-w-[150px] px-5 text-[14px] sm:h-[52px] sm:min-w-[170px] sm:px-6 sm:text-[15px]"
+            >
               Lacak Paket
             </PrimaryButton>
           </div>
@@ -122,28 +153,28 @@ export function LandingPage() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-[30px] bg-[#dcf5e2] p-4 shadow-soft sm:rounded-[34px] sm:p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.95),_transparent_32%)]" />
-          <div className="relative h-full min-h-[280px] rounded-[28px] bg-[#e7f7e5] p-3.5 sm:min-h-[420px] sm:rounded-[32px] sm:p-4 lg:min-h-[500px]">
+        <div className="reveal-on-scroll reveal-delay-1 relative overflow-hidden rounded-[34px] bg-[#dff2dd] p-5 shadow-soft sm:rounded-[38px] sm:p-7">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.82),_transparent_36%)]" />
+          <div className="relative isolate h-full min-h-[320px] rounded-[30px] bg-[#ecf8e9] p-4 sm:min-h-[500px] sm:rounded-[34px] sm:p-5 lg:min-h-[640px]">
             <Image
-              src="/images/landing-hero.svg"
-              alt="Ilustrasi armada logistik SHIPIN GO"
+              src="/images/landing-hero-photo.jpg"
+              alt="Armada logistik SHIPIN GO"
               fill
-              className="rounded-[28px] object-cover"
+              className="rounded-[28px] object-cover sm:rounded-[30px]"
               priority
             />
-            <div className="absolute bottom-3 left-3 w-[175px] rounded-[20px] bg-white/95 p-3.5 shadow-[0_18px_34px_rgba(34,73,47,0.12)] min-[390px]:w-[190px] sm:bottom-8 sm:left-6 sm:w-[232px] sm:rounded-[24px] sm:p-5">
+            <div className="anim-float absolute bottom-2 left-2 z-20 w-[198px] rounded-[24px] border border-white/85 bg-white p-4 shadow-[0_18px_36px_rgba(27,63,38,0.2)] backdrop-blur-[1px] min-[390px]:w-[215px] sm:bottom-5 sm:left-5 sm:w-[292px] sm:rounded-[28px] sm:p-7">
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#91ee8f] text-shipin-ink sm:h-11 sm:w-11">
+                <div className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#86e882] text-shipin-ink sm:h-12 sm:w-12">
                   <CheckIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div>
-                  <h3 className="text-[13px] font-bold leading-4 text-[#2f3a33] min-[390px]:text-[14px] sm:text-[15px] sm:leading-5">
+                  <h3 className="text-[17px] font-bold leading-6 text-[#1f2a23] sm:text-[20px] sm:leading-6">
                     Cakupan
                     <br />
                     Nasional
                   </h3>
-                  <p className="mt-2 text-[11px] leading-5 text-[#6f766f] min-[390px]:text-[12px] sm:mt-3 sm:text-[13px] sm:leading-6">
+                  <p className="mt-2 text-[13px] leading-6 text-[#4f5750] sm:mt-3 sm:text-[13px] sm:leading-6">
                     Menjangkau pelosok di 34 provinsi dengan efisiensi tingkat tinggi.
                   </p>
                 </div>
@@ -164,7 +195,10 @@ export function LandingPage() {
         </div>
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature, index) => (
-            <article key={feature.title} className="min-h-[252px] rounded-[28px] border border-[#e7ebdf] bg-[#f8faef] px-6 py-7 shadow-[0_12px_30px_rgba(194,206,175,0.16)] sm:min-h-[348px] sm:rounded-[36px] sm:px-10 sm:py-10">
+            <article
+              key={feature.title}
+              className={`reveal-on-scroll hover-lift min-h-[252px] rounded-[28px] border border-[#e7ebdf] bg-[#f8faef] px-6 py-7 shadow-[0_12px_30px_rgba(194,206,175,0.16)] sm:min-h-[348px] sm:rounded-[36px] sm:px-10 sm:py-10 ${index === 1 ? "reveal-delay-1" : ""} ${index === 2 ? "reveal-delay-2" : ""} ${index === 3 ? "reveal-delay-3" : ""}`}
+            >
               <div
                 className={`mb-7 inline-flex h-14 w-14 items-center justify-center rounded-full ${featureIcons[index]?.iconBg} ${featureIcons[index]?.iconColor} sm:mb-9 sm:h-16 sm:w-16`}
               >
@@ -182,7 +216,7 @@ export function LandingPage() {
       </section>
 
       <section id="cek-ongkir" className="shell grid gap-6 py-8 lg:grid-cols-2 lg:py-12">
-        <article className="relative overflow-hidden rounded-[32px] bg-white p-6 shadow-[0_22px_50px_rgba(158,184,154,0.28)] sm:p-7">
+        <article className="reveal-on-scroll hover-lift relative overflow-hidden rounded-[32px] bg-white p-6 shadow-[0_22px_50px_rgba(158,184,154,0.28)] sm:p-7">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(203,244,210,0.28),_transparent_40%)]" />
           <div className="absolute bottom-0 right-0 h-28 w-28 translate-x-3 translate-y-3 rounded-tl-[28px] bg-[#f3f7f0]" />
           <div className="absolute bottom-6 right-6 text-[#e7eee5]">
@@ -199,7 +233,7 @@ export function LandingPage() {
               Dapatkan transparansi harga dari puluhan ekspedisi terpercaya dalam satu layar dashboard.
             </p>
             <Link
-              href="#cek-ongkir"
+              href="/cek-ongkir"
               className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-shipin-deep hover:text-[#12572f]"
             >
               Bandingkan Harga
@@ -207,7 +241,7 @@ export function LandingPage() {
             </Link>
           </div>
         </article>
-        <article className="relative overflow-hidden rounded-[30px] border border-[#d7edd2] bg-[radial-gradient(circle_at_top_left,_rgba(211,247,199,0.7),_transparent_38%),linear-gradient(180deg,#ecfbe6_0%,#e6f8dc_100%)] px-6 py-7 shadow-[0_20px_50px_rgba(177,212,164,0.24)] sm:rounded-[44px] sm:px-12 sm:py-12">
+        <article className="reveal-on-scroll reveal-delay-1 hover-lift relative overflow-hidden rounded-[30px] border border-[#d7edd2] bg-[radial-gradient(circle_at_top_left,_rgba(211,247,199,0.7),_transparent_38%),linear-gradient(180deg,#ecfbe6_0%,#e6f8dc_100%)] px-6 py-7 shadow-[0_20px_50px_rgba(177,212,164,0.24)] sm:rounded-[44px] sm:px-12 sm:py-12">
           <div className="absolute -bottom-3 -right-4 text-[#d7efd1]/90">
             <TruckIcon className="h-24 w-24 stroke-[1.1] sm:h-44 sm:w-44" />
           </div>
@@ -231,7 +265,6 @@ export function LandingPage() {
           </ul>
         </article>
       </section>
-
       <section id="ulasan" className="shell py-8 lg:py-12">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
@@ -245,8 +278,11 @@ export function LandingPage() {
           </Link>
         </div>
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {reviews.map((review) => (
-            <article key={review.name} className="card-surface p-6">
+          {reviews.map((review, index) => (
+            <article
+              key={review.name}
+              className={`reveal-on-scroll hover-lift card-surface p-6 ${index === 1 ? "reveal-delay-1" : ""} ${index === 2 ? "reveal-delay-2" : ""}`}
+            >
               <div className="flex items-center gap-1 text-[#f5b700]">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <StarIcon key={index} className="h-4 w-4" />
@@ -306,20 +342,26 @@ export function LandingPage() {
           </div>
         </div>
 
-        <div className="relative min-h-[420px] overflow-hidden rounded-[34px] shadow-soft">
+        <div className="reveal-on-scroll reveal-delay-2 hover-lift relative min-h-[460px] overflow-hidden rounded-[34px] shadow-soft lg:min-h-[620px]">
           <Image
-            src="/images/login-truck.svg"
-            alt="Ilustrasi operasional logistik SHIPIN GO"
+            src="/images/enterprise-courier.jpg"
+            alt="Kurir SHIPIN GO sedang menangani paket"
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0e5f35]/70 via-[#176a3a]/55 to-[#1b4332]/88" />
-          <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-            <p className="max-w-[260px] text-3xl font-extrabold leading-tight">
-              Logistik khusus untuk bisnis dan UMKM yang ingin tumbuh lebih rapi.
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0d4426]/20 via-[#0d4426]/42 to-[#0b1f15]/86" />
+          <div className="absolute inset-0 flex flex-col justify-end p-7 text-white sm:p-9">
+            <div className="mb-4 inline-flex w-fit rounded-full bg-[#1d8a42] px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/95 sm:mb-6">
+              Enterprise Solution
+            </div>
+            <p className="max-w-[380px] text-[34px] font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-[52px]">
+              Logistik Khusus Untuk Bisnis &amp; UMKM
             </p>
-            <div className="mt-8 inline-flex w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/90">
-              Operasional transparan
+            <p className="mt-4 max-w-[420px] text-[15px] leading-7 text-white/85 sm:text-[17px]">
+              Optimalkan rantai pasok bisnis Anda dengan dashboard terpadu dan armada dedicated.
+            </p>
+            <div className="mt-7 inline-flex w-fit rounded-full bg-white px-7 py-3 text-[15px] font-bold text-[#1b7a37] sm:mt-9 sm:px-10 sm:py-4 sm:text-[18px]">
+              Jadwalkan Demo
             </div>
           </div>
         </div>

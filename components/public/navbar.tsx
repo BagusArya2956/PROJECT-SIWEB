@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 const menuItems = [
-  { href: "#beranda", label: "Beranda" },
-  { href: "#cek-ongkir", label: "Cek Ongkir" },
-  { href: "#ulasan", label: "Ulasan" },
-  { href: "#kontak", label: "Kontak" },
-  { href: "#lacak-paket", label: "Lacak Paket" }
+  { href: "/#beranda", label: "Beranda" },
+  { href: "/cek-ongkir", label: "Cek Ongkir" },
+  { href: "/ulasan", label: "Ulasan" },
+  { href: "/kontak", label: "Kontak" },
+  { href: "/lacak-paket", label: "Lacak Paket" }
 ];
 
 export function PublicNavbar() {
@@ -17,9 +17,9 @@ export function PublicNavbar() {
         </Link>
         <nav className="hidden items-center gap-7 text-sm font-medium text-shipin-text lg:flex">
           {menuItems.map((item) => (
-            <a key={item.href} href={item.href} className="hover:text-shipin-deep">
+            <Link key={item.href} href={item.href} className="hover:text-shipin-deep">
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="flex items-center gap-3">
