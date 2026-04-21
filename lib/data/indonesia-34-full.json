@@ -1,0 +1,5707 @@
+{
+  "metadata": {
+    "generatedAt": "2026-04-21T05:53:51.409Z",
+    "source": "https://www.emsifa.com/api-wilayah-indonesia/",
+    "provinceCount": 34,
+    "notes": "Kabupaten/kota lengkap per 34 provinsi. District memakai starter default yang siap diperluas."
+  },
+  "defaults": {
+    "districts": [
+      "Pusat",
+      "Utara",
+      "Selatan",
+      "Timur",
+      "Barat"
+    ]
+  },
+  "provinces": [
+    {
+      "province": "Aceh",
+      "cities": [
+        {
+          "city": "Kabupaten Simeulue",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Singkil",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Tenggara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Besar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pidie",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bireuen",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Barat Daya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gayo Lues",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Tamiang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nagan Raya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Aceh Jaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bener Meriah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pidie Jaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Banda Aceh",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sabang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Langsa",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Lhokseumawe",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Subulussalam",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sumatera Utara",
+      "cities": [
+        {
+          "city": "Kabupaten Nias",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mandailing Natal",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tapanuli Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tapanuli Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tapanuli Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Toba Samosir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Labuhan Batu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Asahan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Simalungun",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Dairi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Karo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Deli Serdang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Langkat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nias Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Humbang Hasundutan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pakpak Bharat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Samosir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Serdang Bedagai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Batu Bara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Padang Lawas Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Padang Lawas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Labuhan Batu Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Labuhan Batu Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nias Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nias Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sibolga",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tanjung Balai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pematang Siantar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tebing Tinggi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Medan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Binjai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Padangsidimpuan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Gunungsitoli",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sumatera Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Kepulauan Mentawai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pesisir Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Solok",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sijunjung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tanah Datar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Padang Pariaman",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Agam",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lima Puluh Kota",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pasaman",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Solok Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Dharmasraya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pasaman Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Padang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Solok",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sawah Lunto",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Padang Panjang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bukittinggi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Payakumbuh",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pariaman",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Riau",
+      "cities": [
+        {
+          "city": "Kabupaten Kuantan Singingi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Indragiri Hulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Indragiri Hilir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pelalawan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten S I A K",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kampar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Rokan Hulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bengkalis",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Rokan Hilir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Meranti",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pekanbaru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota D U M A I",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Jambi",
+      "cities": [
+        {
+          "city": "Kabupaten Kerinci",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Merangin",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sarolangun",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Batang Hari",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Muaro Jambi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tanjung Jabung Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tanjung Jabung Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tebo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bungo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jambi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sungai Penuh",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sumatera Selatan",
+      "cities": [
+        {
+          "city": "Kabupaten Ogan Komering Ulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ogan Komering Ilir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Muara Enim",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lahat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Musi Rawas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Musi Banyuasin",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banyu Asin",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ogan Komering Ulu Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ogan Komering Ulu Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ogan Ilir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Empat Lawang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Penukal Abab Lematang Ilir",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Musi Rawas Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Palembang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Prabumulih",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pagar Alam",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Lubuklinggau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Bengkulu",
+      "cities": [
+        {
+          "city": "Kabupaten Bengkulu Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Rejang Lebong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bengkulu Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kaur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Seluma",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mukomuko",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lebong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepahiang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bengkulu Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bengkulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Lampung",
+      "cities": [
+        {
+          "city": "Kabupaten Lampung Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tanggamus",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lampung Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lampung Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lampung Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lampung Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Way Kanan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tulangbawang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pesawaran",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pringsewu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mesuji",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tulang Bawang Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pesisir Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bandar Lampung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Metro",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kepulauan Bangka Belitung",
+      "cities": [
+        {
+          "city": "Kabupaten Bangka",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Belitung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bangka Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bangka Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bangka Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Belitung Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pangkal Pinang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kepulauan Riau",
+      "cities": [
+        {
+          "city": "Kabupaten Karimun",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bintan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Natuna",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lingga",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Anambas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota B A T A M",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tanjung Pinang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "DKI Jakarta",
+      "cities": [
+        {
+          "city": "Kabupaten Kepulauan Seribu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jakarta Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jakarta Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jakarta Pusat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jakarta Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jakarta Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Jawa Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Bogor",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sukabumi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Cianjur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bandung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Garut",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tasikmalaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ciamis",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kuningan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Cirebon",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Majalengka",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumedang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Indramayu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Subang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Purwakarta",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Karawang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bekasi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bandung Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pangandaran",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bogor",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sukabumi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bandung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Cirebon",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bekasi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Depok",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Cimahi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tasikmalaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Banjar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Jawa Tengah",
+      "cities": [
+        {
+          "city": "Kabupaten Cilacap",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banyumas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Purbalingga",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banjarnegara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kebumen",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Purworejo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Wonosobo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Magelang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Boyolali",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Klaten",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sukoharjo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Wonogiri",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Karanganyar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sragen",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Grobogan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Blora",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Rembang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pati",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kudus",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jepara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Demak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Semarang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Temanggung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kendal",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Batang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pekalongan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pemalang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tegal",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Brebes",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Magelang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Surakarta",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Salatiga",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Semarang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pekalongan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tegal",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "DI Yogyakarta",
+      "cities": [
+        {
+          "city": "Kabupaten Kulon Progo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bantul",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gunung Kidul",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sleman",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Yogyakarta",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Jawa Timur",
+      "cities": [
+        {
+          "city": "Kabupaten Pacitan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ponorogo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Trenggalek",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tulungagung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Blitar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kediri",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Malang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lumajang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jember",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banyuwangi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bondowoso",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Situbondo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Probolinggo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pasuruan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sidoarjo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mojokerto",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jombang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nganjuk",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Madiun",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Magetan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ngawi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bojonegoro",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tuban",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lamongan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gresik",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bangkalan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sampang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pamekasan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumenep",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Kediri",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Blitar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Malang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Probolinggo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pasuruan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Mojokerto",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Madiun",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Surabaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Batu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Banten",
+      "cities": [
+        {
+          "city": "Kabupaten Pandeglang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lebak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tangerang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Serang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tangerang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Cilegon",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Serang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tangerang Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Bali",
+      "cities": [
+        {
+          "city": "Kabupaten Jembrana",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tabanan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Badung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gianyar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Klungkung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bangli",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Karang Asem",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buleleng",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Denpasar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Nusa Tenggara Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Lombok Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lombok Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lombok Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumbawa",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Dompu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bima",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumbawa Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lombok Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Mataram",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bima",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Nusa Tenggara Timur",
+      "cities": [
+        {
+          "city": "Kabupaten Sumba Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumba Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kupang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Timor Tengah Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Timor Tengah Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Belu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Alor",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lembata",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Flores Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sikka",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ende",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ngada",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Manggarai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Rote Ndao",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Manggarai Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumba Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sumba Barat Daya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nagekeo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Manggarai Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sabu Raijua",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Malaka",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Kupang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kalimantan Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Sambas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bengkayang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Landak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mempawah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sanggau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Ketapang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sintang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kapuas Hulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sekadau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Melawi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kayong Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kubu Raya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Pontianak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Singkawang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kalimantan Tengah",
+      "cities": [
+        {
+          "city": "Kabupaten Kotawaringin Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kotawaringin Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kapuas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Barito Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Barito Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sukamara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lamandau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Seruyan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Katingan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pulang Pisau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gunung Mas",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Barito Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Murung Raya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Palangka Raya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kalimantan Selatan",
+      "cities": [
+        {
+          "city": "Kabupaten Tanah Laut",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kota Baru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banjar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Barito Kuala",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tapin",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Hulu Sungai Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Hulu Sungai Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Hulu Sungai Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tabalong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tanah Bumbu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Balangan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Banjarmasin",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Banjar Baru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kalimantan Timur",
+      "cities": [
+        {
+          "city": "Kabupaten Paser",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kutai Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kutai Kartanegara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kutai Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Berau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Penajam Paser Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mahakam Hulu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Balikpapan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Samarinda",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bontang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Kalimantan Utara",
+      "cities": [
+        {
+          "city": "Kabupaten Malinau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bulungan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tana Tidung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nunukan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tarakan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sulawesi Utara",
+      "cities": [
+        {
+          "city": "Kabupaten Bolaang Mongondow",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Minahasa",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Sangihe",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Talaud",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Minahasa Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Minahasa Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bolaang Mongondow Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Siau Tagulandang Biaro",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Minahasa Tenggara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bolaang Mongondow Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bolaang Mongondow Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Manado",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Bitung",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tomohon",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Kotamobagu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sulawesi Tengah",
+      "cities": [
+        {
+          "city": "Kabupaten Banggai Kepulauan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banggai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Morowali",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Poso",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Donggala",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Toli-toli",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buol",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Parigi Moutong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tojo Una-una",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sigi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Banggai Laut",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Morowali Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Palu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sulawesi Selatan",
+      "cities": [
+        {
+          "city": "Kabupaten Kepulauan Selayar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bulukumba",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bantaeng",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jeneponto",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Takalar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gowa",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sinjai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Maros",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pangkajene Dan Kepulauan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Barru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bone",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Soppeng",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Wajo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sidenreng Rappang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pinrang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Enrekang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Luwu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tana Toraja",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Luwu Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Luwu Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Toraja Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Makassar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Parepare",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Palopo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sulawesi Tenggara",
+      "cities": [
+        {
+          "city": "Kabupaten Buton",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Muna",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Konawe",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kolaka",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Konawe Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bombana",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Wakatobi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kolaka Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buton Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Konawe Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kolaka Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Konawe Kepulauan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Muna Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buton Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buton Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Kendari",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Baubau",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Gorontalo",
+      "cities": [
+        {
+          "city": "Kabupaten Boalemo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gorontalo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pohuwato",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Bone Bolango",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Gorontalo Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Gorontalo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Sulawesi Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Majene",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Polewali Mandar",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamasa",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamuju",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamuju Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamuju Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Maluku",
+      "cities": [
+        {
+          "city": "Kabupaten Maluku Tenggara Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Maluku Tenggara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Maluku Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Aru",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Seram Bagian Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Seram Bagian Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Maluku Barat Daya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Buru Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Ambon",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tual",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Maluku Utara",
+      "cities": [
+        {
+          "city": "Kabupaten Halmahera Barat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Halmahera Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Sula",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Halmahera Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Halmahera Utara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Halmahera Timur",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pulau Morotai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pulau Taliabu",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Ternate",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Tidore Kepulauan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Papua Barat",
+      "cities": [
+        {
+          "city": "Kabupaten Fakfak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kaimana",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Teluk Wondama",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Teluk Bintuni",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Manokwari",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sorong Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sorong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Raja Ampat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tambrauw",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Maybrat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Manokwari Selatan",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pegunungan Arfak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Sorong",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    },
+    {
+      "province": "Papua",
+      "cities": [
+        {
+          "city": "Kabupaten Merauke",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jayawijaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Jayapura",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nabire",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Kepulauan Yapen",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Biak Numfor",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Paniai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Puncak Jaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mimika",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Boven Digoel",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mappi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Asmat",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Yahukimo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Pegunungan Bintang",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Tolikara",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Sarmi",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Keerom",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Waropen",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Supiori",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamberamo Raya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Nduga",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Lanny Jaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Mamberamo Tengah",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Yalimo",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Puncak",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Dogiyai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Intan Jaya",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kabupaten Deiyai",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        },
+        {
+          "city": "Kota Jayapura",
+          "districts": [
+            "Pusat",
+            "Utara",
+            "Selatan",
+            "Timur",
+            "Barat"
+          ]
+        }
+      ]
+    }
+  ],
+  "provinceCoordinates": {
+    "aceh": {
+      "lat": 5.5483,
+      "lng": 95.3238
+    },
+    "sumatera utara": {
+      "lat": 3.5952,
+      "lng": 98.6722
+    },
+    "sumatera barat": {
+      "lat": -0.9471,
+      "lng": 100.4172
+    },
+    "riau": {
+      "lat": 0.5333,
+      "lng": 101.45
+    },
+    "jambi": {
+      "lat": -1.6101,
+      "lng": 103.6131
+    },
+    "sumatera selatan": {
+      "lat": -2.9761,
+      "lng": 104.7754
+    },
+    "bengkulu": {
+      "lat": -3.8004,
+      "lng": 102.2655
+    },
+    "lampung": {
+      "lat": -5.4292,
+      "lng": 105.261
+    },
+    "kepulauan bangka belitung": {
+      "lat": -2.1316,
+      "lng": 106.1169
+    },
+    "kepulauan riau": {
+      "lat": 0.9186,
+      "lng": 104.4665
+    },
+    "dki jakarta": {
+      "lat": -6.2,
+      "lng": 106.8167
+    },
+    "jawa barat": {
+      "lat": -6.9039,
+      "lng": 107.6186
+    },
+    "jawa tengah": {
+      "lat": -6.9667,
+      "lng": 110.4167
+    },
+    "di yogyakarta": {
+      "lat": -7.7956,
+      "lng": 110.3695
+    },
+    "jawa timur": {
+      "lat": -7.2575,
+      "lng": 112.7521
+    },
+    "banten": {
+      "lat": -6.1201,
+      "lng": 106.1503
+    },
+    "bali": {
+      "lat": -8.6705,
+      "lng": 115.2126
+    },
+    "nusa tenggara barat": {
+      "lat": -8.5833,
+      "lng": 116.1167
+    },
+    "nusa tenggara timur": {
+      "lat": -10.1772,
+      "lng": 123.607
+    },
+    "kalimantan barat": {
+      "lat": -0.0263,
+      "lng": 109.3425
+    },
+    "kalimantan tengah": {
+      "lat": -2.2096,
+      "lng": 113.9213
+    },
+    "kalimantan selatan": {
+      "lat": -3.3186,
+      "lng": 114.5944
+    },
+    "kalimantan timur": {
+      "lat": -0.5022,
+      "lng": 117.1536
+    },
+    "kalimantan utara": {
+      "lat": 2.8409,
+      "lng": 117.3762
+    },
+    "sulawesi utara": {
+      "lat": 1.4748,
+      "lng": 124.8421
+    },
+    "sulawesi tengah": {
+      "lat": -0.8986,
+      "lng": 119.8506
+    },
+    "sulawesi selatan": {
+      "lat": -5.1477,
+      "lng": 119.4327
+    },
+    "sulawesi tenggara": {
+      "lat": -3.9985,
+      "lng": 122.512
+    },
+    "gorontalo": {
+      "lat": 0.5412,
+      "lng": 123.0595
+    },
+    "sulawesi barat": {
+      "lat": -2.679,
+      "lng": 118.8867
+    },
+    "maluku": {
+      "lat": -3.6954,
+      "lng": 128.1814
+    },
+    "maluku utara": {
+      "lat": 0.7906,
+      "lng": 127.3842
+    },
+    "papua barat": {
+      "lat": -0.8615,
+      "lng": 134.062
+    },
+    "papua": {
+      "lat": -2.5337,
+      "lng": 140.7181
+    }
+  },
+  "cityCoordinates": {
+    "banda aceh": {
+      "lat": 5.5483,
+      "lng": 95.3238
+    },
+    "medan": {
+      "lat": 3.5952,
+      "lng": 98.6722
+    },
+    "padang": {
+      "lat": -0.9471,
+      "lng": 100.4172
+    },
+    "pekanbaru": {
+      "lat": 0.5333,
+      "lng": 101.45
+    },
+    "jambi": {
+      "lat": -1.6101,
+      "lng": 103.6131
+    },
+    "palembang": {
+      "lat": -2.9761,
+      "lng": 104.7754
+    },
+    "bengkulu": {
+      "lat": -3.8004,
+      "lng": 102.2655
+    },
+    "bandar lampung": {
+      "lat": -5.4292,
+      "lng": 105.261
+    },
+    "pangkal pinang": {
+      "lat": -2.1316,
+      "lng": 106.1169
+    },
+    "tanjung pinang": {
+      "lat": 0.9186,
+      "lng": 104.4665
+    },
+    "batam": {
+      "lat": 1.0456,
+      "lng": 104.0305
+    },
+    "jakarta pusat": {
+      "lat": -6.1805,
+      "lng": 106.8283
+    },
+    "jakarta selatan": {
+      "lat": -6.2615,
+      "lng": 106.8106
+    },
+    "jakarta timur": {
+      "lat": -6.225,
+      "lng": 106.9
+    },
+    "bandung": {
+      "lat": -6.9175,
+      "lng": 107.6191
+    },
+    "bekasi": {
+      "lat": -6.2349,
+      "lng": 106.9896
+    },
+    "bogor": {
+      "lat": -6.5944,
+      "lng": 106.7892
+    },
+    "semarang": {
+      "lat": -6.9667,
+      "lng": 110.4167
+    },
+    "surakarta": {
+      "lat": -7.5666,
+      "lng": 110.8167
+    },
+    "kota yogyakarta": {
+      "lat": -7.7956,
+      "lng": 110.3695
+    },
+    "surabaya": {
+      "lat": -7.2575,
+      "lng": 112.7521
+    },
+    "malang": {
+      "lat": -7.9839,
+      "lng": 112.6214
+    },
+    "sidoarjo": {
+      "lat": -7.4469,
+      "lng": 112.7181
+    },
+    "tangerang": {
+      "lat": -6.1781,
+      "lng": 106.63
+    },
+    "serang": {
+      "lat": -6.1201,
+      "lng": 106.1503
+    },
+    "cilegon": {
+      "lat": -6.0167,
+      "lng": 106.05
+    },
+    "denpasar": {
+      "lat": -8.6705,
+      "lng": 115.2126
+    },
+    "mataram": {
+      "lat": -8.5833,
+      "lng": 116.1167
+    },
+    "kupang": {
+      "lat": -10.1772,
+      "lng": 123.607
+    },
+    "pontianak": {
+      "lat": -0.0263,
+      "lng": 109.3425
+    },
+    "palangka raya": {
+      "lat": -2.2096,
+      "lng": 113.9213
+    },
+    "banjarmasin": {
+      "lat": -3.3186,
+      "lng": 114.5944
+    },
+    "samarinda": {
+      "lat": -0.5022,
+      "lng": 117.1536
+    },
+    "tarakan": {
+      "lat": 3.307,
+      "lng": 117.593
+    },
+    "manado": {
+      "lat": 1.4748,
+      "lng": 124.8421
+    },
+    "palu": {
+      "lat": -0.8986,
+      "lng": 119.8506
+    },
+    "makassar": {
+      "lat": -5.1477,
+      "lng": 119.4327
+    },
+    "kendari": {
+      "lat": -3.9985,
+      "lng": 122.512
+    },
+    "gorontalo": {
+      "lat": 0.5412,
+      "lng": 123.0595
+    },
+    "mamuju": {
+      "lat": -2.679,
+      "lng": 118.8867
+    },
+    "ambon": {
+      "lat": -3.6954,
+      "lng": 128.1814
+    },
+    "ternate": {
+      "lat": 0.7906,
+      "lng": 127.3842
+    },
+    "manokwari": {
+      "lat": -0.8615,
+      "lng": 134.062
+    },
+    "jayapura": {
+      "lat": -2.5337,
+      "lng": 140.7181
+    }
+  },
+  "officePartners": [
+    {
+      "name": "Mitra Hub Jakarta",
+      "area": "DKI Jakarta",
+      "address": "Jl. Jend. Sudirman Kav 52-53"
+    },
+    {
+      "name": "Mitra Hub Bandung",
+      "area": "Jawa Barat",
+      "address": "Jl. Asia Afrika No. 88"
+    },
+    {
+      "name": "Mitra Hub Surabaya",
+      "area": "Jawa Timur",
+      "address": "Jl. Ahmad Yani No. 188"
+    },
+    {
+      "name": "Mitra Hub Medan",
+      "area": "Sumatera Utara",
+      "address": "Jl. Gatot Subroto No. 47"
+    },
+    {
+      "name": "Mitra Hub Palembang",
+      "area": "Sumatera Selatan",
+      "address": "Jl. Demang Lebar Daun No. 35"
+    },
+    {
+      "name": "Mitra Hub Pekanbaru",
+      "area": "Riau",
+      "address": "Jl. Sudirman No. 210"
+    },
+    {
+      "name": "Mitra Hub Denpasar",
+      "area": "Bali",
+      "address": "Jl. Teuku Umar Barat No. 39"
+    },
+    {
+      "name": "Mitra Hub Banjarmasin",
+      "area": "Kalimantan Selatan",
+      "address": "Jl. A. Yani Km 4,5"
+    },
+    {
+      "name": "Mitra Hub Balikpapan",
+      "area": "Kalimantan Timur",
+      "address": "Jl. Jend. Sudirman No. 12"
+    },
+    {
+      "name": "Mitra Hub Makassar",
+      "area": "Sulawesi Selatan",
+      "address": "Jl. Urip Sumoharjo No. 122"
+    },
+    {
+      "name": "Mitra Hub Manado",
+      "area": "Sulawesi Utara",
+      "address": "Jl. Sam Ratulangi No. 91"
+    },
+    {
+      "name": "Mitra Hub Jayapura",
+      "area": "Papua",
+      "address": "Jl. Raya Abepura No. 16"
+    }
+  ]
+}

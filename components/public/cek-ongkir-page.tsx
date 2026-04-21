@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 
 import { BoltIcon, PackageIcon, SearchIcon, TruckIcon } from "@/components/icons";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { AREA_TREE, estimateShippingCost } from "@/lib/shipping-pricing";
 
 type ServiceType = "express" | "reguler" | "hemat";
 
@@ -52,40 +54,72 @@ function formatRupiah(value: number) {
 }
 
 export function CekOngkirPage() {
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
+  const [originProvince, setOriginProvince] = useState(AREA_TREE[0]?.province || "");
+  const [originCity, setOriginCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
+  const [destinationProvince, setDestinationProvince] = useState(AREA_TREE[0]?.province || "");
+  const [destinationCity, setDestinationCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
   const [weight, setWeight] = useState("2.5");
   const [length, setLength] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
+  const [originDetail, setOriginDetail] = useState("");
+  const [destinationDetail, setDestinationDetail] = useState("");
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
   const [calculated, setCalculated] = useState(false);
   const [message, setMessage] = useState("");
 
   const numericWeight = Number(weight || 0);
-  const hasCoreData = origin.trim() && destination.trim() && numericWeight > 0;
+  const hasCoreData =
+    originProvince.trim() &&
+    originCity.trim() &&
+    destinationProvince.trim() &&
+    destinationCity.trim() &&
+    originDetail.trim() &&
+    destinationDetail.trim() &&
+    numericWeight > 0;
 
-  const baseCost = useMemo(() => {
-    if (!hasCoreData) return 0;
-    const originFactor = origin.trim().length > 8 ? 1.08 : 1;
-    const destinationFactor = destination.trim().length > 8 ? 1.1 : 1;
-    const volumeRaw = Number(length || 0) * Number(width || 0) * Number(height || 0);
-    const volumeWeight = volumeRaw > 0 ? volumeRaw / 6000 : 0;
-    const billableWeight = Math.max(numericWeight, volumeWeight);
-    return 14500 * billableWeight * originFactor * destinationFactor;
-  }, [destination, hasCoreData, height, length, numericWeight, origin, width]);
+  const originProvinceNode =
+    AREA_TREE.find((item) => item.province === originProvince) || AREA_TREE[0];
+  const destinationProvinceNode =
+    AREA_TREE.find((item) => item.province === destinationProvince) || AREA_TREE[0];
+  const originCities = originProvinceNode?.cities || [];
+  const destinationCities = destinationProvinceNode?.cities || [];
 
   const pricedOptions = useMemo(
     () =>
       shippingOptions.map((option) => {
-        const shipping = baseCost * option.multiplier;
-        const serviceFee = option.key === "express" ? 3500 : option.key === "reguler" ? 1500 : 800;
+        const mappedService = option.key === "express" ? "EKSPRES" : option.key === "hemat" ? "HEMAT" : "REGULER";
+        const shipping = estimateShippingCost({
+          originCity,
+          destinationCity,
+          originProvince,
+          destinationProvince,
+          weightKg: numericWeight || 1,
+          lengthCm: Number(length || 0),
+          widthCm: Number(width || 0),
+          heightCm: Number(height || 0),
+          service: mappedService
+        });
+        const serviceFee = shipping.serviceFee;
         return {
           ...option,
-          price: shipping + serviceFee
+          distanceKm: shipping.distanceKm,
+          billableWeight: shipping.billableWeight,
+          price: shipping.total,
+          detailBaseCost: shipping.baseCost,
+          detailServiceFee: serviceFee
         };
       }),
-    [baseCost]
+    [
+      destinationCity,
+      destinationProvince,
+      height,
+      length,
+      numericWeight,
+      originCity,
+      originProvince,
+      width
+    ]
   );
 
   const selectedOption = pricedOptions.find((item) => item.key === selectedService) ?? null;
@@ -94,7 +128,7 @@ export function CekOngkirPage() {
     if (!hasCoreData) {
       setCalculated(false);
       setSelectedService(null);
-      setMessage("Lengkapi asal, tujuan, dan berat paket terlebih dahulu.");
+      setMessage("Lengkapi asal-tujuan, alamat detail, dan berat paket terlebih dahulu.");
       return;
     }
     setCalculated(true);
@@ -124,27 +158,99 @@ export function CekOngkirPage() {
             </div>
 
             <div className="mt-5 space-y-4">
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
+                    Provinsi Asal
+                  </p>
+                  <select
+                    value={originProvince}
+                    onChange={(event) => {
+                      const nextProvince = event.target.value;
+                      const nextProvinceNode =
+                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
+                      setOriginProvince(nextProvince);
+                      setOriginCity(nextProvinceNode?.cities[0]?.city || "");
+                    }}
+                    className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
+                  >
+                    {AREA_TREE.map((item) => (
+                      <option key={item.province} value={item.province}>
+                        {item.province}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
+                    Kota/Kab Asal
+                  </p>
+                  <SearchableSelect
+                    value={originCity}
+                    options={originCities.map((item) => item.city)}
+                    className="mt-0"
+                    onChange={setOriginCity}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
+                    Provinsi Tujuan
+                  </p>
+                  <select
+                    value={destinationProvince}
+                    onChange={(event) => {
+                      const nextProvince = event.target.value;
+                      const nextProvinceNode =
+                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
+                      setDestinationProvince(nextProvince);
+                      setDestinationCity(nextProvinceNode?.cities[0]?.city || "");
+                    }}
+                    className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
+                  >
+                    {AREA_TREE.map((item) => (
+                      <option key={item.province} value={item.province}>
+                        {item.province}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
+                    Kota/Kab Tujuan
+                  </p>
+                  <SearchableSelect
+                    value={destinationCity}
+                    options={destinationCities.map((item) => item.city)}
+                    className="mt-0"
+                    onChange={setDestinationCity}
+                  />
+                </div>
+              </div>
+
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
-                  Asal Pengiriman
+                  Alamat Detail Asal
                 </p>
-                <input
-                  value={origin}
-                  onChange={(event) => setOrigin(event.target.value)}
-                  className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
-                  placeholder="Kota atau Kecamatan Asal"
+                <textarea
+                  value={originDetail}
+                  onChange={(event) => setOriginDetail(event.target.value)}
+                  className="mt-2 h-[62px] w-full resize-none rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 py-2 text-[13px] text-[#3f4a43] outline-none"
+                  placeholder="Jalan, nomor, RT/RW, patokan"
                 />
               </div>
 
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
-                  Tujuan Pengiriman
+                  Alamat Detail Tujuan
                 </p>
-                <input
-                  value={destination}
-                  onChange={(event) => setDestination(event.target.value)}
-                  className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
-                  placeholder="Kota atau Kecamatan Tujuan"
+                <textarea
+                  value={destinationDetail}
+                  onChange={(event) => setDestinationDetail(event.target.value)}
+                  className="mt-2 h-[62px] w-full resize-none rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 py-2 text-[13px] text-[#3f4a43] outline-none"
+                  placeholder="Jalan, nomor, RT/RW, patokan"
                 />
               </div>
 
@@ -235,9 +341,11 @@ export function CekOngkirPage() {
                       <div>
                         <p className="text-[15px] font-bold text-[#2b312d]">{option.name}</p>
                         <p className="mt-0.5 text-[12px] text-[#737a74]">{option.description}</p>
-                        <div className="mt-2 flex items-center gap-2 text-[11px] text-[#5f665f]">
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[#5f665f]">
                           <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.eta}</span>
                           <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.feature}</span>
+                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.distanceKm} km</span>
+                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.billableWeight} kg tagih</span>
                         </div>
                       </div>
                     </div>
@@ -270,7 +378,8 @@ export function CekOngkirPage() {
               </p>
               {selectedOption ? (
                 <p className="mt-2 text-[12px] font-semibold text-[#256d3f]">
-                  Layanan dipilih: {selectedOption.name} • Total estimasi: {formatRupiah(selectedOption.price)}
+                  Layanan dipilih: {selectedOption.name} | Dasar: {formatRupiah(selectedOption.detailBaseCost)} |
+                  Layanan: {formatRupiah(selectedOption.detailServiceFee)} | Total: {formatRupiah(selectedOption.price)}
                 </p>
               ) : null}
             </div>
@@ -306,7 +415,7 @@ export function CekOngkirPage() {
             </div>
           </div>
           <div className="flex flex-col gap-4 pt-7 text-[14px] text-shipin-text sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>
+            <p>(c) 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>
             <div className="flex gap-6">
               <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="hover:text-shipin-deep">
                 Instagram

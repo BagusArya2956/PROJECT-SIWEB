@@ -1,11 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PrinterIcon, ShieldIcon } from "@/components/icons";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { createShipment, ServiceType } from "@/lib/admin-shipments";
+import { AREA_TREE, estimateShippingCost, formatFullAddress } from "@/lib/shipping-pricing";
 
 const serviceOptions = [
   {
@@ -22,15 +24,27 @@ const serviceOptions = [
   }
 ];
 
+const DRAFT_STORAGE_KEY = "shipin_admin_kirim_paket_draft";
+
 export default function AdminKirimPaketPage() {
   const router = useRouter();
   const [selectedService, setSelectedService] = useState<"reguler" | "ekspres">("reguler");
   const [senderName, setSenderName] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
-  const [pickupAddress, setPickupAddress] = useState("");
+  const [senderProvince, setSenderProvince] = useState(AREA_TREE[0]?.province || "");
+  const [senderCity, setSenderCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
+  const [senderDistrict, setSenderDistrict] = useState(AREA_TREE[0]?.cities[0]?.districts[0] || "");
+  const [senderSubdistrict, setSenderSubdistrict] = useState("");
+  const [senderPostalCode, setSenderPostalCode] = useState("");
+  const [senderAddressDetail, setSenderAddressDetail] = useState("");
   const [receiverName, setReceiverName] = useState("");
   const [receiverPhone, setReceiverPhone] = useState("");
-  const [destinationAddress, setDestinationAddress] = useState("");
+  const [receiverProvince, setReceiverProvince] = useState(AREA_TREE[0]?.province || "");
+  const [receiverCity, setReceiverCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
+  const [receiverDistrict, setReceiverDistrict] = useState(AREA_TREE[0]?.cities[0]?.districts[0] || "");
+  const [receiverSubdistrict, setReceiverSubdistrict] = useState("");
+  const [receiverPostalCode, setReceiverPostalCode] = useState("");
+  const [receiverAddressDetail, setReceiverAddressDetail] = useState("");
   const [weightKg, setWeightKg] = useState("2");
   const [dimP, setDimP] = useState("");
   const [dimL, setDimL] = useState("");
@@ -46,23 +60,81 @@ export default function AdminKirimPaketPage() {
   const [paidAmount, setPaidAmount] = useState(0);
 
   const weight = Number(weightKg) > 0 ? Number(weightKg) : 1;
-  const shippingCost = weight * 17000;
-  const serviceCost = selectedService === "ekspres" ? 3500 : 1500;
-  const totalCost = shippingCost + serviceCost;
+  const lengthCm = Number(dimP) > 0 ? Number(dimP) : 0;
+  const widthCm = Number(dimL) > 0 ? Number(dimL) : 0;
+  const heightCm = Number(dimT) > 0 ? Number(dimT) : 0;
+
+  const senderAddress = formatFullAddress({
+    detail: senderAddressDetail,
+    subdistrict: senderSubdistrict,
+    district: senderDistrict,
+    city: senderCity,
+    province: senderProvince,
+    postalCode: senderPostalCode
+  });
+  const receiverAddress = formatFullAddress({
+    detail: receiverAddressDetail,
+    subdistrict: receiverSubdistrict,
+    district: receiverDistrict,
+    city: receiverCity,
+    province: receiverProvince,
+    postalCode: receiverPostalCode
+  });
+
+  const pricing = estimateShippingCost({
+    originCity: senderCity,
+    destinationCity: receiverCity,
+    originProvince: senderProvince,
+    destinationProvince: receiverProvince,
+    weightKg: weight,
+    lengthCm,
+    widthCm,
+    heightCm,
+    service: selectedService === "ekspres" ? "EKSPRES" : "REGULER"
+  });
+
+  const shippingCost = pricing.baseCost;
+  const serviceCost = pricing.serviceFee;
+  const totalCost = pricing.total;
   const hasCoreData = Boolean(
     senderName.trim() &&
-    pickupAddress.trim() &&
+    senderAddressDetail.trim() &&
+    senderSubdistrict.trim() &&
+    senderPostalCode.trim() &&
     receiverName.trim() &&
-    destinationAddress.trim()
+    receiverAddressDetail.trim() &&
+    receiverSubdistrict.trim() &&
+    receiverPostalCode.trim()
   );
+
+  const senderProvinceNode = AREA_TREE.find((item) => item.province === senderProvince) || AREA_TREE[0];
+  const senderCities = senderProvinceNode?.cities || [];
+  const senderCityNode = senderCities.find((item) => item.city === senderCity) || senderCities[0];
+  const senderDistricts = senderCityNode?.districts || [];
+
+  const receiverProvinceNode =
+    AREA_TREE.find((item) => item.province === receiverProvince) || AREA_TREE[0];
+  const receiverCities = receiverProvinceNode?.cities || [];
+  const receiverCityNode = receiverCities.find((item) => item.city === receiverCity) || receiverCities[0];
+  const receiverDistricts = receiverCityNode?.districts || [];
 
   function resetForm() {
     setSenderName("");
     setSenderPhone("");
-    setPickupAddress("");
+    setSenderProvince(AREA_TREE[0]?.province || "");
+    setSenderCity(AREA_TREE[0]?.cities[0]?.city || "");
+    setSenderDistrict(AREA_TREE[0]?.cities[0]?.districts[0] || "");
+    setSenderSubdistrict("");
+    setSenderPostalCode("");
+    setSenderAddressDetail("");
     setReceiverName("");
     setReceiverPhone("");
-    setDestinationAddress("");
+    setReceiverProvince(AREA_TREE[0]?.province || "");
+    setReceiverCity(AREA_TREE[0]?.cities[0]?.city || "");
+    setReceiverDistrict(AREA_TREE[0]?.cities[0]?.districts[0] || "");
+    setReceiverSubdistrict("");
+    setReceiverPostalCode("");
+    setReceiverAddressDetail("");
     setWeightKg("2");
     setDimP("");
     setDimL("");
@@ -84,27 +156,98 @@ export default function AdminKirimPaketPage() {
     const draftPayload = {
       senderName,
       senderPhone,
-      pickupAddress,
+      senderProvince,
+      senderCity,
+      senderDistrict,
+      senderSubdistrict,
+      senderPostalCode,
+      senderAddressDetail,
       receiverName,
       receiverPhone,
-      destinationAddress,
+      receiverProvince,
+      receiverCity,
+      receiverDistrict,
+      receiverSubdistrict,
+      receiverPostalCode,
+      receiverAddressDetail,
       weightKg,
       dimP,
       dimL,
       dimT,
       selectedService
     };
-    window.localStorage.setItem("shipin_admin_kirim_paket_draft", JSON.stringify(draftPayload));
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftPayload));
     setDraftInfo("Draft pengiriman berhasil disimpan.");
   }
+
+  useEffect(() => {
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return;
+
+    try {
+      const draft = JSON.parse(raw) as Record<string, string>;
+
+      const senderProvinceValue = draft.senderProvince || AREA_TREE[0]?.province || "";
+      const senderProvinceNode =
+        AREA_TREE.find((item) => item.province === senderProvinceValue) || AREA_TREE[0];
+      const senderCityValue =
+        senderProvinceNode?.cities.find((item) => item.city === draft.senderCity)?.city ||
+        senderProvinceNode?.cities[0]?.city ||
+        "";
+      const senderCityNode =
+        senderProvinceNode?.cities.find((item) => item.city === senderCityValue) ||
+        senderProvinceNode?.cities[0];
+      const senderDistrictValue = draft.senderDistrict || senderCityNode?.districts[0] || "";
+
+      const receiverProvinceValue = draft.receiverProvince || AREA_TREE[0]?.province || "";
+      const receiverProvinceNode =
+        AREA_TREE.find((item) => item.province === receiverProvinceValue) || AREA_TREE[0];
+      const receiverCityValue =
+        receiverProvinceNode?.cities.find((item) => item.city === draft.receiverCity)?.city ||
+        receiverProvinceNode?.cities[0]?.city ||
+        "";
+      const receiverCityNode =
+        receiverProvinceNode?.cities.find((item) => item.city === receiverCityValue) ||
+        receiverProvinceNode?.cities[0];
+      const receiverDistrictValue = draft.receiverDistrict || receiverCityNode?.districts[0] || "";
+
+      setSenderName(draft.senderName || "");
+      setSenderPhone(draft.senderPhone || "");
+      setSenderProvince(senderProvinceValue);
+      setSenderCity(senderCityValue);
+      setSenderDistrict(senderDistrictValue);
+      setSenderSubdistrict(draft.senderSubdistrict || "");
+      setSenderPostalCode(draft.senderPostalCode || "");
+      setSenderAddressDetail(draft.senderAddressDetail || "");
+
+      setReceiverName(draft.receiverName || "");
+      setReceiverPhone(draft.receiverPhone || "");
+      setReceiverProvince(receiverProvinceValue);
+      setReceiverCity(receiverCityValue);
+      setReceiverDistrict(receiverDistrictValue);
+      setReceiverSubdistrict(draft.receiverSubdistrict || "");
+      setReceiverPostalCode(draft.receiverPostalCode || "");
+      setReceiverAddressDetail(draft.receiverAddressDetail || "");
+
+      setWeightKg(draft.weightKg || "2");
+      setDimP(draft.dimP || "");
+      setDimL(draft.dimL || "");
+      setDimT(draft.dimT || "");
+      setSelectedService(draft.selectedService === "ekspres" ? "ekspres" : "reguler");
+      setDraftInfo("Draft sebelumnya berhasil dimuat.");
+    } catch {
+      setDraftInfo("");
+    }
+  }, []);
 
   function handleGuideClick() {
     setGuideInfo("Panduan: lengkapi data pengirim/penerima, cek total, lalu Konfirmasi & Bayar.");
   }
 
   function handleCreateShipment() {
-    const senderMissing = !senderName.trim() || !pickupAddress.trim();
-    const receiverMissing = !receiverName.trim() || !destinationAddress.trim();
+    const senderMissing = !senderName.trim() || !senderAddressDetail.trim() || !senderSubdistrict.trim();
+    const receiverMissing =
+      !receiverName.trim() || !receiverAddressDetail.trim() || !receiverSubdistrict.trim();
 
     setSenderError(senderMissing ? "Nama dan alamat pengirim wajib diisi." : "");
     setReceiverError(receiverMissing ? "Nama dan alamat penerima wajib diisi." : "");
@@ -118,9 +261,16 @@ export default function AdminKirimPaketPage() {
     const service: ServiceType = selectedService === "ekspres" ? "EKSPRES" : "REGULER";
     const created = createShipment({
       senderName,
-      pickupAddress,
+      pickupAddress: senderAddress,
       receiverName,
-      destinationAddress,
+      destinationAddress: receiverAddress,
+      originProvince: senderProvince,
+      destinationProvince: receiverProvince,
+      originCity: senderCity,
+      destinationCity: receiverCity,
+      lengthCm,
+      widthCm,
+      heightCm,
       senderPhone,
       receiverPhone,
       weightKg: weight,
@@ -181,13 +331,80 @@ export default function AdminKirimPaketPage() {
                   />
                 </Field>
               </div>
-              <Field label="Alamat Penjemputan">
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                <Field label="Provinsi">
+                  <select
+                    className={inputClass}
+                    value={senderProvince}
+                    onChange={(event) => {
+                      const nextProvince = event.target.value;
+                      const nextProvinceNode =
+                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
+                      const nextCity = nextProvinceNode?.cities[0]?.city || "";
+                      const nextDistrict = nextProvinceNode?.cities[0]?.districts[0] || "";
+                      setSenderProvince(nextProvince);
+                      setSenderCity(nextCity);
+                      setSenderDistrict(nextDistrict);
+                    }}
+                  >
+                    {AREA_TREE.map((item) => (
+                      <option key={item.province} value={item.province}>
+                        {item.province}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Kota / Kabupaten">
+                  <SearchableSelect
+                    value={senderCity}
+                    options={senderCities.map((item) => item.city)}
+                    className="mt-0"
+                    onChange={(nextCity) => {
+                      const nextCityNode = senderCities.find((item) => item.city === nextCity);
+                      setSenderCity(nextCity);
+                      setSenderDistrict(nextCityNode?.districts[0] || "");
+                    }}
+                  />
+                </Field>
+              </div>
+              <div className="mt-2 grid gap-2.5 sm:grid-cols-3">
+                <Field label="Kecamatan">
+                  <select
+                    className={inputClass}
+                    value={senderDistrict}
+                    onChange={(event) => setSenderDistrict(event.target.value)}
+                  >
+                    {senderDistricts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Kelurahan">
+                  <input
+                    className={inputClass}
+                    placeholder="Contoh: Kuningan Timur"
+                    value={senderSubdistrict}
+                    onChange={(event) => setSenderSubdistrict(event.target.value)}
+                  />
+                </Field>
+                <Field label="Kode Pos">
+                  <input
+                    className={inputClass}
+                    placeholder="5 digit"
+                    value={senderPostalCode}
+                    onChange={(event) => setSenderPostalCode(event.target.value)}
+                  />
+                </Field>
+              </div>
+              <Field label="Alamat Lengkap Penjemputan">
                 <textarea
                   className={`${inputClass} h-[74px] resize-none py-2.5`}
-                  placeholder="Masukkan alamat lengkap penjemputan paket..."
-                  value={pickupAddress}
+                  placeholder="Nama jalan, nomor rumah/ruko, RT/RW, patokan..."
+                  value={senderAddressDetail}
                   onChange={(event) => {
-                    setPickupAddress(event.target.value);
+                    setSenderAddressDetail(event.target.value);
                     if (senderError) setSenderError("");
                   }}
                 />
@@ -220,13 +437,80 @@ export default function AdminKirimPaketPage() {
                   />
                 </Field>
               </div>
-              <Field label="Alamat Tujuan">
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                <Field label="Provinsi">
+                  <select
+                    className={inputClass}
+                    value={receiverProvince}
+                    onChange={(event) => {
+                      const nextProvince = event.target.value;
+                      const nextProvinceNode =
+                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
+                      const nextCity = nextProvinceNode?.cities[0]?.city || "";
+                      const nextDistrict = nextProvinceNode?.cities[0]?.districts[0] || "";
+                      setReceiverProvince(nextProvince);
+                      setReceiverCity(nextCity);
+                      setReceiverDistrict(nextDistrict);
+                    }}
+                  >
+                    {AREA_TREE.map((item) => (
+                      <option key={item.province} value={item.province}>
+                        {item.province}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Kota / Kabupaten">
+                  <SearchableSelect
+                    value={receiverCity}
+                    options={receiverCities.map((item) => item.city)}
+                    className="mt-0"
+                    onChange={(nextCity) => {
+                      const nextCityNode = receiverCities.find((item) => item.city === nextCity);
+                      setReceiverCity(nextCity);
+                      setReceiverDistrict(nextCityNode?.districts[0] || "");
+                    }}
+                  />
+                </Field>
+              </div>
+              <div className="mt-2 grid gap-2.5 sm:grid-cols-3">
+                <Field label="Kecamatan">
+                  <select
+                    className={inputClass}
+                    value={receiverDistrict}
+                    onChange={(event) => setReceiverDistrict(event.target.value)}
+                  >
+                    {receiverDistricts.map((district) => (
+                      <option key={district} value={district}>
+                        {district}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Kelurahan">
+                  <input
+                    className={inputClass}
+                    placeholder="Contoh: Dinoyo"
+                    value={receiverSubdistrict}
+                    onChange={(event) => setReceiverSubdistrict(event.target.value)}
+                  />
+                </Field>
+                <Field label="Kode Pos">
+                  <input
+                    className={inputClass}
+                    placeholder="5 digit"
+                    value={receiverPostalCode}
+                    onChange={(event) => setReceiverPostalCode(event.target.value)}
+                  />
+                </Field>
+              </div>
+              <Field label="Alamat Lengkap Tujuan">
                 <textarea
                   className={`${inputClass} h-[74px] resize-none py-2.5`}
-                  placeholder="Masukkan alamat lengkap tujuan pengiriman..."
-                  value={destinationAddress}
+                  placeholder="Nama jalan, nomor rumah/ruko, RT/RW, patokan..."
+                  value={receiverAddressDetail}
                   onChange={(event) => {
-                    setDestinationAddress(event.target.value);
+                    setReceiverAddressDetail(event.target.value);
                     if (receiverError) setReceiverError("");
                   }}
                 />
@@ -291,8 +575,11 @@ export default function AdminKirimPaketPage() {
             </h2>
 
             <div className="mt-8 space-y-4 text-[14px] text-[#275238] sm:text-[15px]">
+              <div className="rounded-2xl bg-[#d7f6d3] px-3 py-2 text-[12px] font-semibold text-[#245739]">
+                Rute: {senderCity || "-"}{" -> "}{receiverCity || "-"}{" | "}{pricing.distanceKm} km
+              </div>
               <div className="flex items-center justify-between gap-4">
-                <span>Biaya Pengiriman ({weight}kg)</span>
+                <span>Biaya Pengiriman ({pricing.billableWeight}kg)</span>
                 <span className="shrink-0 text-[18px] font-semibold text-[#1c4d30]">
                   {hasCoreData ? `Rp ${shippingCost.toLocaleString("id-ID")}` : "-"}
                 </span>
@@ -495,3 +782,4 @@ function BlockCard({ number, title, children }: { number: number; title: string;
     </article>
   );
 }
+

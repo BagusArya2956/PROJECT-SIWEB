@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   ChatBubbleIcon,
@@ -15,6 +14,15 @@ import {
   SearchIcon
 } from "@/components/icons";
 import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
+import {
+  getShipmentStorageKey,
+  loadShipments,
+  PaymentStatus as HistoryPaymentStatus,
+  refreshTrackingProgress,
+  ShipmentRecord,
+  ShipmentStatus as HistoryShipmentStatus,
+  updateShipment
+} from "@/lib/admin-shipments";
 
 type ShipmentStatus = "Dikirim" | "Selesai" | "Pending";
 type PaymentStatus = "Lunas" | "Menunggu";
@@ -33,69 +41,6 @@ type ShipmentRow = {
   amount: number;
 };
 
-const shipments: ShipmentRow[] = [
-  {
-    id: "SPG-001293",
-    sender: "Toko Makmur Jaya",
-    senderCity: "Jakarta",
-    receiver: "Andi Wijaya",
-    receiverCity: "Surabaya",
-    dayIndex: 0,
-    status: "Dikirim",
-    payment: "Lunas",
-    service: "Reguler",
-    amount: 45000
-  },
-  {
-    id: "SPG-001294",
-    sender: "Dapur Ummi",
-    senderCity: "Bandung",
-    receiver: "Siti Aminah",
-    receiverCity: "Malang",
-    dayIndex: 1,
-    status: "Selesai",
-    payment: "Lunas",
-    service: "Same-Day",
-    amount: 32000
-  },
-  {
-    id: "SPG-001295",
-    sender: "Batik Solo Asli",
-    senderCity: "Solo",
-    receiver: "Budi Santoso",
-    receiverCity: "Medan",
-    dayIndex: 3,
-    status: "Pending",
-    payment: "Menunggu",
-    service: "Ekspres",
-    amount: 128000
-  },
-  {
-    id: "SPG-001296",
-    sender: "Elektronik Murah",
-    senderCity: "Semarang",
-    receiver: "Dewi Sartika",
-    receiverCity: "Palembang",
-    dayIndex: 5,
-    status: "Dikirim",
-    payment: "Lunas",
-    service: "Same-Day",
-    amount: 89000
-  },
-  {
-    id: "SPG-001297",
-    sender: "Sumber Rejeki",
-    senderCity: "Yogyakarta",
-    receiver: "Rina Putri",
-    receiverCity: "Bekasi",
-    dayIndex: 6,
-    status: "Selesai",
-    payment: "Lunas",
-    service: "Reguler",
-    amount: 51000
-  }
-];
-
 const dayLabels = ["S", "S", "R", "K", "J", "S", "M"];
 const longDayLabels = ["SEN", "SEL", "RAB", "KAM", "JUM", "SAB", "MIN"];
 
@@ -111,6 +56,60 @@ function statusPill(status: ShipmentStatus) {
   if (status === "Selesai") return "bg-[#ddf8dc] text-[#1a8f37]";
   if (status === "Pending") return "bg-[#ffe7de] text-[#d26b3f]";
   return "bg-[#dff5dc] text-[#2d9a49]";
+}
+
+function mapHistoryShipmentStatus(status: HistoryShipmentStatus): ShipmentStatus {
+  if (status === "SAMPAI") return "Selesai";
+  if (status === "DIJADWALKAN") return "Pending";
+  return "Dikirim";
+}
+
+function toHistoryShipmentStatus(status: ShipmentStatus): HistoryShipmentStatus {
+  if (status === "Selesai") return "SAMPAI";
+  if (status === "Pending") return "DIJADWALKAN";
+  return "DALAM PERJALANAN";
+}
+
+function mapHistoryPaymentStatus(status: HistoryPaymentStatus): PaymentStatus {
+  return status === "LUNAS" ? "Lunas" : "Menunggu";
+}
+
+function toHistoryPaymentStatus(status: PaymentStatus): HistoryPaymentStatus {
+  return status === "Lunas" ? "LUNAS" : "BELUM BAYAR";
+}
+
+function mapHistoryService(service?: ShipmentRecord["service"]): ServiceType {
+  if (service === "EKSPRES") return "Ekspres";
+  return "Reguler";
+}
+
+function extractCityFromAddress(value?: string) {
+  if (!value) return "-";
+  const tokens = value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!tokens.length) return "-";
+  if (tokens.length >= 3) return tokens[tokens.length - 3];
+  return tokens[tokens.length - 1];
+}
+
+function mapShipmentRows(rows: ShipmentRecord[]): ShipmentRow[] {
+  return rows.map((row) => {
+    const dayIndex = ((new Date(row.createdAt).getDay() + 6) % 7) || 0;
+    return {
+      id: row.id,
+      sender: row.sender,
+      senderCity: row.originCity || extractCityFromAddress(row.senderAddress),
+      receiver: row.receiver,
+      receiverCity: row.destinationCity || extractCityFromAddress(row.receiverAddress),
+      dayIndex,
+      status: mapHistoryShipmentStatus(row.shipment),
+      payment: mapHistoryPaymentStatus(row.payment),
+      service: mapHistoryService(row.service),
+      amount: row.total
+    };
+  });
 }
 
 function buildSparkline(values: number[]) {
@@ -133,13 +132,41 @@ function buildSparkline(values: number[]) {
 }
 
 export function AdminDashboard() {
-  const [shipmentRows, setShipmentRows] = useState<ShipmentRow[]>(shipments);
+  const [shipmentRows, setShipmentRows] = useState<ShipmentRow[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<(typeof statusOptions)[number]>("Semua");
   const [paymentFilter, setPaymentFilter] = useState<(typeof paymentOptions)[number]>("Semua");
   const [serviceFilter, setServiceFilter] = useState<(typeof serviceOptions)[number]>("Semua");
   const [activeWindow, setActiveWindow] = useState("7 Hari Terakhir");
-  const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(shipments[0]?.id ?? null);
+  const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const hydrate = () => {
+      const currentRows = mapShipmentRows(refreshTrackingProgress());
+      setShipmentRows(currentRows);
+      setSelectedShipmentId((currentId) =>
+        currentId && currentRows.some((row) => row.id === currentId) ? currentId : currentRows[0]?.id || null
+      );
+    };
+
+    hydrate();
+
+    const timer = window.setInterval(hydrate, 5000);
+    const handleStorage = (event: StorageEvent) => {
+      if (!event.key || event.key === getShipmentStorageKey()) {
+        hydrate();
+      }
+    };
+    const handleFocus = () => hydrate();
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
 
   const selectedShipment =
     shipmentRows.find((shipment) => shipment.id === selectedShipmentId) ?? shipmentRows[0] ?? null;
@@ -200,22 +227,15 @@ export function AdminDashboard() {
   }, [filteredShipments]);
 
   function updateShipmentStatus(id: string, nextStatus: ShipmentStatus) {
-    setShipmentRows((currentRows) =>
-      currentRows.map((shipment) =>
-        shipment.id === id
-          ? {
-              ...shipment,
-              status: nextStatus,
-              payment:
-                nextStatus === "Pending"
-                  ? "Menunggu"
-                  : shipment.payment === "Menunggu"
-                    ? "Lunas"
-                    : shipment.payment
-            }
-          : shipment
-      )
-    );
+    const current = loadShipments().find((row) => row.id === id);
+    const inferredPayment: PaymentStatus =
+      nextStatus === "Pending" ? "Menunggu" : current?.payment === "BELUM BAYAR" ? "Lunas" : mapHistoryPaymentStatus(current?.payment || "LUNAS");
+
+    const updated = updateShipment(id, {
+      shipment: toHistoryShipmentStatus(nextStatus),
+      payment: toHistoryPaymentStatus(inferredPayment)
+    });
+    setShipmentRows(mapShipmentRows(updated));
     setSelectedShipmentId(id);
   }
 
@@ -260,27 +280,9 @@ export function AdminDashboard() {
 
   const quickActions = [
     {
-      label: "Kirim Paket",
-      href: "/admin/kirim-paket",
-      icon: <PackageIcon className="h-4 w-4" />,
-      className: "bg-[#9df28f] text-[#175e35]"
-    },
-    {
-      label: "Histori",
-      href: "/admin/histori",
-      icon: <HistoryIcon className="h-4 w-4" />,
-      className: "bg-white text-[#495249]"
-    },
-    {
       label: "Cetak Resi",
       onClick: printShipmentLabel,
       icon: <PrinterIcon className="h-4 w-4" />,
-      className: "bg-white text-[#495249]"
-    },
-    {
-      label: "Ulasan",
-      href: "/admin/ulasan",
-      icon: <ChatBubbleIcon className="h-4 w-4" />,
       className: "bg-white text-[#495249]"
     }
   ];
@@ -310,28 +312,17 @@ export function AdminDashboard() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              {quickActions.map((action) =>
-                action.href ? (
-                  <Link
-                    key={action.label}
-                    href={action.href}
-                    className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold shadow-[0_10px_20px_rgba(122,165,114,0.12)] ${action.className}`}
-                  >
-                    {action.icon}
-                    {action.label}
-                  </Link>
-                ) : (
-                  <button
-                    key={action.label}
-                    type="button"
-                    onClick={action.onClick}
-                    className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold shadow-[0_10px_20px_rgba(122,165,114,0.12)] ${action.className}`}
-                  >
-                    {action.icon}
-                    {action.label}
-                  </button>
-                )
-              )}
+              {quickActions.map((action) => (
+                <button
+                  key={action.label}
+                  type="button"
+                  onClick={action.onClick}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold shadow-[0_10px_20px_rgba(122,165,114,0.12)] ${action.className}`}
+                >
+                  {action.icon}
+                  {action.label}
+                </button>
+              ))}
               <AdminLogoutButton />
             </div>
           </div>
@@ -399,8 +390,8 @@ export function AdminDashboard() {
                       <div className="mb-2 h-6" />
                     )}
                     <div
-                      className={`rounded-t-[22px] ${isPeak ? "bg-[#8fe987]" : "bg-[#eef3e8]"}`}
-                      style={{ height }}
+                      className={`admin-chart-bar rounded-t-[22px] ${isPeak ? "bg-[#8fe987]" : "bg-[#eef3e8]"}`}
+                      style={{ height, animationDelay: `${index * 120}ms` }}
                     />
                     <p className="mt-3 text-center text-[11px] font-semibold text-[#9aa39b]">
                       {longDayLabels[index]}
@@ -428,31 +419,16 @@ export function AdminDashboard() {
 
             <div className="mt-8">
               <svg viewBox={`0 0 ${sparkline.width} ${sparkline.height}`} className="w-full">
-                <polyline
-                  fill="none"
-                  stroke="#1c7b33"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  points={sparkline.points}
-                />
-                {chartMetrics.weeklyRevenue.map((value, index) => {
-                  const max = Math.max(...chartMetrics.weeklyRevenue);
-                  const min = Math.min(...chartMetrics.weeklyRevenue);
-                  const range = Math.max(1, max - min);
-                  const x = index * (sparkline.width / (chartMetrics.weeklyRevenue.length - 1));
-                  const y = sparkline.height - ((value - min) / range) * (sparkline.height - 16) - 8;
-
-                  return (
-                    <circle
-                      key={`${dayLabels[index]}-${index}`}
-                      cx={x}
-                      cy={y}
-                      r={index === chartMetrics.weeklyRevenue.length - 1 ? 5 : 4}
-                      fill={index === chartMetrics.weeklyRevenue.length - 1 ? "#8fe987" : "#1c7b33"}
-                    />
-                  );
-                })}
+                <g className="admin-chart-line-float">
+                  <polyline
+                    fill="none"
+                    stroke="#1c7b33"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points={sparkline.points}
+                  />
+                </g>
               </svg>
               <div className="mt-3 flex justify-between px-1 text-[11px] font-semibold text-[#9aa39b]">
                 {dayLabels.map((day, index) => (

@@ -33,12 +33,66 @@ function GlobeIcon() {
   );
 }
 
+function PasswordField({
+  label,
+  value,
+  onChange,
+  show,
+  onToggle,
+  hint
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  show: boolean;
+  onToggle: () => void;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <RowLabel>{label}</RowLabel>
+      <div className="relative">
+        <input
+          type={show ? "text" : "password"}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="h-12 w-full rounded-xl border border-[#e0e6df] bg-[#f2f5ef] px-4 pr-12 text-[15px] tracking-[0.2em] text-[#253a33] outline-none"
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5e6d64]"
+          aria-label={show ? "Sembunyikan kata sandi" : "Lihat kata sandi"}
+        >
+          {show ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
+              <path d="M3 3 21 21" />
+              <path d="M10.6 10.6a2 2 0 1 0 2.8 2.8" />
+              <path d="M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a15.6 15.6 0 0 1-3.2 4.5" />
+              <path d="M6.2 6.2A15.8 15.8 0 0 0 2 12s3 8 10 8a9.8 9.8 0 0 0 4.2-.9" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          )}
+        </button>
+      </div>
+      {hint ? <p className="mt-1 text-[11px] text-[#98a29d]">{hint}</p> : null}
+    </div>
+  );
+}
+
 export default function AdminProfilPage() {
   const [fullName, setFullName] = useState("Bagus Arya");
   const [email, setEmail] = useState("bagus.santoso@email.com");
   const [currentPassword, setCurrentPassword] = useState("password");
   const [newPassword, setNewPassword] = useState("password");
   const [confirmPassword, setConfirmPassword] = useState("password");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [language, setLanguage] = useState("Bahasa Indonesia (Default)");
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"error" | "success" | "info">("info");
@@ -209,36 +263,30 @@ export default function AdminProfilPage() {
             </p>
 
             <div className="mt-5 space-y-4">
-              <div>
-                <RowLabel>Kata Sandi Saat Ini</RowLabel>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="h-12 w-full rounded-xl border border-[#e0e6df] bg-[#f2f5ef] px-4 text-[15px] tracking-[0.2em] text-[#253a33] outline-none"
-                />
-              </div>
+              <PasswordField
+                label="Kata Sandi Saat Ini"
+                value={currentPassword}
+                onChange={setCurrentPassword}
+                show={showCurrentPassword}
+                onToggle={() => setShowCurrentPassword((prev) => !prev)}
+              />
 
-              <div>
-                <RowLabel>Kata Sandi Baru</RowLabel>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(event) => setNewPassword(event.target.value)}
-                  className="h-12 w-full rounded-xl border border-[#e0e6df] bg-[#f2f5ef] px-4 text-[15px] tracking-[0.2em] text-[#253a33] outline-none"
-                />
-                <p className="mt-1 text-[11px] text-[#98a29d]">Minimal 8 karakter dengan kombinasi angka</p>
-              </div>
+              <PasswordField
+                label="Kata Sandi Baru"
+                value={newPassword}
+                onChange={setNewPassword}
+                show={showNewPassword}
+                onToggle={() => setShowNewPassword((prev) => !prev)}
+                hint="Minimal 8 karakter dengan kombinasi angka"
+              />
 
-              <div>
-                <RowLabel>Konfirmasi Kata Sandi Baru</RowLabel>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="h-12 w-full rounded-xl border border-[#e0e6df] bg-[#f2f5ef] px-4 text-[15px] tracking-[0.2em] text-[#253a33] outline-none"
-                />
-              </div>
+              <PasswordField
+                label="Konfirmasi Kata Sandi Baru"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                show={showConfirmPassword}
+                onToggle={() => setShowConfirmPassword((prev) => !prev)}
+              />
             </div>
 
             <button

@@ -11,6 +11,7 @@ import {
   PhoneIcon
 } from "@/components/icons";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { OFFICE_PARTNERS } from "@/lib/shipping-pricing";
 
 const TrackingMap = dynamic(
   () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
@@ -157,8 +158,8 @@ export function KontakPage() {
             </article>
           </div>
 
-          <div className="mt-6 grid gap-5 lg:grid-cols-[1fr_0.46fr]">
-            <article className="reveal-on-scroll hover-lift relative overflow-hidden rounded-[24px] border border-[#e2e7e1] bg-[#4f8f86] p-4 shadow-[0_18px_34px_rgba(114,148,138,0.22)]">
+          <div className="mt-6 grid gap-5 lg:items-start lg:grid-cols-[1fr_0.46fr]">
+            <article className="reveal-on-scroll hover-lift relative self-start overflow-hidden rounded-[24px] border border-[#e2e7e1] bg-[#4f8f86] p-4 shadow-[0_18px_34px_rgba(114,148,138,0.22)]">
               <div className="relative overflow-hidden rounded-[18px] border border-white/40">
                 <TrackingMap
                   latest={{
@@ -166,7 +167,7 @@ export function KontakPage() {
                     lng: 106.8456,
                     label: "SHIPIN GO HQ - Sudirman, Jakarta"
                   }}
-                  heightClassName="h-[250px]"
+                  heightClassName="h-[320px] sm:h-[380px] lg:h-[520px]"
                   zoom={13}
                   scrollWheelZoom={false}
                 />
@@ -198,6 +199,25 @@ export function KontakPage() {
                     <p>Minggu / Libur: Tutup</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="mt-5 border-t border-[#e2e7e1] pt-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#405047]">
+                    Mitra Kantor
+                  </p>
+                  <span className="rounded-full bg-[#e8f5e7] px-2.5 py-1 text-[10px] font-bold text-[#2f6f43]">
+                    {OFFICE_PARTNERS.length} Lokasi
+                  </span>
+                </div>
+                <ul className="mt-2 grid max-h-[230px] gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
+                  {OFFICE_PARTNERS.map((partner) => (
+                    <li key={partner.name} className="rounded-[10px] border border-[#e6ece6] bg-white px-3 py-2">
+                      <p className="text-[12px] font-bold text-[#294033]">{partner.name}</p>
+                      <p className="text-[11px] text-[#5d6d61]">{partner.area} | {partner.address}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </article>
           </div>
@@ -232,7 +252,7 @@ export function KontakPage() {
             </div>
           </div>
           <div className="flex flex-col gap-4 pt-7 text-[14px] text-shipin-text sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>
+            <p>(c) 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>
             <div className="flex gap-6">
               <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="hover:text-shipin-deep">
                 Instagram
@@ -250,3 +270,4 @@ export function KontakPage() {
     </main>
   );
 }
+

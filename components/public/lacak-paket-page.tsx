@@ -21,6 +21,7 @@ import {
   ShipmentRecord,
   TrackingEvent
 } from "@/lib/admin-shipments";
+import { resolveAreaCoordinate } from "@/lib/shipping-pricing";
 
 const TrackingMap = dynamic(
   () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
@@ -66,28 +67,6 @@ function parseOriginDestination(shipment: ShipmentRecord) {
     origin: shipment.senderAddress || originRaw?.trim() || "Asal",
     destination: shipment.receiverAddress || destinationRaw?.trim() || "Tujuan"
   };
-}
-
-const fallbackCoords: Record<string, { lat: number; lng: number }> = {
-  jakarta: { lat: -6.2088, lng: 106.8456 },
-  bekasi: { lat: -6.2349, lng: 106.9896 },
-  bandung: { lat: -6.9175, lng: 107.6191 },
-  surabaya: { lat: -7.2575, lng: 112.7521 },
-  depok: { lat: -6.4025, lng: 106.7942 },
-  bogor: { lat: -6.5944, lng: 106.7892 },
-  tangerang: { lat: -6.1781, lng: 106.63 },
-  semarang: { lat: -6.9667, lng: 110.4167 },
-  medan: { lat: 3.5952, lng: 98.6722 }
-};
-
-function resolveCoordFromText(text: string) {
-  const normalized = text.toLowerCase();
-  for (const [key, coords] of Object.entries(fallbackCoords)) {
-    if (normalized.includes(key)) {
-      return coords;
-    }
-  }
-  return fallbackCoords.jakarta;
 }
 
 function getCurrentStatus(shipment: ShipmentRecord) {
@@ -321,7 +300,10 @@ export function LacakPaketPage() {
                         destination={
                           locationInfo
                             ? {
-                                ...resolveCoordFromText(locationInfo.destination),
+                                ...resolveAreaCoordinate({
+                                  city: activeShipment.destinationCity || locationInfo.destination,
+                                  province: activeShipment.destinationProvince
+                                }),
                                 label: locationInfo.destination
                               }
                             : null

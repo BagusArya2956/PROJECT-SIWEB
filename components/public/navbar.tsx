@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -17,8 +18,16 @@ export function PublicNavbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/70 bg-[#fbfaf3]/85 backdrop-blur">
       <div className="shell flex h-20 items-center justify-between gap-4">
-        <Link href="/" className="text-sm font-extrabold tracking-tight text-shipin-deep">
-          SHIPIN GO
+        <Link href="/" className="inline-flex items-center gap-2.5 text-sm font-extrabold tracking-tight text-shipin-deep">
+          <Image
+            src="/images/shipin-logo.png"
+            alt="SHIPIN GO Logo"
+            width={72}
+            height={72}
+            className="h-[72px] w-[72px] rounded-md object-cover"
+            priority
+          />
+          <span>SHIPIN GO</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm font-medium text-shipin-text lg:flex">
           {menuItems.map((item) => (

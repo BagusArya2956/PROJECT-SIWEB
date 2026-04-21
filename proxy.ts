@@ -6,7 +6,7 @@ import { ADMIN_SESSION_COOKIE } from "@/lib/auth";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
-  const isAuthRoute = pathname === "/login" || pathname === "/register";
+  const isAuthRoute = pathname === "/login" || pathname === "/register" || pathname === "/lupa-password";
   const isLoggedIn = request.cookies.get(ADMIN_SESSION_COOKIE)?.value === "active";
 
   if (pathname === "/admin") {
@@ -31,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/login", "/register"]
+  matcher: ["/admin/:path*", "/login", "/register", "/lupa-password"]
 };

@@ -1,3 +1,5 @@
+import { estimateShippingCost, resolveAreaCoordinate } from "@/lib/shipping-pricing";
+
 export type ShipmentStatus = "DALAM PERJALANAN" | "DIJADWALKAN" | "SAMPAI";
 export type PaymentStatus = "LUNAS" | "BELUM BAYAR";
 export type ServiceType = "REGULER" | "EKSPRES";
@@ -33,6 +35,10 @@ export type ShipmentRecord = {
   createdAt: number;
   senderAddress?: string;
   receiverAddress?: string;
+  originProvince?: string;
+  destinationProvince?: string;
+  originCity?: string;
+  destinationCity?: string;
   senderPhone?: string;
   receiverPhone?: string;
   weightKg?: number;
@@ -50,6 +56,13 @@ export type CreateShipmentPayload = {
   pickupAddress: string;
   receiverName: string;
   destinationAddress: string;
+  originProvince?: string;
+  destinationProvince?: string;
+  originCity?: string;
+  destinationCity?: string;
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
   senderPhone?: string;
   receiverPhone?: string;
   weightKg: number;
@@ -73,22 +86,6 @@ type Waypoint = {
   lng: number;
 };
 
-const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  jakarta: { lat: -6.2088, lng: 106.8456 },
-  bekasi: { lat: -6.2349, lng: 106.9896 },
-  bandung: { lat: -6.9175, lng: 107.6191 },
-  surabaya: { lat: -7.2575, lng: 112.7521 },
-  depok: { lat: -6.4025, lng: 106.7942 },
-  bogor: { lat: -6.5944, lng: 106.7892 },
-  tangerang: { lat: -6.1781, lng: 106.63 },
-  yogyakarta: { lat: -7.7956, lng: 110.3695 },
-  semarang: { lat: -6.9667, lng: 110.4167 },
-  medan: { lat: 3.5952, lng: 98.6722 },
-  makassar: { lat: -5.1477, lng: 119.4327 },
-  palembang: { lat: -2.9761, lng: 104.7754 },
-  bali: { lat: -8.65, lng: 115.2167 }
-};
-
 const SEED_SHIPMENTS: ShipmentRecord[] = [
   {
     id: "SPG-99281-ID",
@@ -103,6 +100,10 @@ const SEED_SHIPMENTS: ShipmentRecord[] = [
     createdAt: 1697068800000,
     senderAddress: "Jakarta",
     receiverAddress: "Surabaya",
+    originProvince: "DKI Jakarta",
+    destinationProvince: "Jawa Timur",
+    originCity: "Kota Jakarta Pusat",
+    destinationCity: "Kota Surabaya",
     weightKg: 2.5,
     service: "EKSPRES",
     senderPhone: "081200000001",
@@ -121,6 +122,10 @@ const SEED_SHIPMENTS: ShipmentRecord[] = [
     createdAt: 1696896000000,
     senderAddress: "Bandung",
     receiverAddress: "Medan",
+    originProvince: "Jawa Barat",
+    destinationProvince: "Sumatera Utara",
+    originCity: "Kota Bandung",
+    destinationCity: "Kota Medan",
     weightKg: 6.4,
     service: "REGULER",
     senderPhone: "081200000002",
@@ -146,27 +151,18 @@ function parseDestination(pickupAddress: string, destinationAddress: string) {
 }
 
 function getPrimaryArea(text: string) {
-  return (
-    text
-      .split(",")[0]
-      ?.trim()
-      .replace(/\s+/g, " ") || "Indonesia"
-  );
+  const tokens = text
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!tokens.length) return "Indonesia";
+  if (tokens.length >= 3) return tokens[tokens.length - 3];
+  return tokens[0];
 }
 
 function makeId() {
   const tail = String(Date.now()).slice(-6);
   return `SPG-${tail}-ID`;
-}
-
-function getCoordinateByText(text: string) {
-  const normalized = text.toLowerCase();
-  for (const [keyword, coord] of Object.entries(CITY_COORDINATES)) {
-    if (normalized.includes(keyword)) {
-      return coord;
-    }
-  }
-  return CITY_COORDINATES.jakarta;
 }
 
 function getTransitPoint(origin: Waypoint, destination: Waypoint): Waypoint {
@@ -178,10 +174,20 @@ function getTransitPoint(origin: Waypoint, destination: Waypoint): Waypoint {
 }
 
 function getWaypointsFromShipment(row: ShipmentRecord) {
-  const senderArea = getPrimaryArea(row.senderAddress || row.destination.split("|")[0] || "Jakarta");
-  const receiverArea = getPrimaryArea(row.receiverAddress || row.destination.split("|")[1] || "Bekasi");
-  const originCoord = getCoordinateByText(senderArea);
-  const destinationCoord = getCoordinateByText(receiverArea);
+  const senderArea =
+    row.originCity ||
+    getPrimaryArea(row.senderAddress || row.destination.split("|")[0] || "Jakarta");
+  const receiverArea =
+    row.destinationCity ||
+    getPrimaryArea(row.receiverAddress || row.destination.split("|")[1] || "Bekasi");
+  const originCoord = resolveAreaCoordinate({
+    city: row.originCity || senderArea,
+    province: row.originProvince
+  });
+  const destinationCoord = resolveAreaCoordinate({
+    city: row.destinationCity || receiverArea,
+    province: row.destinationProvince
+  });
   return {
     senderArea,
     receiverArea,
@@ -353,8 +359,21 @@ export function saveShipments(rows: ShipmentRecord[]) {
 export function createShipment(payload: CreateShipmentPayload) {
   const now = Date.now();
   const safeWeight = Math.max(1, payload.weightKg);
-  const baseCost = safeWeight * 17000;
-  const serviceCost = payload.service === "EKSPRES" ? 3500 : 1500;
+  const originCity = payload.originCity || getPrimaryArea(payload.pickupAddress);
+  const destinationCity = payload.destinationCity || getPrimaryArea(payload.destinationAddress);
+  const originProvince = payload.originProvince || "Indonesia";
+  const destinationProvince = payload.destinationProvince || "Indonesia";
+  const pricing = estimateShippingCost({
+    originCity,
+    destinationCity,
+    originProvince,
+    destinationProvince,
+    weightKg: safeWeight,
+    lengthCm: payload.lengthCm,
+    widthCm: payload.widthCm,
+    heightCm: payload.heightCm,
+    service: payload.service
+  });
 
   const next: ShipmentRecord = enrichShipment({
     id: makeId(),
@@ -365,10 +384,14 @@ export function createShipment(payload: CreateShipmentPayload) {
     date: formatShipmentDate(now),
     payment: "BELUM BAYAR",
     shipment: "DIJADWALKAN",
-    total: baseCost + serviceCost,
+    total: pricing.total,
     createdAt: now,
     senderAddress: payload.pickupAddress,
     receiverAddress: payload.destinationAddress,
+    originProvince,
+    destinationProvince,
+    originCity,
+    destinationCity,
     senderPhone: payload.senderPhone,
     receiverPhone: payload.receiverPhone,
     weightKg: safeWeight,

@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,8 +20,16 @@ export function AdminTopNavbar() {
     <header className="sticky top-0 z-40 border-b border-white/70 bg-[#fbfaf3]/88 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-4">
-          <Link href="/" className="text-sm font-extrabold tracking-tight text-shipin-deep">
-            SHIPIN GO
+          <Link href="/" className="inline-flex items-center gap-2.5 text-sm font-extrabold tracking-tight text-shipin-deep">
+            <Image
+              src="/images/shipin-logo.png"
+              alt="SHIPIN GO Logo"
+              width={72}
+              height={72}
+              className="h-[72px] w-[72px] rounded-md object-cover"
+              priority
+            />
+            <span>SHIPIN GO</span>
           </Link>
           <span className="hidden rounded-full bg-[#e8f7df] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#2a8b48] md:inline-flex">
             Admin Area
@@ -82,3 +91,5 @@ export function AdminTopNavbar() {
     </header>
   );
 }
+
+
