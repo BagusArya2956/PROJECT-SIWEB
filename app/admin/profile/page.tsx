@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import { ShieldIcon, StarIcon, TruckIcon, UserIcon } from "@/components/icons";
 import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
@@ -84,7 +84,17 @@ function PasswordField({
   );
 }
 
-export default function AdminProfilPage() {
+function LoadingFallback() {
+  return (
+    <main className="min-h-[calc(100vh-80px)] bg-[#f2f5f1] px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1540px] rounded-[28px] border border-[#e5ebe5] bg-white p-6 text-[13px] font-semibold text-[#5f6d63]">
+        Memuat profil...
+      </div>
+    </main>
+  );
+}
+
+function AdminProfilContent() {
   const [fullName, setFullName] = useState("Bagus Arya");
   const [email, setEmail] = useState("bagus.santoso@email.com");
   const [currentPassword, setCurrentPassword] = useState("password");
@@ -332,5 +342,13 @@ export default function AdminProfilPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function AdminProfilPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminProfilContent />
+    </Suspense>
   );
 }

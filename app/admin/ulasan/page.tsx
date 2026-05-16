@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { deleteReview, loadReviews, ReviewItem, updateReview } from "@/lib/admin-reviews";
 
@@ -13,9 +13,23 @@ function RatingStars({ stars }: { stars: number }) {
   );
 }
 
-export default function AdminUlasanPage() {
+const ITEMS_PER_PAGE = 3;
+
+function LoadingFallback() {
+  return (
+    <main className="min-h-[calc(100vh-80px)] bg-[#f2f5f1] px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1540px] rounded-[28px] bg-white p-6 text-[13px] font-semibold text-[#5f6d63]">
+        Memuat ulasan...
+      </div>
+    </main>
+  );
+}
+
+function AdminUlasanContent() {
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [filter, setFilter] = useState<"all" | "unmoderated">("all");
+  const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -38,9 +52,32 @@ export default function AdminUlasanPage() {
   }, [reviews]);
 
   const displayedReviews = useMemo(() => {
-    if (filter === "unmoderated") return reviews.filter((review) => !review.visible);
-    return reviews;
-  }, [filter, reviews]);
+    const keyword = query.trim().toLowerCase();
+    const filteredByStatus = filter === "unmoderated" ? reviews.filter((review) => !review.visible) : reviews;
+
+    if (!keyword) return filteredByStatus;
+
+    return filteredByStatus.filter((review) => {
+      return (
+        review.name.toLowerCase().includes(keyword) ||
+        review.text.toLowerCase().includes(keyword) ||
+        review.meta.toLowerCase().includes(keyword)
+      );
+    });
+  }, [filter, query, reviews]);
+
+  const totalPages = Math.max(1, Math.ceil(displayedReviews.length / ITEMS_PER_PAGE));
+  const paginatedReviews = displayedReviews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, query]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   function handleToggleVisibility(id: string, visible: boolean) {
     const updated = updateReview(id, { visible: !visible });
@@ -127,7 +164,10 @@ export default function AdminUlasanPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setFilter("all")}
+                  onClick={() => {
+                    setFilter("all");
+                    setCurrentPage(1);
+                  }}
                   className={`h-12 rounded-full px-7 text-[clamp(0.95rem,1.1vw,1.25rem)] font-bold ${
                     filter === "all" ? "bg-[#155a3a] text-white" : "border border-[#d1d7d3] bg-white text-[#334842]"
                   }`}
@@ -136,7 +176,10 @@ export default function AdminUlasanPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFilter("unmoderated")}
+                  onClick={() => {
+                    setFilter("unmoderated");
+                    setCurrentPage(1);
+                  }}
                   className={`h-12 rounded-full px-7 text-[clamp(0.95rem,1.1vw,1.25rem)] font-medium ${
                     filter === "unmoderated"
                       ? "bg-[#155a3a] text-white"
@@ -150,8 +193,23 @@ export default function AdminUlasanPage() {
 
             {message ? <p className="mt-3 text-[12px] font-semibold text-[#1f6a3f]">{message}</p> : null}
 
+            <input
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Cari nama, isi ulasan, atau transaksi..."
+              className="mt-4 h-12 w-full rounded-2xl border border-[#d8e0d8] bg-white px-4 text-sm text-[#2a372f] outline-none"
+            />
+
             <div className="mt-5 space-y-4">
-              {displayedReviews.map((review) => (
+              {paginatedReviews.length === 0 ? (
+                <div className="rounded-[24px] border border-dashed border-[#d7dfd7] bg-white px-6 py-8 text-center">
+                  <p className="text-[13px] font-semibold text-[#5f6d63]">Belum ada ulasan yang cocok.</p>
+                </div>
+              ) : null}
+              {paginatedReviews.map((review) => (
                 <article
                   key={review.id}
                   className="rounded-[28px] bg-white px-6 py-5 shadow-[0_10px_30px_rgba(21,43,28,0.06)]"
@@ -197,18 +255,74 @@ export default function AdminUlasanPage() {
               ))}
             </div>
 
-            <div className="mt-8 flex justify-center pb-2">
+            <div className="mt-8 flex flex-col items-center gap-3 pb-2 text-[12px] font-semibold text-[#5f6d63] sm:flex-row sm:justify-between">
+              <p>Menampilkan {paginatedReviews.length} dari {displayedReviews.length} ulasan</p>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage === 1}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6dcd4] text-[13px] text-[#47604f] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+                  return (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-[13px] font-bold transition-all ${
+                        currentPage === page
+                          ? "bg-[#148a31] text-white shadow-[0_4px_12px_rgba(20,138,49,0.25)]"
+                          : "border border-[#d6dcd4] text-[#47604f] hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6dcd4] text-[#47604f] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-3 flex justify-center pb-2">
               <button
                 type="button"
                 onClick={() => setMessage(`Total ulasan saat ini: ${reviews.length}`)}
-                className="inline-flex h-12 items-center justify-center rounded-full border-2 border-[#8fd797] px-7 text-sm font-semibold text-[#257144] sm:h-12 sm:px-8 sm:text-base"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[#cfe8d4] bg-white px-6 text-sm font-extrabold text-[#155a3a] shadow-[0_12px_28px_rgba(21,90,58,0.08)] transition hover:-translate-y-0.5 hover:border-[#8fd797] hover:bg-[#f4fff6] hover:shadow-[0_16px_34px_rgba(21,90,58,0.14)] sm:px-7 sm:text-base"
               >
-                Lihat Lebih Banyak v
+                Lihat Lebih Banyak
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#e7f8eb] text-[#1f7a44] transition group-hover:bg-[#155a3a] group-hover:text-white">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="h-3.5 w-3.5">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>
         </section>
       </div>
     </main>
+  );
+}
+
+export default function AdminUlasanPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminUlasanContent />
+    </Suspense>
   );
 }

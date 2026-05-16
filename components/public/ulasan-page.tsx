@@ -13,6 +13,7 @@ import {
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 const PUBLIC_OWNED_REVIEW_KEY = "shipin_public_owned_reviews_v1";
+const ITEMS_PER_PAGE = 3;
 
 function ReviewStars({ stars }: { stars: number }) {
   return (
@@ -30,12 +31,13 @@ function ReviewStars({ stars }: { stars: number }) {
 export function UlasanPage() {
   const [rows, setRows] = useState<ReviewItem[]>([]);
   const [sort, setSort] = useState<"latest" | "top">("latest");
+  const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [ownedReviewIds, setOwnedReviewIds] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [stars, setStars] = useState(5);
   const [message, setMessage] = useState("");
-  const [showAll, setShowAll] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const [editingText, setEditingText] = useState("");
@@ -55,12 +57,35 @@ export function UlasanPage() {
   const visibleRows = useMemo(() => rows.filter((row) => row.visible), [rows]);
 
   const displayedRows = useMemo(() => {
-    const list = [...visibleRows];
+    const keyword = query.trim().toLowerCase();
+    const searchedRows = keyword
+      ? visibleRows.filter((row) => {
+          return (
+            row.name.toLowerCase().includes(keyword) ||
+            row.text.toLowerCase().includes(keyword) ||
+            row.meta.toLowerCase().includes(keyword)
+          );
+        })
+      : visibleRows;
+    const list = [...searchedRows];
     if (sort === "top") {
       return list.sort((a, b) => b.stars - a.stars);
     }
     return list.sort((a, b) => b.id.localeCompare(a.id));
-  }, [sort, visibleRows]);
+  }, [query, sort, visibleRows]);
+
+  const totalPages = Math.max(1, Math.ceil(displayedRows.length / ITEMS_PER_PAGE));
+  const paginatedRows = displayedRows.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, sort]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const average = useMemo(() => {
     if (visibleRows.length === 0) return 0;
@@ -76,6 +101,7 @@ export function UlasanPage() {
     }
     const updated = createReview(name.trim(), text.trim(), stars);
     setRows(updated);
+    setCurrentPage(1);
     const createdId = updated[0]?.id;
     if (createdId) {
       const nextOwnedIds = [createdId, ...ownedReviewIds];
@@ -123,6 +149,7 @@ export function UlasanPage() {
           .join("") || "US"
     });
     setRows(updated);
+    setCurrentPage(1);
     handleCancelEdit();
     setMessage("Ulasan berhasil diperbarui.");
   }
@@ -130,6 +157,7 @@ export function UlasanPage() {
   function handleDeleteReview(id: string) {
     const updated = deleteReview(id);
     setRows(updated);
+    setCurrentPage(1);
     const nextOwnedIds = ownedReviewIds.filter((item) => item !== id);
     setOwnedReviewIds(nextOwnedIds);
     window.localStorage.setItem(PUBLIC_OWNED_REVIEW_KEY, JSON.stringify(nextOwnedIds));
@@ -176,7 +204,10 @@ export function UlasanPage() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => setSort("latest")}
+                    onClick={() => {
+                      setSort("latest");
+                      setCurrentPage(1);
+                    }}
                     className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
                       sort === "latest" ? "bg-[#e4f4e5] text-[#126b39]" : "text-[#657068]"
                     }`}
@@ -185,7 +216,10 @@ export function UlasanPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSort("top")}
+                    onClick={() => {
+                      setSort("top");
+                      setCurrentPage(1);
+                    }}
                     className={`rounded-full px-3 py-1.5 text-[12px] font-semibold ${
                       sort === "top" ? "bg-[#e4f4e5] text-[#126b39]" : "text-[#657068]"
                     }`}
@@ -195,8 +229,23 @@ export function UlasanPage() {
                 </div>
               </div>
 
+              <input
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Cari nama, isi ulasan, atau transaksi..."
+                className="mt-4 h-10 w-full rounded-[12px] border border-[#e0e6df] bg-white px-3 text-[13px] text-[#324039] outline-none placeholder:text-[#9aa39b]"
+              />
+
               <div className="mt-4 space-y-3">
-                {(showAll ? displayedRows : displayedRows.slice(0, 3)).map((review) => (
+                {paginatedRows.length === 0 ? (
+                  <div className="rounded-[16px] border border-dashed border-[#d7dfd7] bg-white px-4 py-6 text-center">
+                    <p className="text-[13px] font-semibold text-[#657068]">Belum ada ulasan yang cocok.</p>
+                  </div>
+                ) : null}
+                {paginatedRows.map((review) => (
                   <article
                     key={review.id}
                     className="rounded-[16px] border border-[#e8ece7] bg-white px-4 py-3"
@@ -229,6 +278,49 @@ export function UlasanPage() {
                     ) : null}
                   </article>
                 ))}
+              </div>
+
+              <div className="mt-5 flex flex-col items-center gap-3 text-[12px] font-semibold text-[#657068] sm:flex-row sm:justify-between">
+                <p>Menampilkan {paginatedRows.length} dari {displayedRows.length} ulasan</p>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={currentPage === 1}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6ddd5] text-[13px] text-[#58665d] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                  {Array.from({ length: totalPages }).map((_, index) => {
+                    const page = index + 1;
+                    return (
+                      <button
+                        key={page}
+                        type="button"
+                        onClick={() => setCurrentPage(page)}
+                        className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-[13px] font-bold transition-all ${
+                          currentPage === page
+                            ? "bg-[#0f8d50] text-white shadow-[0_4px_12px_rgba(15,141,80,0.25)]"
+                            : "border border-[#d6ddd5] text-[#58665d] hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={currentPage === totalPages}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6ddd5] text-[#58665d] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </article>
 
@@ -334,19 +426,6 @@ export function UlasanPage() {
             </aside>
           </div>
 
-          <div className="mt-7 flex justify-center">
-            <button
-              type="button"
-              onClick={() => setShowAll((prev) => !prev)}
-              className="inline-flex h-11 items-center justify-center rounded-full border border-[#9ddeab] px-6 text-[13px] font-semibold text-[#1e7c46]"
-            >
-              {showAll
-                ? "Tampilkan Ringkas"
-                : displayedRows.length > 3
-                  ? `Lihat ${displayedRows.length - 3}+ Ulasan Lainnya`
-                  : "Lihat Semua Ulasan"}
-            </button>
-          </div>
         </div>
       </section>
 

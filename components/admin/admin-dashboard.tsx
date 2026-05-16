@@ -47,6 +47,7 @@ const longDayLabels = ["SEN", "SEL", "RAB", "KAM", "JUM", "SAB", "MIN"];
 const statusOptions = ["Semua", "Dikirim", "Selesai", "Pending"] as const;
 const paymentOptions = ["Semua", "Lunas", "Menunggu"] as const;
 const serviceOptions = ["Semua", "Reguler", "Same-Day", "Ekspres"] as const;
+const ITEMS_PER_PAGE = 5;
 
 function formatCurrency(amount: number) {
   return `Rp ${amount.toLocaleString("id-ID")}`;
@@ -139,6 +140,7 @@ export function AdminDashboard() {
   const [serviceFilter, setServiceFilter] = useState<(typeof serviceOptions)[number]>("Semua");
   const [activeWindow, setActiveWindow] = useState("7 Hari Terakhir");
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const hydrate = () => {
@@ -173,7 +175,7 @@ export function AdminDashboard() {
 
   const filteredShipments = useMemo(() => {
     return shipmentRows.filter((shipment) => {
-      const query = search.toLowerCase();
+      const query = search.trim().toLowerCase();
       const matchesSearch =
         !query ||
         shipment.id.toLowerCase().includes(query) ||
@@ -187,6 +189,19 @@ export function AdminDashboard() {
       return matchesSearch && matchesStatus && matchesPayment && matchesService;
     });
   }, [paymentFilter, search, serviceFilter, shipmentRows, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredShipments.length / ITEMS_PER_PAGE));
+  const paginatedShipments = filteredShipments.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [paymentFilter, search, serviceFilter, statusFilter]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const chartMetrics = useMemo(() => {
     const packageSeries = Array.from({ length: 7 }, () => 0);
@@ -445,7 +460,10 @@ export function AdminDashboard() {
               <SearchIcon className="h-4 w-4 text-[#8f9990]" />
               <input
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setCurrentPage(1);
+                }}
                 placeholder="Cari Resi atau Pengirim..."
                 className="w-full bg-transparent text-sm text-[#384138] outline-none placeholder:text-[#afb6af]"
               />
@@ -453,7 +471,10 @@ export function AdminDashboard() {
             <div className="flex flex-wrap gap-3">
               <select
                 value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value as (typeof statusOptions)[number])}
+                onChange={(event) => {
+                  setStatusFilter(event.target.value as (typeof statusOptions)[number]);
+                  setCurrentPage(1);
+                }}
                 className="rounded-full bg-white px-4 py-3 text-sm text-[#505850] shadow-[0_10px_24px_rgba(155,184,143,0.14)] outline-none"
               >
                 {statusOptions.map((option) => (
@@ -462,7 +483,10 @@ export function AdminDashboard() {
               </select>
               <select
                 value={paymentFilter}
-                onChange={(event) => setPaymentFilter(event.target.value as (typeof paymentOptions)[number])}
+                onChange={(event) => {
+                  setPaymentFilter(event.target.value as (typeof paymentOptions)[number]);
+                  setCurrentPage(1);
+                }}
                 className="rounded-full bg-white px-4 py-3 text-sm text-[#505850] shadow-[0_10px_24px_rgba(155,184,143,0.14)] outline-none"
               >
                 {paymentOptions.map((option) => (
@@ -471,7 +495,10 @@ export function AdminDashboard() {
               </select>
               <select
                 value={serviceFilter}
-                onChange={(event) => setServiceFilter(event.target.value as (typeof serviceOptions)[number])}
+                onChange={(event) => {
+                  setServiceFilter(event.target.value as (typeof serviceOptions)[number]);
+                  setCurrentPage(1);
+                }}
                 className="rounded-full bg-white px-4 py-3 text-sm text-[#505850] shadow-[0_10px_24px_rgba(155,184,143,0.14)] outline-none"
               >
                 {serviceOptions.map((option) => (
@@ -502,7 +529,7 @@ export function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredShipments.map((shipment) => (
+                  {paginatedShipments.map((shipment) => (
                     <tr key={shipment.id} className="border-b border-[#edf0ea] last:border-b-0">
                       <td className="px-6 py-5">
                         <button
@@ -550,13 +577,39 @@ export function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+              {paginatedShipments.length === 0 ? (
+                <div className="px-6 py-8 text-center text-sm font-semibold text-[#7f887f]">
+                  Belum ada transaksi yang cocok.
+                </div>
+              ) : null}
             </div>
 
             <div className="flex flex-col gap-3 border-t border-[#edf0ea] px-6 py-4 text-sm text-[#7f887f] sm:flex-row sm:items-center sm:justify-between">
               <p>
-                Menampilkan {filteredShipments.length} dari {shipmentRows.length} transaksi
+                Menampilkan {paginatedShipments.length} dari {filteredShipments.length} transaksi
               </p>
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-full bg-[#f3f8ef] px-3 py-1.5 font-bold text-[#59705a] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  Sebelumnya
+                </button>
+                <span className="font-semibold text-[#384138]">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                  disabled={currentPage === totalPages}
+                  className="rounded-full bg-[#f3f8ef] px-3 py-1.5 font-bold text-[#59705a] disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  Berikutnya
+                </button>
+              </div>
+              <div className="hidden">
                 <button className="rounded-full bg-[#f3f8ef] px-3 py-1.5 text-[#59705a]">‹</button>
                 <button className="rounded-full bg-[#f3f8ef] px-3 py-1.5 text-[#59705a]">›</button>
               </div>

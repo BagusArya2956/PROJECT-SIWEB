@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PrinterIcon, ShieldIcon } from "@/components/icons";
@@ -26,7 +26,17 @@ const serviceOptions = [
 
 const DRAFT_STORAGE_KEY = "shipin_admin_kirim_paket_draft";
 
-export default function AdminKirimPaketPage() {
+function LoadingFallback() {
+  return (
+    <main className="min-h-screen bg-[#eef2ee] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1540px] rounded-[28px] bg-white p-6 text-[13px] font-semibold text-[#5f6d63]">
+        Memuat formulir pengiriman...
+      </div>
+    </main>
+  );
+}
+
+function AdminKirimPaketContent() {
   const router = useRouter();
   const [selectedService, setSelectedService] = useState<"reguler" | "ekspres">("reguler");
   const [senderName, setSenderName] = useState("");
@@ -780,6 +790,14 @@ function BlockCard({ number, title, children }: { number: number; title: string;
       </div>
       {children}
     </article>
+  );
+}
+
+export default function AdminKirimPaketPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminKirimPaketContent />
+    </Suspense>
   );
 }
 

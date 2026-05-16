@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { EyeIcon } from "@/components/icons";
 import { deleteShipment, loadShipments, PaymentStatus, ShipmentRecord, ShipmentStatus, updateShipment } from "@/lib/admin-shipments";
@@ -29,9 +29,22 @@ function TrashIcon() {
   );
 }
 
-export default function AdminHistoriPage() {
+const ITEMS_PER_PAGE = 5;
+
+function LoadingFallback() {
+  return (
+    <main className="min-h-[calc(100vh-80px)] bg-[#f2f5f1] px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1540px] rounded-[28px] border border-[#e5ebe5] bg-white p-6 text-[13px] font-semibold text-[#5f6d63]">
+        Memuat data...
+      </div>
+    </main>
+  );
+}
+
+function AdminHistoriContent() {
   const [rows, setRows] = useState<ShipmentRecord[]>([]);
   const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"info" | "success">("info");
@@ -56,7 +69,19 @@ export default function AdminHistoriPage() {
     });
   }, [query, rows]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
+  const paginatedRows = filteredRows.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   const selectedRow = filteredRows.find((row) => row.id === selectedId) ?? filteredRows[0] ?? null;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   function handleUpdateStatus(id: string, status: ShipmentStatus) {
     const payment: PaymentStatus = status === "DIJADWALKAN" ? "BELUM BAYAR" : "LUNAS";
@@ -101,6 +126,7 @@ export default function AdminHistoriPage() {
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
+                setCurrentPage(1);
                 if (event.target.value.trim()) {
                   setMessageTone("info");
                   setMessage("Menampilkan hasil pencarian sesuai kata kunci.");
@@ -130,7 +156,7 @@ export default function AdminHistoriPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredRows.map((row) => (
+                {paginatedRows.map((row) => (
                   <tr key={row.id} className="border-b border-[#edf1ea] last:border-b-0">
                     <td className="px-4 py-4 align-top">
                       <button
@@ -194,6 +220,48 @@ export default function AdminHistoriPage() {
                 ))}
               </tbody>
             </table>
+            <div className="mt-4 flex flex-col items-center gap-3 border-t border-[#edf1ea] pt-4 text-[12px] font-semibold text-[#5f6d63] sm:flex-row sm:justify-between">
+              <p>Menampilkan {paginatedRows.length} dari {filteredRows.length} data</p>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage === 1}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6dcd4] text-[13px] text-[#47604f] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+                  return (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-[13px] font-bold transition-all ${
+                        currentPage === page
+                          ? "bg-[#148a31] text-white shadow-[0_4px_12px_rgba(20,138,49,0.25)]"
+                          : "border border-[#d6dcd4] text-[#47604f] hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#d6dcd4] text-[#47604f] transition-all disabled:cursor-not-allowed disabled:opacity-35 hover:border-[#8fd797] hover:bg-[#eefaf0]"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
           )}
         </section>
@@ -209,5 +277,13 @@ export default function AdminHistoriPage() {
         ) : null}
       </div>
     </main>
+  );
+}
+
+export default function AdminHistoriPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminHistoriContent />
+    </Suspense>
   );
 }
