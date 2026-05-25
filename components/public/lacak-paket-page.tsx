@@ -13,15 +13,19 @@ import {
   SearchIcon
 } from "@/components/icons";
 import {
-  findShipmentByResi,
+  CheckpointRecord,
+  fetchTrackingByResi,
   formatDateTime,
   formatShipmentDate,
-  getShipmentStorageKey,
-  refreshTrackingProgress,
-  ShipmentRecord,
-  TrackingEvent
+  runProgressCheck,
+  ShipmentRecord
 } from "@/lib/admin-shipments";
-import { resolveAreaCoordinate } from "@/lib/shipping-pricing";
+import {
+  CHECKPOINT_SEQUENCE,
+  formatCheckpointTime,
+  getCheckpointLabel,
+  getCheckpointOrder
+} from "@/lib/utils/checkpoint-shared";
 
 const TrackingMap = dynamic(
   () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
@@ -74,70 +78,136 @@ function getCurrentStatus(shipment: ShipmentRecord) {
   return latest?.status || "Pesanan diterima";
 }
 
-function toTimeline(events: TrackingEvent[] = []) {
-  return [...events].sort((a, b) => b.occurredAt - a.occurredAt);
-}
-
 export function LacakPaketPage() {
   const [resiInput, setResiInput] = useState("");
   const [activeResi, setActiveResi] = useState("");
   const [isNotFound, setIsNotFound] = useState(false);
   const [rows, setRows] = useState<ShipmentRecord[]>([]);
+  const [checkpoints, setCheckpoints] = useState<CheckpointRecord[]>([]);
 
-  useEffect(() => {
-    const latestRows = refreshTrackingProgress();
-    setRows(latestRows);
-    setActiveResi(latestRows[0]?.id || "");
-    setResiInput(latestRows[0]?.id || "");
-
-    const timer = window.setInterval(() => {
-      setRows(refreshTrackingProgress());
-    }, 5000);
-
-    const handleStorage = (event: StorageEvent) => {
-      if (!event.key || event.key === getShipmentStorageKey()) {
-        setRows(refreshTrackingProgress());
-      }
-    };
-
-    const handleFocus = () => {
-      setRows(refreshTrackingProgress());
-    };
-
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener("focus", handleFocus);
-
-    return () => {
-      window.clearInterval(timer);
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const resiFromQuery = normalizeResiInput(params.get("resi") || "");
-    if (!resiFromQuery) return;
-    setResiInput(resiFromQuery);
-    const found = findShipmentByResi(resiFromQuery);
-    if (!found) {
+  async function loadTracking(resi: string) {
+    const data = await fetchTrackingByResi(resi);
+    if (!data.shipment) {
+      setRows([]);
+      setActiveResi("");
       setIsNotFound(true);
+      setCheckpoints([]);
       return;
     }
-    setRows(refreshTrackingProgress());
-    setActiveResi(found.id);
+
+    setRows([data.shipment]);
+    setActiveResi(data.shipment.id);
+    setResiInput(data.shipment.id);
     setIsNotFound(false);
+    setCheckpoints(
+      (data.checkpoints || []).map((checkpoint) => ({
+        ...checkpoint,
+        waktu: new Date(checkpoint.waktu)
+      }))
+    );
+  }
+
+  useEffect(() => {
+    let active = true;
+
+    async function hydrate() {
+      await runProgressCheck().catch(() => null);
+      const params = new URLSearchParams(window.location.search);
+      const resiFromQuery = normalizeResiInput(params.get("resi") || "");
+
+      if (!resiFromQuery) {
+        setRows([]);
+        setActiveResi("");
+        setResiInput("");
+        setIsNotFound(false);
+        setCheckpoints([]);
+        return;
+      }
+
+      if (!active) return;
+      try {
+        const data = await fetchTrackingByResi(resiFromQuery);
+        if (!active) return;
+        if (!data.shipment) {
+          setRows([]);
+          setActiveResi("");
+          setResiInput(resiFromQuery);
+          setIsNotFound(true);
+          setCheckpoints([]);
+          return;
+        }
+
+        setRows([data.shipment]);
+        setActiveResi(data.shipment.id);
+        setResiInput(data.shipment.id);
+        setIsNotFound(false);
+        setCheckpoints(
+          (data.checkpoints || []).map((checkpoint) => ({
+            ...checkpoint,
+            waktu: new Date(checkpoint.waktu)
+          }))
+        );
+      } catch {
+        if (active) {
+          setIsNotFound(true);
+        }
+      }
+    }
+
+    hydrate().catch(() => setIsNotFound(true));
+
+    return () => {
+      active = false;
+    };
   }, []);
+
+  useEffect(() => {
+    if (!activeResi) {
+      setCheckpoints([]);
+      return;
+    }
+
+    const interval = window.setInterval(async () => {
+      const data = await fetchTrackingByResi(activeResi).catch(() => null);
+      if (!data?.shipment) return;
+      setRows([data.shipment]);
+      setCheckpoints(
+        (data.checkpoints || []).map((checkpoint) => ({
+          ...checkpoint,
+          waktu: new Date(checkpoint.waktu)
+        }))
+      );
+    }, 10000);
+
+    return () => window.clearInterval(interval);
+  }, [activeResi]);
 
   const activeShipment = useMemo(() => {
     if (!activeResi) return null;
     return rows.find((row) => row.id === activeResi) || null;
   }, [activeResi, rows]);
 
-  const timeline = useMemo(
-    () => toTimeline(activeShipment?.trackingEvents),
-    [activeShipment?.trackingEvents]
-  );
+  const checkpointTimeline = useMemo(() => {
+    const latestByStatus = new Map<string, (typeof checkpoints)[number]>();
+    checkpoints.forEach((checkpoint) => {
+      if (!latestByStatus.has(checkpoint.status)) {
+        latestByStatus.set(checkpoint.status, checkpoint);
+      }
+    });
+
+    return [...CHECKPOINT_SEQUENCE]
+      .sort((a, b) => getCheckpointOrder(b) - getCheckpointOrder(a))
+      .map((status) => {
+        const checkpoint = latestByStatus.get(status);
+        return {
+          status,
+          completed: Boolean(checkpoint),
+          waktu: checkpoint?.waktu ?? null,
+          deskripsi: checkpoint?.deskripsi ?? "Belum ada update untuk checkpoint ini.",
+          lokasi: checkpoint?.lokasi ?? null
+        };
+      });
+  }, [checkpoints]);
 
   const locationInfo = useMemo(() => {
     if (!activeShipment) return null;
@@ -151,20 +221,11 @@ export function LacakPaketPage() {
     };
   }, [activeShipment]);
 
-  function handleSearch() {
+  async function handleSearch() {
     const normalized = normalizeResiInput(resiInput);
     if (!normalized) return;
-
-    const found = findShipmentByResi(normalized);
-    if (!found) {
-      setIsNotFound(true);
-      return;
-    }
-
-    setRows(refreshTrackingProgress());
-    setActiveResi(found.id);
-    setResiInput(found.id);
-    setIsNotFound(false);
+    await runProgressCheck().catch(() => null);
+    await loadTracking(normalized);
   }
 
   return (
@@ -213,9 +274,9 @@ export function LacakPaketPage() {
 
           {!activeShipment ? (
             <div className="mt-6 rounded-[24px] border border-dashed border-[#d9e1d8] bg-[#f8faf7] px-5 py-8 text-center">
-              <p className="text-[16px] font-bold text-[#314036]">Belum ada data pengiriman</p>
+              <p className="text-[16px] font-bold text-[#314036]">Masukkan nomor resi untuk mulai melacak</p>
               <p className="mt-2 text-[13px] text-[#748076]">
-                Admin perlu membuat paket terlebih dahulu pada menu Kirim Paket.
+                Data pengiriman akan muncul setelah nomor resi yang valid dicari.
               </p>
             </div>
           ) : (
@@ -281,33 +342,20 @@ export function LacakPaketPage() {
                       <div className="h-[220px] bg-[linear-gradient(135deg,#6a8b7c_0%,#b8d7bf_46%,#7ca19b_100%)] opacity-85" />
                     }
                   >
-                    {locationInfo?.latestLat != null && locationInfo.latestLng != null ? (
+                    {activeShipment.koordinatAsalLat != null && activeShipment.koordinatAsalLng != null ? (
                       <TrackingMap
-                        latest={{
-                          lat: locationInfo.latestLat,
-                          lng: locationInfo.latestLng,
-                          label: locationInfo.latestLabel
-                        }}
-                        origin={
-                          activeShipment.trackingEvents?.[0]
-                            ? {
-                                lat: activeShipment.trackingEvents[0].lat,
-                                lng: activeShipment.trackingEvents[0].lng,
-                                label: locationInfo.origin
-                              }
-                            : null
-                        }
-                        destination={
-                          locationInfo
-                            ? {
-                                ...resolveAreaCoordinate({
-                                  city: activeShipment.destinationCity || locationInfo.destination,
-                                  province: activeShipment.destinationProvince
-                                }),
-                                label: locationInfo.destination
-                              }
-                            : null
-                        }
+                        origin={activeShipment.koordinatAsalLat != null && activeShipment.koordinatAsalLng != null ? {
+                          lat: activeShipment.koordinatAsalLat,
+                          lng: activeShipment.koordinatAsalLng,
+                          label: locationInfo?.origin || "Asal"
+                        } : null}
+                        destination={activeShipment.koordinatTujuanLat != null && activeShipment.koordinatTujuanLng != null ? {
+                          lat: activeShipment.koordinatTujuanLat,
+                          lng: activeShipment.koordinatTujuanLng,
+                          label: locationInfo?.destination || "Tujuan"
+                        } : null}
+                        waktuBerangkat={activeShipment.waktuBerangkat ?? null}
+                        durasiEstimasiMs={activeShipment.durasiEstimasiMs ?? null}
                         heightClassName="h-[220px]"
                       />
                     ) : (
@@ -316,7 +364,7 @@ export function LacakPaketPage() {
                   </TrackingMapBoundary>
                   <div className="flex items-center gap-2 border-t border-[#d2ded1] bg-[#f4f8f3] px-3 py-2 text-[11px] text-[#4f5b52]">
                     <CheckIcon className="h-3.5 w-3.5 text-[#1f8f4e]" />
-                    Lokasi Terkini: {locationInfo?.latestLabel}
+                    Rute: {locationInfo?.origin} → {locationInfo?.destination}
                   </div>
                 </div>
               </article>
@@ -332,33 +380,33 @@ export function LacakPaketPage() {
                 </div>
 
                 <div className="relative mt-5 pl-7">
-                  <div className="absolute left-[9px] top-2 bottom-2 w-[2px] bg-[#dce8db]" />
+                  <div className="absolute bottom-2 left-[9px] top-2 w-[2px] bg-[#dce8db]" />
                   <div className="space-y-4">
-                    {timeline.map((item, index) => (
-                      <div key={item.id} className="relative">
+                    {checkpointTimeline.map((item) => (
+                      <div key={item.status} className="relative">
                         <span
                           className={`absolute -left-[26px] top-2 h-4 w-4 rounded-full border-2 ${
-                            index === 0
+                            item.completed
                               ? "border-[#219754] bg-[#219754]"
-                              : "border-[#8be19f] bg-[#eefcf0]"
+                              : "border-[#c8d0ca] bg-[#eef1ef]"
                           }`}
                         />
                         <div
                           className={`rounded-[14px] border px-4 py-3 ${
-                            index === 0
+                            item.completed
                               ? "border-[#d6ead8] bg-white shadow-[0_10px_20px_rgba(144,177,150,0.16)]"
-                              : "border-transparent bg-transparent"
+                              : "border-[#e7ece7] bg-[#f7f9f7]"
                           }`}
                         >
                           <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#95a190]">
-                            {formatDateTime(item.occurredAt)}
+                            {item.waktu ? formatCheckpointTime(item.waktu) : "MENUNGGU UPDATE"}
                           </p>
                           <p className="mt-1 text-[17px] font-bold tracking-[-0.01em] text-[#303a33]">
-                            {item.status}
+                            {getCheckpointLabel(item.status)}
                           </p>
-                          <p className="mt-1 text-[12px] leading-5 text-[#6a746d]">{item.description}</p>
+                          <p className="mt-1 text-[12px] leading-5 text-[#6a746d]">{item.deskripsi}</p>
                           <p className="mt-1 text-[11px] font-semibold text-[#4b5a50]">
-                            Lokasi: {item.locationLabel}
+                            Lokasi: {item.lokasi || "-"}
                           </p>
                         </div>
                       </div>
@@ -435,4 +483,3 @@ export function LacakPaketPage() {
     </main>
   );
 }
-

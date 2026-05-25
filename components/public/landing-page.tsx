@@ -215,48 +215,88 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="cek-ongkir" className="shell grid gap-6 py-8 lg:grid-cols-2 lg:py-12">
-        <article className="reveal-on-scroll hover-lift relative overflow-hidden rounded-[32px] bg-white p-6 shadow-[0_22px_50px_rgba(158,184,154,0.28)] sm:p-7">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(203,244,210,0.28),_transparent_40%)]" />
-          <div className="absolute bottom-0 right-0 h-28 w-28 translate-x-3 translate-y-3 rounded-tl-[28px] bg-[#f3f7f0]" />
-          <div className="absolute bottom-6 right-6 text-[#e7eee5]">
-            <WalletIcon className="h-14 w-14 stroke-[1.5]" />
-          </div>
+      <section id="cek-ongkir" className="shell grid gap-5 py-8 lg:grid-cols-[0.95fr_1.05fr] lg:py-12">
+        <article className="reveal-on-scroll hover-lift relative overflow-hidden rounded-[28px] border border-[#e1e9de] bg-[linear-gradient(180deg,#ffffff_0%,#f7fbf5_100%)] p-5 shadow-[0_22px_48px_rgba(95,126,99,0.14)] sm:p-7">
+          <div className="absolute right-0 top-0 h-36 w-36 translate-x-10 -translate-y-10 rounded-full bg-[#dff7d8]/80" />
+          <div className="absolute bottom-0 right-0 h-28 w-32 rounded-tl-[32px] bg-[#eef6eb]" />
           <div className="relative">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef4ea] text-shipin-ink">
-              <WalletIcon className="h-5 w-5" />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eaf6e8] text-shipin-deep">
+                <WalletIcon className="h-5 w-5" />
+              </div>
+              <span className="rounded-full border border-[#cfe8d4] bg-[#f3fbf1] px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#1d7a45]">
+                Real-time
+              </span>
             </div>
-            <h3 className="mt-5 text-[34px] font-extrabold leading-[1.02] tracking-[-0.03em] text-[#2a312d]">
-              Cek Ongkir
-            </h3>
-            <p className="mt-3 max-w-[320px] text-[15px] leading-6 text-[#70766f]">
-              Dapatkan transparansi harga dari puluhan ekspedisi terpercaya dalam satu layar dashboard.
-            </p>
+            <div className="mt-8 max-w-[460px]">
+              <h3 className="text-[30px] font-extrabold leading-[1.02] tracking-[-0.04em] text-[#222d27] sm:text-[42px]">
+                Cek Ongkir Instan
+              </h3>
+              <p className="mt-3 text-[14px] leading-6 text-[#68736b] sm:text-[16px]">
+                Bandingkan estimasi tarif cargo darat berdasarkan rute, berat, dan layanan sebelum membuat pengiriman.
+              </p>
+            </div>
+
+            <div className="mt-7 rounded-[22px] border border-[#e0e8dd] bg-white p-4 shadow-[0_14px_28px_rgba(98,127,102,0.08)]">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#8a948c]">Rute Contoh</p>
+                  <p className="mt-1 text-[17px] font-extrabold text-[#24332a]">Jakarta Selatan - Surabaya</p>
+                </div>
+                <span className="inline-flex w-fit rounded-full bg-[#e9f8e6] px-3 py-1.5 text-[12px] font-bold text-[#1e7d42]">
+                  2.5 kg
+                </span>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-[16px] bg-[#f5f8f3] px-3 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a948c]">Reguler</p>
+                  <p className="mt-1 text-[15px] font-extrabold text-[#24332a]">Rp 42rb</p>
+                </div>
+                <div className="rounded-[16px] bg-[#f5f8f3] px-3 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a948c]">Cepat</p>
+                  <p className="mt-1 text-[15px] font-extrabold text-[#24332a]">Rp 65rb</p>
+                </div>
+                <div className="rounded-[16px] bg-[#f5f8f3] px-3 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a948c]">ETA</p>
+                  <p className="mt-1 text-[15px] font-extrabold text-[#24332a]">1-3 hari</p>
+                </div>
+              </div>
+            </div>
             <Link
               href="/cek-ongkir"
-              className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-shipin-deep hover:text-[#12572f]"
+              className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#176c3b] px-6 text-[14px] font-bold text-white shadow-[0_16px_28px_rgba(23,108,59,0.22)] hover:bg-[#12572f]"
             >
               Bandingkan Harga
-              <span aria-hidden="true">→</span>
+              <span aria-hidden="true">-&gt;</span>
             </Link>
           </div>
         </article>
-        <article className="reveal-on-scroll reveal-delay-1 hover-lift relative overflow-hidden rounded-[30px] border border-[#d7edd2] bg-[radial-gradient(circle_at_top_left,_rgba(211,247,199,0.7),_transparent_38%),linear-gradient(180deg,#ecfbe6_0%,#e6f8dc_100%)] px-6 py-7 shadow-[0_20px_50px_rgba(177,212,164,0.24)] sm:rounded-[44px] sm:px-12 sm:py-12">
-          <div className="absolute -bottom-3 -right-4 text-[#d7efd1]/90">
-            <TruckIcon className="h-24 w-24 stroke-[1.1] sm:h-44 sm:w-44" />
+        <article className="reveal-on-scroll reveal-delay-1 hover-lift relative overflow-hidden rounded-[28px] border border-[#d6ead0] bg-[linear-gradient(135deg,#f2fdeb_0%,#e7f8dd_52%,#f8fff4_100%)] p-5 shadow-[0_22px_48px_rgba(126,164,112,0.16)] sm:p-7">
+          <div className="absolute -bottom-8 -right-8 text-[#cfeac8]/80">
+            <TruckIcon className="h-32 w-32 stroke-[1.1] sm:h-44 sm:w-44" />
           </div>
           <div className="relative">
-            <div className="inline-flex h-[56px] w-[56px] items-center justify-center rounded-[18px] bg-[#d7f3cd] text-shipin-deep shadow-[0_14px_28px_rgba(166,220,155,0.18)] sm:h-[78px] sm:w-[78px] sm:rounded-[24px]">
-              <BulbIcon className="h-6 w-6 sm:h-9 sm:w-9" />
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#d9f3d1] text-shipin-deep shadow-[0_12px_24px_rgba(151,205,141,0.18)]">
+                  <BulbIcon className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-[25px] font-extrabold leading-[1.05] tracking-[-0.04em] text-[#26312b] sm:text-[36px]">
+                  Tips Menghemat Ongkir
+                </h3>
+              </div>
+              <div className="rounded-2xl border border-[#cae8c3] bg-white/55 px-4 py-3 text-[12px] font-semibold leading-5 text-[#3f6c4a] backdrop-blur">
+                Cocok untuk pengiriman rutin UMKM dan cargo darat antarkota.
+              </div>
             </div>
-            <h3 className="mt-6 text-[24px] font-extrabold tracking-[-0.04em] text-[#2b312e] min-[390px]:text-[26px] sm:mt-10 sm:text-[38px]">
-              Tips Menghemat Ongkir
-            </h3>
           </div>
-          <ul className="relative mt-5 space-y-4 sm:mt-8 sm:space-y-6">
+          <ul className="relative mt-6 grid gap-3">
             {tips.map((tip) => (
-              <li key={tip} className="flex gap-3 text-[14px] leading-[1.5] text-[#59605a] min-[390px]:text-[15px] sm:gap-4 sm:text-[17px] sm:leading-[1.55]">
-                <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#6ab86b] bg-white/60 text-shipin-deep sm:h-6 sm:w-6">
+              <li
+                key={tip}
+                className="flex gap-3 rounded-[18px] border border-white/70 bg-white/58 px-4 py-3 text-[14px] leading-[1.55] text-[#536058] shadow-[0_10px_22px_rgba(113,150,104,0.07)] backdrop-blur sm:text-[16px]"
+              >
+                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#7ac47b] bg-[#f7fff5] text-shipin-deep">
                   <CheckIcon className="h-3.5 w-3.5" />
                 </span>
                 <span>{tip}</span>
@@ -266,35 +306,44 @@ export function LandingPage() {
         </article>
       </section>
       <section id="ulasan" className="shell py-8 lg:py-12">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-shipin-deep/75">
-              Ulasan
-            </p>
-            <h2 className="mt-4 text-3xl font-extrabold text-shipin-ink">Dipercaya bisnis yang butuh operasional ringkas.</h2>
+        <div className="shell">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-shipin-deep">
+                Ulasan
+              </p>
+              <h2 className="mt-4 text-3xl font-bold text-shipin-ink">
+                Dipercaya bisnis yang butuh operasional ringkas.
+              </h2>
+            </div>
+            <Link href="/login" className="text-sm font-semibold text-shipin-deep hover:text-[#12572f]">
+              Masuk ke admin untuk mengelola ulasan
+            </Link>
           </div>
-          <Link href="/login" className="text-sm font-semibold text-shipin-deep hover:text-[#12572f]">
-            Masuk ke admin untuk mengelola ulasan
-          </Link>
-        </div>
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {reviews.map((review, index) => (
-            <article
-              key={review.name}
-              className={`reveal-on-scroll hover-lift card-surface p-6 ${index === 1 ? "reveal-delay-1" : ""} ${index === 2 ? "reveal-delay-2" : ""}`}
-            >
-              <div className="flex items-center gap-1 text-[#f5b700]">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <StarIcon key={index} className="h-4 w-4" />
+          <div className="mt-8 overflow-hidden" style={{ paddingBottom: "4px" }}>
+            <div className="marquee-track-wrapper group cursor-pointer">
+              <div className="marquee-track flex w-max" style={{ animation: "marquee 25s linear infinite" }}>
+                {[...reviews, ...reviews].map((review, index) => (
+                  <article
+                    key={`${review.name}-${index}`}
+                    className="mx-0 w-[340px] shrink-0 rounded-2xl bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
+                    style={{ marginRight: "24px" }}
+                  >
+                    <div className="flex items-center gap-1 text-[#f5b700]">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <StarIcon key={i} className="h-4 w-4" />
+                      ))}
+                    </div>
+                    <p className="mt-4 text-sm leading-7 italic text-[#4a4a4a]">"{review.quote}"</p>
+                    <div className="mt-6">
+                      <p className="font-bold text-shipin-ink">{review.name}</p>
+                      <p className="text-sm text-[#888888]">{review.role}</p>
+                    </div>
+                  </article>
                 ))}
               </div>
-              <p className="mt-4 text-sm leading-7 text-shipin-text">"{review.quote}"</p>
-              <div className="mt-6">
-                <p className="font-semibold text-shipin-ink">{review.name}</p>
-                <p className="text-sm text-shipin-text">{review.role}</p>
-              </div>
-            </article>
-          ))}
+            </div>
+          </div>
         </div>
       </section>
 

@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-import { TruckIcon } from "@/components/icons";
-
 export function LoginHeroPanel() {
   return (
     <section className="relative min-h-[360px] overflow-hidden rounded-[30px] bg-[#0f5b32] text-white shadow-soft lg:min-h-[760px]">
@@ -13,9 +11,6 @@ export function LoginHeroPanel() {
         priority
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,63,34,0.42)_0%,rgba(16,100,55,0.72)_35%,rgba(17,88,49,0.92)_100%)]" />
-      <div className="absolute right-7 top-7 rounded-[24px] border border-white/12 bg-white/8 p-5 text-white/20 backdrop-blur-[2px]">
-        <TruckIcon className="h-20 w-20 stroke-[1.2]" />
-      </div>
       <div className="relative flex h-full flex-col justify-between p-8 sm:p-10 lg:p-12">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/12 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-white/90">

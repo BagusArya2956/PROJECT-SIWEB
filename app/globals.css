@@ -90,6 +90,10 @@ select {
     animation: chart-bar-breathe 1.8s ease-in-out infinite;
   }
 
+  .marquee-track-wrapper:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
   .admin-chart-line-float {
     animation: chart-line-float 2.8s ease-in-out infinite;
     transform-origin: center;
@@ -161,6 +165,15 @@ select {
   }
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @keyframes chart-dot-pulse {
   0%,
   100% {
@@ -185,7 +198,8 @@ select {
   .admin-chart-bar,
   .admin-chart-line,
   .admin-chart-line-float,
-  .admin-chart-dot {
+  .admin-chart-dot,
+  .marquee-track {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

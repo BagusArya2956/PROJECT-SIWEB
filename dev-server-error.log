@@ -1,0 +1,380 @@
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of D:\bun.lock as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * D:\PROJECT SIWEB\package-lock.json
+
+[browser] Image with src "/images/landing-hero-photo.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/enterprise-courier.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async loadShipments (app\api\shipments\route.ts:166:18)
+    at async GET (app\api\shipments\route.ts:273:21)
+  164 |     : "";
+  165 |
+> 166 |   const result = await pool.query<ShipmentRow>(
+      |                  ^
+  167 |     `
+  168 |       SELECT
+  169 |         s.id,
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException: TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ uncaughtException:  TypeError: bufferUtil.mask is not a function
+    at ignore-listed frames
+⨯ Error: Connection terminated unexpectedly
+    at async GET (app\api\vehicles\route.ts:6:18)
+  4 |
+  5 | export async function GET() {
+> 6 |   const result = await pool.query(`
+    |                  ^
+  7 |     SELECT
+  8 |       v.id,
+  9 |       COALESCE(v.vehicle_name, v.vehicle_type || ' ' || v.plate_number) AS vehicle_name,

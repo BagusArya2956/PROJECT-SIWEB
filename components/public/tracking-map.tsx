@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { MapContainer, Marker, Popup, Polyline, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Polyline, TileLayer } from "react-leaflet";
 
 type MapPoint = {
   lat: number;
@@ -11,9 +11,11 @@ type MapPoint = {
 };
 
 type TrackingMapProps = {
-  latest: MapPoint;
   origin?: MapPoint | null;
   destination?: MapPoint | null;
+  latest?: MapPoint | null;
+  waktuBerangkat?: number | null;
+  durasiEstimasiMs?: number | null;
   heightClassName?: string;
   zoom?: number;
   scrollWheelZoom?: boolean;
@@ -28,77 +30,102 @@ const markerIcon = L.icon({
   shadowSize: [41, 41]
 });
 
+// Blue marker for origin
+const originIcon = L.divIcon({
+  className: "shipin-origin-pin",
+  html: `<span style="display:inline-flex;height:16px;width:16px;border-radius:9999px;background:#3b82f6;border:3px solid #dbeafe;box-shadow:0 0 0 4px rgba(59,130,246,0.25);"></span>`,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10]
+});
+
+// Green marker for destination
+const destinationIcon = L.divIcon({
+  className: "shipin-destination-pin",
+  html: `<span style="display:inline-flex;height:16px;width:16px;border-radius:9999px;background:#22c55e;border:3px solid #bbf7d0;box-shadow:0 0 0 4px rgba(34,197,94,0.25);"></span>`,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10]
+});
+
+// Orange marker for current package position (animated)
 const latestIcon = L.divIcon({
   className: "shipin-latest-pin",
-  html: `<span style="display:inline-flex;height:14px;width:14px;border-radius:9999px;background:#1e8f4c;border:2px solid #d8f7df;box-shadow:0 0 0 4px rgba(30,143,76,0.25);"></span>`,
-  iconSize: [18, 18],
-  iconAnchor: [9, 9]
+  html: `<span style="display:inline-flex;height:18px;width:18px;border-radius:9999px;background:#f97316;border:3px solid #fed7aa;box-shadow:0 0 0 5px rgba(249,115,22,0.3);"></span>`,
+  iconSize: [22, 22],
+  iconAnchor: [11, 11]
 });
 
 export function TrackingMap({
-  latest,
   origin,
   destination,
+  latest = null,
+  waktuBerangkat,
+  durasiEstimasiMs,
   heightClassName = "h-[170px]",
   zoom = 11,
   scrollWheelZoom = true
 }: TrackingMapProps) {
-  const [animatedLatest, setAnimatedLatest] = useState<MapPoint>(latest);
+  // Animated marker position
+  const [animatedPos, setAnimatedPos] = useState<MapPoint | null>(null);
 
-  const center = useMemo<[number, number]>(() => [latest.lat, latest.lng], [latest.lat, latest.lng]);
-  const linePoints = useMemo<[number, number][]>(() => {
-    const points: [number, number][] = [];
-    if (origin) points.push([origin.lat, origin.lng]);
-    points.push([animatedLatest.lat, animatedLatest.lng]);
-    if (destination) points.push([destination.lat, destination.lng]);
-    return points;
-  }, [animatedLatest.lat, animatedLatest.lng, destination, origin]);
+  // Calculate current position based on progress
+  const computedCurrent = useMemo<MapPoint | null>(() => {
+    if (!origin || !destination || !waktuBerangkat || !durasiEstimasiMs) return null;
+    const progress = (Date.now() - waktuBerangkat) / durasiEstimasiMs;
+    const clamped = Math.min(progress, 1);
+    return {
+      lat: origin.lat + (destination.lat - origin.lat) * clamped,
+      lng: origin.lng + (destination.lng - origin.lng) * clamped,
+      label: "Paket dalam perjalanan"
+    };
+  }, [origin, destination, waktuBerangkat, durasiEstimasiMs]);
 
-  const traveledPoints = useMemo<[number, number][]>(() => {
-    if (!origin) return [[animatedLatest.lat, animatedLatest.lng]];
-    return [
-      [origin.lat, origin.lng],
-      [animatedLatest.lat, animatedLatest.lng]
-    ];
-  }, [animatedLatest.lat, animatedLatest.lng, origin]);
-
-  useEffect(() => {
-    // Prevent default icon path issues in bundled environments.
-    L.Marker.prototype.options.icon = markerIcon;
-  }, []);
+  // Update position every 5 seconds
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    // Animate courier pin moving toward the latest tracking coordinate.
-    if (!origin) {
-      setAnimatedLatest(latest);
-      return;
+    if (computedCurrent) {
+      setAnimatedPos(computedCurrent);
     }
 
-    const startLat = origin.lat;
-    const startLng = origin.lng;
-    const endLat = latest.lat;
-    const endLng = latest.lng;
-    const durationMs = 2400;
-    const startAt = performance.now();
-    let rafId = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - startAt) / durationMs, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setAnimatedLatest({
-        lat: startLat + (endLat - startLat) * eased,
-        lng: startLng + (endLng - startLng) * eased,
-        label: latest.label
+    // Update every 5 seconds
+    intervalRef.current = setInterval(() => {
+      if (!origin || !destination || !waktuBerangkat || !durasiEstimasiMs) return;
+      const progress = (Date.now() - waktuBerangkat) / durasiEstimasiMs;
+      const clamped = Math.min(progress, 1);
+      setAnimatedPos({
+        lat: origin.lat + (destination.lat - origin.lat) * clamped,
+        lng: origin.lng + (destination.lng - origin.lng) * clamped,
+        label: "Paket dalam perjalanan"
       });
+    }, 5000);
 
-      if (progress < 1) {
-        rafId = requestAnimationFrame(tick);
-      }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
+  }, [computedCurrent, origin, destination, waktuBerangkat, durasiEstimasiMs]);
 
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [latest, origin]);
+  // Center of the map
+  const center = useMemo<[number, number]>(() => {
+    if (animatedPos) return [animatedPos.lat, animatedPos.lng];
+    if (latest) return [latest.lat, latest.lng];
+    if (origin) return [origin.lat, origin.lng];
+    if (destination) return [destination.lat, destination.lng];
+    // Default to Indonesia center
+    return [-2.5, 118];
+  }, [animatedPos, latest, origin, destination]);
+
+  // Polyline: from origin to current position (dashed) + from origin to destination (dashed dashed)
+  const routePoints = useMemo<[number, number][]>(() => {
+    const points: [number, number][] = [];
+    if (origin) points.push([origin.lat, origin.lng]);
+    if (animatedPos) points.push([animatedPos.lat, animatedPos.lng]);
+    if (destination) points.push([destination.lat, destination.lng]);
+    return points;
+  }, [origin, animatedPos, destination]);
+
+  useEffect(() => {
+    L.Marker.prototype.options.icon = markerIcon;
+  }, []);
 
   return (
     <MapContainer
@@ -113,32 +140,24 @@ export function TrackingMap({
       />
 
       {origin ? (
-        <Marker position={[origin.lat, origin.lng]}>
-          <Popup>Asal: {origin.label}</Popup>
-        </Marker>
+        <Marker position={[origin.lat, origin.lng]} icon={originIcon} />
       ) : null}
 
       {destination ? (
-        <Marker position={[destination.lat, destination.lng]}>
-          <Popup>Tujuan: {destination.label}</Popup>
-        </Marker>
+        <Marker position={[destination.lat, destination.lng]} icon={destinationIcon} />
       ) : null}
 
-      <Marker position={[animatedLatest.lat, animatedLatest.lng]} icon={latestIcon}>
-        <Popup>Lokasi terbaru: {latest.label}</Popup>
-      </Marker>
+      {animatedPos ? (
+        <Marker position={[animatedPos.lat, animatedPos.lng]} icon={latestIcon} />
+      ) : latest ? (
+        <Marker position={[latest.lat, latest.lng]} icon={latestIcon} />
+      ) : null}
 
-      {linePoints.length > 1 ? (
-        <>
-          <Polyline
-            positions={linePoints}
-            pathOptions={{ color: "#8bcf96", weight: 4, opacity: 0.55, dashArray: "8 8" }}
-          />
-          <Polyline
-            positions={traveledPoints}
-            pathOptions={{ color: "#1f8d4b", weight: 5, opacity: 0.9 }}
-          />
-        </>
+      {routePoints.length > 1 ? (
+        <Polyline
+          positions={routePoints}
+          pathOptions={{ color: "#f97316", weight: 4, opacity: 0.7, dashArray: "12 8" }}
+        />
       ) : null}
     </MapContainer>
   );

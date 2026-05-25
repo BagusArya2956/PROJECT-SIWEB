@@ -1,6 +1,6 @@
 import { estimateShippingCost, resolveAreaCoordinate } from "@/lib/shipping-pricing";
 
-export type ShipmentStatus = "DALAM PERJALANAN" | "DIJADWALKAN" | "SAMPAI";
+export type ShipmentStatus = "DALAM PERJALANAN" | "DIJADWALKAN" | "SAMPAI" | "SELESAI";
 export type PaymentStatus = "LUNAS" | "BELUM BAYAR";
 export type ServiceType = "REGULER" | "EKSPRES";
 
@@ -24,6 +24,7 @@ export type TrackingEvent = {
 
 export type ShipmentRecord = {
   id: string;
+  uuid?: string;
   type: string;
   sender: string;
   receiver: string;
@@ -31,6 +32,8 @@ export type ShipmentRecord = {
   date: string;
   payment: PaymentStatus;
   shipment: ShipmentStatus;
+  itemStatus?: string;
+  itemNote?: string;
   total: number;
   createdAt: number;
   senderAddress?: string;
@@ -42,13 +45,30 @@ export type ShipmentRecord = {
   senderPhone?: string;
   receiverPhone?: string;
   weightKg?: number;
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
   service?: ServiceType;
+  vehicleId?: number | null;
+  vehicleName?: string;
+  vehicleType?: string;
+  plateNumber?: string;
+  vehicleCapacityKg?: number;
+  vehicleStatus?: string;
   estimatedArrivalAt?: number;
+  deliveredAt?: number;
   latestLocationLabel?: string;
   latestLat?: number;
   latestLng?: number;
   trackingEvents?: TrackingEvent[];
   lastTrackingUpdateAt?: number;
+  // Coordinate columns for accurate map display
+  koordinatAsalLat?: number | null;
+  koordinatAsalLng?: number | null;
+  koordinatTujuanLat?: number | null;
+  koordinatTujuanLng?: number | null;
+  waktuBerangkat?: number | null;
+  durasiEstimasiMs?: number | null;
 };
 
 export type CreateShipmentPayload = {
@@ -67,6 +87,27 @@ export type CreateShipmentPayload = {
   receiverPhone?: string;
   weightKg: number;
   service: ServiceType;
+  packageType?: string;
+  itemNote?: string;
+  deliveryType?: "BIASA" | "CEPAT" | "VVIP";
+  vehicleId?: number;
+  originLat?: number;
+  originLng?: number;
+  destinationLat?: number;
+  destinationLng?: number;
+  waktuBerangkat?: number;
+  durasiEstimasiMs?: number;
+};
+
+export type VehicleOption = {
+  id: number;
+  vehicle_name: string;
+  vehicle_type: string;
+  plate_number: string;
+  capacity_kg: string;
+  vehicle_status: string;
+  hub_name: string;
+  city: string;
 };
 
 const STORAGE_KEY = "shipin_admin_shipments_v1";
@@ -197,7 +238,7 @@ function getWaypointsFromShipment(row: ShipmentRecord) {
 }
 
 function inferProgressFromShipmentStatus(status: ShipmentStatus) {
-  if (status === "SAMPAI") return TRACKING_STATUSES.length - 1;
+  if (status === "SAMPAI" || status === "SELESAI") return TRACKING_STATUSES.length - 1;
   if (status === "DALAM PERJALANAN") return 4;
   return 1;
 }
@@ -492,4 +533,158 @@ export function refreshTrackingProgress() {
   }
 
   return updated;
+}
+
+async function parseJsonResponse<T>(response: Response): Promise<T> {
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.message || "Request database gagal.");
+  }
+  return data as T;
+}
+
+export async function fetchShipmentsFromDatabase(search = "") {
+  const response = await fetch(`/api/shipments?search=${encodeURIComponent(search)}`, {
+    cache: "no-store"
+  });
+  const data = await parseJsonResponse<{ shipments: ShipmentRecord[] }>(response);
+  return data.shipments;
+}
+
+export async function runProgressCheck() {
+  const response = await fetch("/api/cek-progress", {
+    cache: "no-store"
+  });
+  return parseJsonResponse<{ ok: boolean; checked: number; updated: number }>(response);
+}
+
+export async function fetchTrackingByResi(resi: string) {
+  const response = await fetch(`/api/lacak?resi=${encodeURIComponent(resi)}`, {
+    cache: "no-store"
+  });
+  return parseJsonResponse<{
+    shipment: ShipmentRecord | null;
+    checkpoints: CheckpointRecord[];
+  }>(response);
+}
+
+export async function fetchVehiclesFromDatabase() {
+  const response = await fetch("/api/vehicles", { cache: "no-store" });
+  const data = await parseJsonResponse<{ vehicles: VehicleOption[] }>(response);
+  return data.vehicles;
+}
+
+export async function createShipmentInDatabase(payload: CreateShipmentPayload) {
+  const response = await fetch("/api/shipments", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      senderName: payload.senderName,
+      senderPhone: payload.senderPhone,
+      receiverName: payload.receiverName,
+      receiverPhone: payload.receiverPhone,
+      originProvince: payload.originProvince,
+      originCity: payload.originCity,
+      originAddress: payload.pickupAddress,
+      destinationProvince: payload.destinationProvince,
+      destinationCity: payload.destinationCity,
+      destinationAddress: payload.destinationAddress,
+      weightKg: payload.weightKg,
+      lengthCm: payload.lengthCm,
+      widthCm: payload.widthCm,
+      heightCm: payload.heightCm,
+      service: payload.service,
+      deliveryType: payload.deliveryType || (payload.service === "EKSPRES" ? "CEPAT" : "BIASA"),
+      packageType: payload.packageType || "Barang Cargo",
+      itemNote: payload.itemNote || "",
+      vehicleId: payload.vehicleId,
+      totalAmount: estimateShippingCost({
+        originCity: payload.originCity || "",
+        destinationCity: payload.destinationCity || "",
+        originProvince: payload.originProvince || "Indonesia",
+        destinationProvince: payload.destinationProvince || "Indonesia",
+        weightKg: payload.weightKg,
+        lengthCm: payload.lengthCm,
+        widthCm: payload.widthCm,
+        heightCm: payload.heightCm,
+        service: payload.service
+      }).total,
+      originLat: payload.originLat,
+      originLng: payload.originLng,
+      destinationLat: payload.destinationLat,
+      destinationLng: payload.destinationLng,
+      waktuBerangkat: payload.waktuBerangkat,
+      durasiEstimasiMs: payload.durasiEstimasiMs
+    })
+  });
+  const data = await parseJsonResponse<{ shipment: ShipmentRecord }>(response);
+  return data.shipment;
+}
+
+export async function updateShipmentInDatabase(id: string, patch: Partial<ShipmentRecord>) {
+  const response = await fetch(`/api/shipments/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch)
+  });
+  await parseJsonResponse<{ ok: boolean }>(response);
+  return fetchShipmentsFromDatabase();
+}
+
+export async function deleteShipmentFromDatabase(id: string) {
+  const response = await fetch(`/api/shipments/${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
+  await parseJsonResponse<{ ok: boolean }>(response);
+  return fetchShipmentsFromDatabase();
+}
+
+/**
+ * Checkpoint types for shipment tracking history.
+ */
+export type CheckpointRecord = {
+  id: number;
+  resi_id: string;
+  waktu: Date;
+  status: string;
+  deskripsi: string | null;
+  lokasi: string | null;
+};
+
+/**
+ * Fetch checkpoint/riwayat data for a shipment.
+ * Uses API route for consistency.
+ */
+export async function fetchCheckpointsByResi(resi: string) {
+  const response = await fetch(`/api/checkpoints?resi=${encodeURIComponent(resi)}`, {
+    cache: "no-store"
+  });
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.checkpoints || [];
+}
+
+/**
+ * Geocode an address using Nominatim OpenStreetMap.
+ * Returns { lat, lng } or null if not found.
+ */
+export async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
+  if (!address?.trim()) return null;
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&accept-language=id`;
+    const response = await fetch(url, {
+      headers: { "User-Agent": "SHIPINGO/1.0" }
+    });
+    if (!response.ok) return null;
+    const results = await response.json();
+    if (results && results.length > 0) {
+      return {
+        lat: parseFloat(results[0].lat),
+        lng: parseFloat(results[0].lon)
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }

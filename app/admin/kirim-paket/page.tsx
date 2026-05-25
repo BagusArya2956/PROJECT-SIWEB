@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { PrinterIcon, ShieldIcon } from "@/components/icons";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { createShipment, ServiceType } from "@/lib/admin-shipments";
+import { createShipmentInDatabase, fetchVehiclesFromDatabase, geocodeAddress, ServiceType, VehicleOption } from "@/lib/admin-shipments";
 import { AREA_TREE, estimateShippingCost, formatFullAddress } from "@/lib/shipping-pricing";
 
 const serviceOptions = [
@@ -59,6 +59,12 @@ function AdminKirimPaketContent() {
   const [dimP, setDimP] = useState("");
   const [dimL, setDimL] = useState("");
   const [dimT, setDimT] = useState("");
+  const [packageType, setPackageType] = useState("");
+  const [itemNote, setItemNote] = useState("");
+  const [deliveryType, setDeliveryType] = useState<"BIASA" | "CEPAT" | "VVIP">("BIASA");
+  const [vehicleId, setVehicleId] = useState("");
+  const [vehicles, setVehicles] = useState<VehicleOption[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState("");
   const [noticeTone, setNoticeTone] = useState<"error" | "success">("error");
   const [senderError, setSenderError] = useState("");
@@ -149,6 +155,10 @@ function AdminKirimPaketContent() {
     setDimP("");
     setDimL("");
     setDimT("");
+    setPackageType("");
+    setItemNote("");
+    setDeliveryType("BIASA");
+    setVehicleId(vehicles[0]?.id ? String(vehicles[0].id) : "");
     setSelectedService("reguler");
     setSenderError("");
     setReceiverError("");
@@ -184,11 +194,24 @@ function AdminKirimPaketContent() {
       dimP,
       dimL,
       dimT,
+      packageType,
+      itemNote,
+      deliveryType,
+      vehicleId,
       selectedService
     };
     window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftPayload));
     setDraftInfo("Draft pengiriman berhasil disimpan.");
   }
+
+  useEffect(() => {
+    fetchVehiclesFromDatabase()
+      .then((items) => {
+        setVehicles(items);
+        setVehicleId((current) => current || (items[0]?.id ? String(items[0].id) : ""));
+      })
+      .catch(() => setVehicles([]));
+  }, []);
 
   useEffect(() => {
     const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
@@ -243,6 +266,10 @@ function AdminKirimPaketContent() {
       setDimP(draft.dimP || "");
       setDimL(draft.dimL || "");
       setDimT(draft.dimT || "");
+      setPackageType(draft.packageType || "");
+      setItemNote(draft.itemNote || "");
+      setDeliveryType(draft.deliveryType === "VVIP" || draft.deliveryType === "CEPAT" ? draft.deliveryType : "BIASA");
+      setVehicleId(draft.vehicleId || "");
       setSelectedService(draft.selectedService === "ekspres" ? "ekspres" : "reguler");
       setDraftInfo("Draft sebelumnya berhasil dimuat.");
     } catch {
@@ -254,44 +281,73 @@ function AdminKirimPaketContent() {
     setGuideInfo("Panduan: lengkapi data pengirim/penerima, cek total, lalu Konfirmasi & Bayar.");
   }
 
-  function handleCreateShipment() {
+  async function handleCreateShipment() {
     const senderMissing = !senderName.trim() || !senderAddressDetail.trim() || !senderSubdistrict.trim();
     const receiverMissing =
       !receiverName.trim() || !receiverAddressDetail.trim() || !receiverSubdistrict.trim();
+    const cargoMissing = !packageType.trim() || !vehicleId;
 
     setSenderError(senderMissing ? "Nama dan alamat pengirim wajib diisi." : "");
     setReceiverError(receiverMissing ? "Nama dan alamat penerima wajib diisi." : "");
 
-    if (senderMissing || receiverMissing) {
+    if (senderMissing || receiverMissing || cargoMissing) {
       setNoticeTone("error");
-      setNotice("Lengkapi data wajib: nama/alamat pengirim dan penerima.");
+      setNotice("Lengkapi data wajib: pengirim, penerima, jenis barang, dan kendaraan.");
       return;
     }
 
     const service: ServiceType = selectedService === "ekspres" ? "EKSPRES" : "REGULER";
-    const created = createShipment({
-      senderName,
-      pickupAddress: senderAddress,
-      receiverName,
-      destinationAddress: receiverAddress,
-      originProvince: senderProvince,
-      destinationProvince: receiverProvince,
-      originCity: senderCity,
-      destinationCity: receiverCity,
-      lengthCm,
-      widthCm,
-      heightCm,
-      senderPhone,
-      receiverPhone,
-      weightKg: weight,
-      service
-    });
+    setIsSubmitting(true);
 
-    setNoticeTone("success");
-    setNotice("Pembayaran berhasil diverifikasi.");
-    setPaidShipmentId(created.id);
-    setPaidAmount(created.total);
-    setIsPaymentSuccessOpen(true);
+    try {
+      // Geocode origin and destination addresses
+      const [originCoords, destinationCoords] = await Promise.all([
+        geocodeAddress(senderAddress),
+        geocodeAddress(receiverAddress)
+      ]);
+
+      // Calculate estimated duration based on service
+      const durasiEstimasiMs = service === "EKSPRES" ? 24 * 60 * 60 * 1000 : 72 * 60 * 60 * 1000;
+
+      const created = await createShipmentInDatabase({
+        senderName,
+        pickupAddress: senderAddress,
+        receiverName,
+        destinationAddress: receiverAddress,
+        originProvince: senderProvince,
+        destinationProvince: receiverProvince,
+        originCity: senderCity,
+        destinationCity: receiverCity,
+        lengthCm,
+        widthCm,
+        heightCm,
+        senderPhone,
+        receiverPhone,
+        weightKg: weight,
+        service,
+        packageType,
+        itemNote,
+        deliveryType,
+        vehicleId: Number(vehicleId),
+        originLat: originCoords?.lat,
+        originLng: originCoords?.lng,
+        destinationLat: destinationCoords?.lat,
+        destinationLng: destinationCoords?.lng,
+        waktuBerangkat: Date.now(),
+        durasiEstimasiMs
+      });
+
+      setNoticeTone("success");
+      setNotice("Data pengiriman berhasil masuk database.");
+      setPaidShipmentId(created.id);
+      setPaidAmount(created.total);
+      setIsPaymentSuccessOpen(true);
+    } catch (error) {
+      setNoticeTone("error");
+      setNotice(error instanceof Error ? error.message : "Data gagal disimpan ke database.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleGoToHistory() {
@@ -529,6 +585,55 @@ function AdminKirimPaketContent() {
             </BlockCard>
 
             <BlockCard number={3} title="Detail Paket">
+              <div className="mb-4 grid gap-2.5 sm:grid-cols-2">
+                <Field label="Jenis Barang">
+                  <input
+                    className={inputClass}
+                    placeholder="Contoh: Dokumen, Elektronik, Sparepart"
+                    value={packageType}
+                    onChange={(event) => setPackageType(event.target.value)}
+                  />
+                </Field>
+                <Field label="Jenis Pengiriman">
+                  <select
+                    className={inputClass}
+                    value={deliveryType}
+                    onChange={(event) => {
+                      const next = event.target.value as "BIASA" | "CEPAT" | "VVIP";
+                      setDeliveryType(next);
+                      setSelectedService(next === "BIASA" ? "reguler" : "ekspres");
+                    }}
+                  >
+                    <option value="BIASA">Biasa</option>
+                    <option value="CEPAT">Cepat</option>
+                    <option value="VVIP">Vvip</option>
+                  </select>
+                </Field>
+              </div>
+              <div className="mb-4 grid gap-2.5 sm:grid-cols-2">
+                <Field label="Kendaraan">
+                  <select
+                    className={inputClass}
+                    value={vehicleId}
+                    onChange={(event) => setVehicleId(event.target.value)}
+                  >
+                    <option value="">Pilih kendaraan</option>
+                    {vehicles.map((vehicle) => (
+                      <option key={vehicle.id} value={vehicle.id}>
+                        {vehicle.vehicle_name} - {vehicle.plate_number}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Deskripsi / Catatan Barang">
+                  <input
+                    className={inputClass}
+                    placeholder="Contoh: fragile, jangan dibalik"
+                    value={itemNote}
+                    onChange={(event) => setItemNote(event.target.value)}
+                  />
+                </Field>
+              </div>
               <div className="mb-4 grid gap-2.5 sm:grid-cols-[1fr_2fr]">
                 <Field label="Berat (Kg)">
                   <div className="relative">
@@ -558,7 +663,10 @@ function AdminKirimPaketContent() {
                   return (
                     <button
                       key={service.id}
-                      onClick={() => setSelectedService(service.id)}
+                      onClick={() => {
+                        setSelectedService(service.id);
+                        setDeliveryType(service.id === "ekspres" ? "CEPAT" : "BIASA");
+                      }}
                       className={`rounded-2xl border px-3.5 py-3 text-left transition ${
                         active ? "border-[#8fd09b] bg-[#ecf9ef]" : "border-[#dce2da] bg-white"
                       }`}
@@ -664,9 +772,10 @@ function AdminKirimPaketContent() {
             <button
               type="button"
               onClick={handleCreateShipment}
+              disabled={isSubmitting}
               className="mt-7 h-14 w-full rounded-full bg-[#175f31] text-[15px] font-bold text-white shadow-[0_18px_28px_rgba(23,95,49,0.24)] transition hover:bg-[#114a26]"
             >
-              Konfirmasi & Bayar
+              {isSubmitting ? "Menyimpan ke Database..." : "Konfirmasi & Bayar"}
             </button>
             {notice ? (
               <p
@@ -800,4 +909,3 @@ export default function AdminKirimPaketPage() {
     </Suspense>
   );
 }
-

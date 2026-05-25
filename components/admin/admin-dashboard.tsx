@@ -15,13 +15,11 @@ import {
 } from "@/components/icons";
 import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import {
-  getShipmentStorageKey,
-  loadShipments,
+  fetchShipmentsFromDatabase,
   PaymentStatus as HistoryPaymentStatus,
-  refreshTrackingProgress,
   ShipmentRecord,
   ShipmentStatus as HistoryShipmentStatus,
-  updateShipment
+  updateShipmentInDatabase
 } from "@/lib/admin-shipments";
 
 type ShipmentStatus = "Dikirim" | "Selesai" | "Pending";
@@ -143,30 +141,19 @@ export function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const hydrate = () => {
-      const currentRows = mapShipmentRows(refreshTrackingProgress());
+    let active = true;
+    const hydrate = async () => {
+      const currentRows = mapShipmentRows(await fetchShipmentsFromDatabase());
+      if (!active) return;
       setShipmentRows(currentRows);
       setSelectedShipmentId((currentId) =>
         currentId && currentRows.some((row) => row.id === currentId) ? currentId : currentRows[0]?.id || null
       );
     };
 
-    hydrate();
-
-    const timer = window.setInterval(hydrate, 5000);
-    const handleStorage = (event: StorageEvent) => {
-      if (!event.key || event.key === getShipmentStorageKey()) {
-        hydrate();
-      }
-    };
-    const handleFocus = () => hydrate();
-
-    window.addEventListener("storage", handleStorage);
-    window.addEventListener("focus", handleFocus);
+    hydrate().catch(() => setShipmentRows([]));
     return () => {
-      window.clearInterval(timer);
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("focus", handleFocus);
+      active = false;
     };
   }, []);
 
@@ -241,12 +228,12 @@ export function AdminDashboard() {
     };
   }, [filteredShipments]);
 
-  function updateShipmentStatus(id: string, nextStatus: ShipmentStatus) {
-    const current = loadShipments().find((row) => row.id === id);
+  async function updateShipmentStatus(id: string, nextStatus: ShipmentStatus) {
+    const current = shipmentRows.find((row) => row.id === id);
     const inferredPayment: PaymentStatus =
-      nextStatus === "Pending" ? "Menunggu" : current?.payment === "BELUM BAYAR" ? "Lunas" : mapHistoryPaymentStatus(current?.payment || "LUNAS");
+      nextStatus === "Pending" ? "Menunggu" : current?.payment === "Menunggu" ? "Lunas" : current?.payment || "Lunas";
 
-    const updated = updateShipment(id, {
+    const updated = await updateShipmentInDatabase(id, {
       shipment: toHistoryShipmentStatus(nextStatus),
       payment: toHistoryPaymentStatus(inferredPayment)
     });

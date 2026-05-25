@@ -3,14 +3,26 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { EyeIcon } from "@/components/icons";
-import { deleteShipment, loadShipments, PaymentStatus, ShipmentRecord, ShipmentStatus, updateShipment } from "@/lib/admin-shipments";
+import {
+  deleteShipmentFromDatabase,
+  fetchShipmentsFromDatabase,
+  fetchVehiclesFromDatabase,
+  PaymentStatus,
+  runProgressCheck,
+  ShipmentRecord,
+  ShipmentStatus,
+  updateShipmentInDatabase,
+  VehicleOption
+} from "@/lib/admin-shipments";
 
 const badgeStyles: Record<string, string> = {
   LUNAS: "bg-[#d9f8db] text-[#12743a]",
-  "BELUM BAYAR": "bg-[#ffe7cf] text-[#e06612]",
-  "DALAM PERJALANAN": "bg-[#8ef47d] text-[#12652d]",
+  "BELUM BAYAR": "bg-[#fde2e2] text-[#c53030]",
+  "DALAM PERJALANAN": "bg-[#dbeafe] text-[#1d4ed8]",
   DIJADWALKAN: "bg-[#ececec] text-[#6d746f]",
-  SAMPAI: "bg-[#8ef47d] text-[#12652d]"
+  SAMPAI: "bg-[#d9f8db] text-[#12743a]",
+  SELESAI: "bg-[#d9f8db] text-[#12743a]",
+  DALAM_PENGIRIMAN: "bg-[#fef3c7] text-[#b45309]"
 };
 
 function formatCurrency(amount: number) {
@@ -48,11 +60,29 @@ function AdminHistoriContent() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"info" | "success">("info");
+  const [vehicles, setVehicles] = useState<VehicleOption[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const current = loadShipments();
-    setRows(current);
-    setSelectedId(current[0]?.id ?? null);
+    async function hydrate() {
+      try {
+        await runProgressCheck().catch(() => null);
+        const [current, vehicleRows] = await Promise.all([
+          fetchShipmentsFromDatabase(),
+          fetchVehiclesFromDatabase()
+        ]);
+        setRows(current);
+        setVehicles(vehicleRows);
+        setSelectedId(current[0]?.id ?? null);
+      } catch (error) {
+        setMessageTone("info");
+        setMessage(error instanceof Error ? error.message : "Gagal memuat data database.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    hydrate();
   }, []);
 
   const filteredRows = useMemo(() => {
@@ -64,7 +94,8 @@ function AdminHistoriContent() {
         row.id.toLowerCase().includes(keyword) ||
         row.sender.toLowerCase().includes(keyword) ||
         row.receiver.toLowerCase().includes(keyword) ||
-        row.destination.toLowerCase().includes(keyword)
+        row.destination.toLowerCase().includes(keyword) ||
+        (row.type || "").toLowerCase().includes(keyword)
       );
     });
   }, [query, rows]);
@@ -83,21 +114,36 @@ function AdminHistoriContent() {
     }
   }, [currentPage, totalPages]);
 
-  function handleUpdateStatus(id: string, status: ShipmentStatus) {
-    const payment: PaymentStatus = status === "DIJADWALKAN" ? "BELUM BAYAR" : "LUNAS";
-    const updated = updateShipment(id, { shipment: status, payment });
-    setRows(updated);
-    setMessageTone("success");
-    setMessage(`Status ${id} diperbarui ke ${status}.`);
+  async function handleUpdateShipment(id: string, patch: Partial<ShipmentRecord>) {
+    try {
+      const updated = await updateShipmentInDatabase(id, patch);
+      setRows(updated);
+      setSelectedId(id);
+      setMessageTone("success");
+      setMessage(`Data ${id} berhasil diperbarui di database.`);
+    } catch (error) {
+      setMessageTone("info");
+      setMessage(error instanceof Error ? error.message : "Data gagal diperbarui.");
+    }
   }
 
-  function handleDelete(id: string) {
-    const updated = deleteShipment(id);
-    setRows(updated);
-    setMessageTone("success");
-    setMessage(`Data ${id} berhasil dihapus.`);
-    if (selectedId === id) {
-      setSelectedId(updated[0]?.id ?? null);
+  function handleUpdateStatus(id: string, status: ShipmentStatus) {
+    const payment: PaymentStatus = status === "DIJADWALKAN" ? "BELUM BAYAR" : "LUNAS";
+    handleUpdateShipment(id, { shipment: status, payment });
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      const updated = await deleteShipmentFromDatabase(id);
+      setRows(updated);
+      setMessageTone("success");
+      setMessage(`Data ${id} berhasil dihapus dari database.`);
+      if (selectedId === id) {
+        setSelectedId(updated[0]?.id ?? null);
+      }
+    } catch (error) {
+      setMessageTone("info");
+      setMessage(error instanceof Error ? error.message : "Data gagal dihapus.");
     }
   }
 
@@ -139,17 +185,23 @@ function AdminHistoriContent() {
             />
           </div>
 
-          {filteredRows.length === 0 ? (
+          {loading ? (
+            <div className="rounded-xl border border-dashed border-[#d7dfd7] bg-[#f8faf8] p-8 text-center">
+              <p className="text-[13px] font-semibold text-[#5f6d63]">Mengambil data dari database...</p>
+            </div>
+          ) : null}
+
+          {!loading && filteredRows.length === 0 ? (
             <div className="rounded-xl border border-dashed border-[#d7dfd7] bg-[#f8faf8] p-8 text-center">
               <p className="text-[13px] font-semibold text-[#5f6d63]">Belum ada data yang cocok.</p>
             </div>
           ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
+          <div className="overflow-x-auto rounded-xl border border-[#edf1ea]">
+            <table className="min-w-[1200px] w-full">
               <thead>
-                <tr className="border-b border-[#edf1ea]">
-                  {["NO. RESI", "PIHAK TERLIBAT", "TUJUAN", "TANGGAL", "STATUS", "TOTAL", "AKSI"].map((heading) => (
-                    <th key={heading} className="px-4 py-3 text-left text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#6e796f]">
+                <tr className="border-b border-[#edf1ea] bg-[#f8faf8]">
+                  {["NO. RESI", "PIHAK TERLIBAT", "TUJUAN", "TANGGAL", "STATUS", "BARANG", "KENDARAAN", "TOTAL", "AKSI"].map((heading) => (
+                    <th key={heading} className="px-3 py-3 text-left text-[10px] font-extrabold uppercase tracking-[0.15em] text-[#6e796f] whitespace-nowrap">
                       {heading}
                     </th>
                   ))}
@@ -157,59 +209,110 @@ function AdminHistoriContent() {
               </thead>
               <tbody>
                 {paginatedRows.map((row) => (
-                  <tr key={row.id} className="border-b border-[#edf1ea] last:border-b-0">
-                    <td className="px-4 py-4 align-top">
+                  <tr key={row.id} className="border-b border-[#edf1ea] hover:bg-[#fafcf9] last:border-b-0">
+                    <td className="px-3 py-3">
                       <button
                         type="button"
                         onClick={() => setSelectedId(row.id)}
-                        className="text-[15px] font-extrabold text-[#148a31]"
+                        className="text-[13px] font-extrabold text-[#148a31] whitespace-nowrap"
                       >
                         #{row.id}
                       </button>
-                      <p className="mt-1 text-[12px] uppercase tracking-[0.05em] text-[#6a756c]">{row.type}</p>
+                      <p className="text-[10px] uppercase tracking-[0.05em] text-[#6a756c]">{row.type}</p>
                     </td>
 
-                    <td className="px-4 py-4 align-top">
-                      <p className="text-[15px] font-bold text-[#243526]">{row.sender}</p>
-                      <p className="text-[14px] text-[#5e695f]">ke {row.receiver}</p>
+                    <td className="px-3 py-3">
+                      <p className="text-[13px] font-bold text-[#243526] whitespace-nowrap">{row.sender}</p>
+                      <p className="text-[11px] text-[#5e695f] whitespace-nowrap">ke {row.receiver}</p>
                     </td>
 
-                    <td className="px-4 py-4 align-top text-[14px] text-[#2b362c]">{row.destination}</td>
-                    <td className="px-4 py-4 align-top text-[14px] text-[#2b362c]">{row.date}</td>
+                    <td className="px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap">{row.destination}</td>
+                    <td className="px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap">{row.date}</td>
 
-                    <td className="px-4 py-4 align-top">
-                      <div className="space-y-2">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-bold ${badgeStyles[row.payment]}`}>
-                          {row.payment}
-                        </span>
+                    <td className="px-3 py-3">
+                      <div className="flex flex-col gap-1">
+                        <select
+                          value={row.payment}
+                          onChange={(event) =>
+                            handleUpdateShipment(row.id, { payment: event.target.value as PaymentStatus })
+                          }
+                          className={`rounded-full px-2 py-1 text-[9px] font-bold ${badgeStyles[row.payment]} outline-none cursor-pointer`}
+                        >
+                          <option value="LUNAS">LUNAS</option>
+                          <option value="BELUM BAYAR">BELUM BAYAR</option>
+                        </select>
                         <select
                           value={row.shipment}
                           onChange={(event) => handleUpdateStatus(row.id, event.target.value as ShipmentStatus)}
-                          className={`block rounded-full px-3 py-1 text-[11px] font-bold ${badgeStyles[row.shipment]} outline-none`}
+                          className={`rounded-full px-2 py-1 text-[9px] font-bold ${badgeStyles[row.shipment]} outline-none cursor-pointer`}
                         >
                           <option value="DIJADWALKAN">DIJADWALKAN</option>
                           <option value="DALAM PERJALANAN">DALAM PERJALANAN</option>
-                          <option value="SAMPAI">SAMPAI</option>
+                          <option value="SAMPAI">SELESAI</option>
                         </select>
                       </div>
                     </td>
 
-                    <td className="px-4 py-4 align-top text-[15px] font-extrabold text-[#2a362c]">{formatCurrency(row.total)}</td>
+                    <td className="px-3 py-3">
+                      <select
+                        value={row.itemStatus || "DIPROSES"}
+                        onChange={(event) => handleUpdateShipment(row.id, { itemStatus: event.target.value })}
+                        className={`rounded-full px-2 py-1 text-[9px] font-bold outline-none cursor-pointer ${
+                          badgeStyles[row.itemStatus || "DIPROSES"] || "bg-[#f3f6f3] text-[#415046]"
+                        }`}
+                      >
+                        <option value="DIPROSES">DIPROSES</option>
+                        <option value="DALAM_PENGIRIMAN">DALAM PENGIRIMAN</option>
+                        <option value="SAMPAI_TUJUAN">SAMPAI TUJUAN</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="SELESAI">SELESAI</option>
+                      </select>
+                      <p className="mt-1 text-[9px] text-[#738076] max-w-[120px] truncate">{row.itemNote || "-"}</p>
+                    </td>
 
-                    <td className="px-4 py-4 align-top">
-                      <div className="flex items-center gap-2">
+                    <td className="px-3 py-3">
+                      <select
+                        value={row.vehicleId ? String(row.vehicleId) : ""}
+                        onChange={(event) => handleUpdateShipment(row.id, { vehicleId: Number(event.target.value) })}
+                        className="w-[150px] rounded-lg border border-[#d8e0d8] bg-[#f6f8f4] px-2 py-1.5 text-[10px] text-[#2a372f] outline-none cursor-pointer"
+                      >
+                        <option value="">Pilih kendaraan</option>
+                        {vehicles.map((vehicle) => (
+                          <option key={vehicle.id} value={vehicle.id}>
+                            {vehicle.vehicle_name} - {vehicle.plate_number}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+
+                    <td className="px-3 py-3">
+                      <input
+                        defaultValue={row.total}
+                        onBlur={(event) => {
+                          const nextTotal = Number(event.target.value);
+                          if (Number.isFinite(nextTotal) && nextTotal !== row.total) {
+                            handleUpdateShipment(row.id, { total: nextTotal });
+                          }
+                        }}
+                        className="w-[100px] rounded-lg border border-[#d8e0d8] bg-[#f6f8f4] px-2 py-1.5 text-[11px] font-extrabold text-[#2a362c] outline-none"
+                      />
+                      <p className="mt-0.5 text-[9px] text-[#748076]">{formatCurrency(row.total)}</p>
+                    </td>
+
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => setSelectedId(row.id)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f4ef] text-[#47604f]"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f4ef] text-[#47604f] transition-colors hover:bg-[#e4ebe3]"
                           aria-label="Pilih data"
                         >
-                          <EyeIcon className="h-4 w-4" />
+                          <EyeIcon className="h-3.5 w-3.5" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(row.id)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fde9e7] text-[#b9473f]"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fde9e7] text-[#b9473f] transition-colors hover:bg-[#fbd5d2]"
                           aria-label="Hapus data"
                         >
                           <TrashIcon />
