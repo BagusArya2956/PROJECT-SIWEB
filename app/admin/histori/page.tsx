@@ -1,12 +1,14 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 
 import { EyeIcon } from "@/components/icons";
 import {
   deleteShipmentFromDatabase,
   fetchShipmentsFromDatabase,
   fetchVehiclesFromDatabase,
+  getWaypointsFromShipment,
   PaymentStatus,
   runProgressCheck,
   ShipmentRecord,
@@ -14,6 +16,21 @@ import {
   updateShipmentInDatabase,
   VehicleOption
 } from "@/lib/admin-shipments";
+
+const TrackingMap = dynamic(
+  () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[380px] w-full bg-[#f2f5f1] flex items-center justify-center rounded-lg">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-3 border-[#148a31] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-[11px] font-semibold text-[#6d786f]">Memuat peta...</p>
+        </div>
+      </div>
+    )
+  }
+);
 
 const badgeStyles: Record<string, string> = {
   LUNAS: "bg-[#d9f8db] text-[#12743a]",
@@ -370,12 +387,131 @@ function AdminHistoriContent() {
         </section>
 
         {selectedRow ? (
-          <section className="mt-4 rounded-[24px] border border-[#e5ebe5] bg-white p-5">
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#6d786f]">Data Terpilih</p>
-            <h2 className="mt-2 text-[24px] font-extrabold text-[#203229]">{selectedRow.id}</h2>
-            <p className="mt-2 text-[14px] text-[#4d5a53]">
-              {selectedRow.sender} ke {selectedRow.receiver} - {selectedRow.destination}
-            </p>
+          <section className="mt-4 rounded-[24px] border border-[#e5ebe5] bg-white overflow-hidden shadow-[0_10px_30px_rgba(25,45,33,0.06)]">
+            {/* Header */}
+            <div className="bg-[#148a31] px-5 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#a3ddb0]">Lacak Pengiriman</p>
+                  <h2 className="mt-1 text-[22px] font-extrabold text-white">{selectedRow.id}</h2>
+                </div>
+                <div className={`rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide ${
+                  selectedRow.shipment === "SELESAI" || selectedRow.shipment === "SAMPAI"
+                    ? "bg-[#22c55e] text-white"
+                    : selectedRow.shipment === "DALAM PERJALANAN"
+                    ? "bg-[#f97316] text-white animate-pulse"
+                    : "bg-white/20 text-white"
+                }`}>
+                  {selectedRow.shipment}
+                </div>
+              </div>
+            </div>
+
+            {/* Tracking Map */}
+            <TrackingMap
+              origin={(() => {
+                const wp = getWaypointsFromShipment(selectedRow);
+                if (selectedRow.koordinatAsalLat && selectedRow.koordinatAsalLng) {
+                  return { lat: selectedRow.koordinatAsalLat, lng: selectedRow.koordinatAsalLng, label: wp.senderArea };
+                }
+                return { lat: wp.origin.lat, lng: wp.origin.lng, label: wp.senderArea };
+              })()}
+              destination={(() => {
+                const wp = getWaypointsFromShipment(selectedRow);
+                if (selectedRow.koordinatTujuanLat && selectedRow.koordinatTujuanLng) {
+                  return { lat: selectedRow.koordinatTujuanLat, lng: selectedRow.koordinatTujuanLng, label: wp.receiverArea };
+                }
+                return { lat: wp.destination.lat, lng: wp.destination.lng, label: wp.receiverArea };
+              })()}
+              latest={selectedRow.latestLat && selectedRow.latestLng
+                ? { lat: selectedRow.latestLat, lng: selectedRow.latestLng, label: selectedRow.latestLocationLabel || "Lokasi Terkini" }
+                : null}
+              waktuBerangkat={selectedRow.waktuBerangkat ?? null}
+              durasiEstimasiMs={selectedRow.durasiEstimasiMs ?? null}
+              heightClassName="h-[380px]"
+              zoom={7}
+            />
+
+            {/* Route Info */}
+            <div className="px-5 py-4 border-t border-[#edf1ea]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Asal */}
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#dbeafe]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="h-4 w-4">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6d786f]">Asal</p>
+                    <p className="mt-0.5 text-[13px] font-bold text-[#203229]">{selectedRow.sender}</p>
+                    <p className="text-[11px] text-[#5e695f]">{selectedRow.senderAddress || selectedRow.originCity || "-"}</p>
+                  </div>
+                </div>
+
+                {/* Progress indicator */}
+                <div className="flex flex-col items-center justify-center">
+                  <div className="flex w-full items-center gap-2">
+                    <div className="h-1 flex-1 rounded-full bg-[#e5ebe5] overflow-hidden">
+                      <div className={`h-full rounded-full transition-all duration-1000 ${
+                        selectedRow.shipment === "SELESAI" || selectedRow.shipment === "SAMPAI"
+                          ? "w-full bg-[#22c55e]"
+                          : selectedRow.shipment === "DALAM PERJALANAN"
+                          ? "w-2/3 bg-[#f97316]"
+                          : "w-1/4 bg-[#3b82f6]"
+                      }`}/>
+                    </div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke={selectedRow.shipment === "DALAM PERJALANAN" ? "#f97316" : "#22c55e"} strokeWidth="2" className="h-5 w-5 shrink-0">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </div>
+                  <p className="mt-2 text-[11px] text-[#5e695f] text-center">
+                    {selectedRow.shipment === "SELESAI" || selectedRow.shipment === "SAMPAI"
+                      ? "✓ Paket telah sampai tujuan"
+                      : selectedRow.shipment === "DALAM PERJALANAN"
+                      ? `📦 ${selectedRow.latestLocationLabel || "Sedang dalam perjalanan"}`
+                      : "⏳ Menunggu keberangkatan"}
+                  </p>
+                </div>
+
+                {/* Tujuan */}
+                <div className="flex items-start gap-3 md:justify-end">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#6d786f]">Tujuan</p>
+                    <p className="mt-0.5 text-[13px] font-bold text-[#203229]">{selectedRow.receiver}</p>
+                    <p className="text-[11px] text-[#5e695f]">{selectedRow.receiverAddress || selectedRow.destinationCity || selectedRow.destination}</p>
+                  </div>
+                  <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#d9f8db]">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" className="h-4 w-4">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Detail Info */}
+            <div className="px-5 py-3 border-t border-[#edf1ea] bg-[#f8faf8] grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
+              <div>
+                <p className="font-bold text-[#6d786f] uppercase tracking-[0.05em]">Tipe</p>
+                <p className="mt-0.5 font-bold text-[#203229]">{selectedRow.type}</p>
+              </div>
+              <div>
+                <p className="font-bold text-[#6d786f] uppercase tracking-[0.05em]">Layanan</p>
+                <p className="mt-0.5 font-bold text-[#203229]">{selectedRow.service || selectedRow.type}</p>
+              </div>
+              <div>
+                <p className="font-bold text-[#6d786f] uppercase tracking-[0.05em]">Total</p>
+                <p className="mt-0.5 font-bold text-[#148a31]">{formatCurrency(selectedRow.total)}</p>
+              </div>
+              <div>
+                <p className="font-bold text-[#6d786f] uppercase tracking-[0.05em]">Pembayaran</p>
+                <p className={`mt-0.5 font-bold ${selectedRow.payment === "LUNAS" ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                  {selectedRow.payment}
+                </p>
+              </div>
+            </div>
           </section>
         ) : null}
       </div>

@@ -214,7 +214,7 @@ function getTransitPoint(origin: Waypoint, destination: Waypoint): Waypoint {
   };
 }
 
-function getWaypointsFromShipment(row: ShipmentRecord) {
+export function getWaypointsFromShipment(row: ShipmentRecord) {
   const senderArea =
     row.originCity ||
     getPrimaryArea(row.senderAddress || row.destination.split("|")[0] || "Jakarta");
