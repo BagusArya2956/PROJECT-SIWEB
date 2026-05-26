@@ -29,7 +29,17 @@ import {
 
 const TrackingMap = dynamic(
   () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[280px] w-full bg-[#f2f5f1] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-[3px] border-[#148a31] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-[11px] font-semibold text-[#6d786f]">Memuat peta...</p>
+        </div>
+      </div>
+    )
+  }
 );
 
 type TrackingMapBoundaryProps = {
@@ -339,7 +349,7 @@ export function LacakPaketPage() {
                 <div className="mt-4 overflow-hidden rounded-[18px] border border-[#e0e6df] bg-[#dce8dd]">
                   <TrackingMapBoundary
                     fallback={
-                      <div className="h-[220px] bg-[linear-gradient(135deg,#6a8b7c_0%,#b8d7bf_46%,#7ca19b_100%)] opacity-85" />
+                      <div className="h-[380px] bg-[linear-gradient(135deg,#6a8b7c_0%,#b8d7bf_46%,#7ca19b_100%)] opacity-85" />
                     }
                   >
                     <TrackingMap
@@ -364,7 +374,8 @@ export function LacakPaketPage() {
                       }
                       waktuBerangkat={activeShipment.waktuBerangkat ?? null}
                       durasiEstimasiMs={activeShipment.durasiEstimasiMs ?? null}
-                      heightClassName="h-[220px]"
+                      heightClassName="h-[380px]"
+                      zoom={7}
                     />
                   </TrackingMapBoundary>
                   <div className="flex items-center gap-2 border-t border-[#d2ded1] bg-[#f4f8f3] px-3 py-2 text-[11px] text-[#4f5b52]">

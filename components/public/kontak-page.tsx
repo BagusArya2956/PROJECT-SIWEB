@@ -18,7 +18,7 @@ const TrackingMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[250px] w-full rounded-[18px] bg-[linear-gradient(130deg,#3e7f76,#5b9d93)]" />
+      <div className="h-[380px] w-full bg-[linear-gradient(135deg,#4f8f86,#6aab9f)]" />
     )
   }
 );

@@ -1,5 +1,7 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
@@ -244,13 +246,13 @@ export function TrackingMap({
   }, [origin, animatedPos, destination]);
 
   return (
-    <div className="relative">
+    <div className="relative" style={{ minHeight: heightClassName }}>
       <MapContainer
         center={origin ? [origin.lat, origin.lng] : [-2.5, 118]}
         zoom={zoom}
         scrollWheelZoom={scrollWheelZoom}
         className={`${heightClassName} w-full`}
-        style={{ borderRadius: 0 }}
+        style={{ borderRadius: 0, minHeight: heightClassName }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -328,7 +330,7 @@ export function TrackingMap({
       </MapContainer>
 
       {/* ---- ETA Overlay Card (Top Left) ---- */}
-      <div className="absolute top-3 left-3 z-[1000] bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-xl border border-[#e5ebe5] min-w-[160px]">
+      <div className="absolute top-3 left-3 z-[500] bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-xl border border-[#e5ebe5] min-w-[160px] pointer-events-none">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" width="18" height="18">
