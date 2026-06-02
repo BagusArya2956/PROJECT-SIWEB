@@ -9,7 +9,7 @@ export function AdminLogoutButton() {
     await fetch("/api/admin/session", {
       method: "DELETE"
     }).catch(() => null);
-    router.push("/admin/login");
+    router.push("/");
     router.refresh();
   }
 

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  ChatBubbleIcon,
   CheckIcon,
   ClipboardIcon,
   EyeIcon,
@@ -11,7 +10,8 @@ import {
   MoneyIcon,
   PackageIcon,
   PrinterIcon,
-  SearchIcon
+  SearchIcon,
+  TruckIcon
 } from "@/components/icons";
 import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import {
@@ -21,6 +21,7 @@ import {
   ShipmentStatus as HistoryShipmentStatus,
   updateShipmentInDatabase
 } from "@/lib/admin-shipments";
+import { ADMIN_HISTORY_REFRESH_INTERVAL_MS } from "@/lib/tracking-config";
 
 type ShipmentStatus = "Dikirim" | "Selesai" | "Pending";
 type PaymentStatus = "Lunas" | "Menunggu";
@@ -58,23 +59,6 @@ function sensitiveBlurClass(isRevealed: boolean) {
   return isRevealed ? "" : "blur-[4px] select-none";
 }
 
-function toDateInputValue(value: Date) {
-  const year = value.getFullYear();
-  const month = `${value.getMonth() + 1}`.padStart(2, "0");
-  const day = `${value.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getDefaultDateRange() {
-  const end = new Date();
-  const start = new Date();
-  start.setDate(end.getDate() - 6);
-  return {
-    startDate: toDateInputValue(start),
-    endDate: toDateInputValue(end)
-  };
-}
-
 function toDayStart(value: string) {
   return value ? new Date(`${value}T00:00:00`).getTime() : null;
 }
@@ -84,6 +68,26 @@ function toDayEnd(value: string) {
 }
 
 function formatDateRangeLabel(startDate: string, endDate: string) {
+  if (!startDate && !endDate) {
+    return "Semua tanggal";
+  }
+
+  if (startDate && !endDate) {
+    const start = new Date(`${startDate}T00:00:00`);
+    return `Mulai ${start.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short"
+    })}`;
+  }
+
+  if (!startDate && endDate) {
+    const end = new Date(`${endDate}T00:00:00`);
+    return `Sampai ${end.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short"
+    })}`;
+  }
+
   const start = new Date(`${startDate}T00:00:00`);
   const end = new Date(`${endDate}T00:00:00`);
 
@@ -186,15 +190,23 @@ function buildSparkline(values: number[]) {
   return { points, width, height };
 }
 
+function formatCompactCurrency(amount: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    notation: "compact",
+    maximumFractionDigits: 1
+  }).format(amount);
+}
+
 export function AdminDashboard() {
   const [shipmentRows, setShipmentRows] = useState<ShipmentRow[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<(typeof statusOptions)[number]>("Semua");
   const [paymentFilter, setPaymentFilter] = useState<(typeof paymentOptions)[number]>("Semua");
   const [serviceFilter, setServiceFilter] = useState<(typeof serviceOptions)[number]>("Semua");
-  const defaultDateRange = getDefaultDateRange();
-  const [startDate, setStartDate] = useState(defaultDateRange.startDate);
-  const [endDate, setEndDate] = useState(defaultDateRange.endDate);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -202,6 +214,7 @@ export function AdminDashboard() {
 
   useEffect(() => {
     let active = true;
+
     const hydrate = async () => {
       const currentRows = mapShipmentRows(await fetchShipmentsFromDatabase());
       if (!active) return;
@@ -212,13 +225,17 @@ export function AdminDashboard() {
     };
 
     hydrate().catch(() => setShipmentRows([]));
+
+    const interval = window.setInterval(() => {
+      if (document.hidden) return;
+      hydrate().catch(() => null);
+    }, ADMIN_HISTORY_REFRESH_INTERVAL_MS);
+
     return () => {
       active = false;
+      window.clearInterval(interval);
     };
   }, []);
-
-  const selectedShipment =
-    shipmentRows.find((shipment) => shipment.id === selectedShipmentId) ?? shipmentRows[0] ?? null;
 
   const filteredShipments = useMemo(() => {
     const startAt = toDayStart(startDate);
@@ -245,6 +262,16 @@ export function AdminDashboard() {
 
   const totalPages = Math.max(1, Math.ceil(filteredShipments.length / ITEMS_PER_PAGE));
   const paginatedShipments = filteredShipments.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const selectedShipment =
+    filteredShipments.find((shipment) => shipment.id === selectedShipmentId) ?? filteredShipments[0] ?? null;
+
+  useEffect(() => {
+    setSelectedShipmentId((currentId) =>
+      currentId && filteredShipments.some((shipment) => shipment.id === currentId)
+        ? currentId
+        : filteredShipments[0]?.id || null
+    );
+  }, [filteredShipments]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -260,20 +287,14 @@ export function AdminDashboard() {
     const packageSeries = Array.from({ length: 7 }, () => 0);
     const revenueSeries = Array.from({ length: 7 }, () => 0);
 
-    shipmentRows.forEach((shipment) => {
-      const statusWeight =
-        shipment.status === "Selesai" ? 280 : shipment.status === "Dikirim" ? 210 : 120;
-      const serviceWeight =
-        shipment.service === "Same-Day" ? 36 : shipment.service === "Ekspres" ? 48 : 20;
-      const paymentMultiplier = shipment.payment === "Lunas" ? 1 : 0.45;
-
-      packageSeries[shipment.dayIndex] += Math.round(statusWeight + serviceWeight);
-      revenueSeries[shipment.dayIndex] += shipment.amount * paymentMultiplier;
+    filteredShipments.forEach((shipment) => {
+      packageSeries[shipment.dayIndex] += 1;
+      revenueSeries[shipment.dayIndex] += shipment.amount;
     });
 
     return {
       weeklyPackages: packageSeries,
-      weeklyRevenue: revenueSeries.map((value) => Number((value / 1_000_000).toFixed(2)))
+      weeklyRevenue: revenueSeries
     };
   }, [filteredShipments]);
 
@@ -285,10 +306,10 @@ export function AdminDashboard() {
 
     return {
       transaksi: filteredShipments.length,
-      paket: filteredShipments.length * 3 + 1578,
+      paket: filteredShipments.length,
       pendapatan: revenue,
-      berhasil: success + 3410,
-      pending: pending + 182,
+      berhasil: success,
+      pending,
       dikirim: shipped
     };
   }, [filteredShipments]);
@@ -362,11 +383,66 @@ export function AdminDashboard() {
   ];
 
   const summaryCards = [
-    { label: "Total Transaksi", value: totals.transaksi + 1280, tone: "text-[#6c766e]", icon: <ClipboardIcon className="h-4 w-4" /> },
-    { label: "Total Paket", value: totals.paket, tone: "text-[#6c766e]", icon: <PackageIcon className="h-4 w-4" /> },
-    { label: "Pendapatan", value: `Rp ${(totals.pendapatan / 1_000_000 + 42.1).toFixed(1)}M`, tone: "text-[#6c766e]", icon: <MoneyIcon className="h-4 w-4" /> },
-    { label: "Paket Berhasil", value: totals.berhasil, tone: "text-[#6c766e]", icon: <CheckIcon className="h-4 w-4" /> },
-    { label: "Paket Pending", value: totals.pending, tone: "text-[#d06e3e]", icon: <HistoryIcon className="h-4 w-4" /> }
+    {
+      label: "Total Transaksi",
+      value: totals.transaksi,
+      caption: "Semua resi pada filter aktif",
+      chip: "Operasional",
+      icon: <ClipboardIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#eff8ea] text-[#2f7a3f]",
+      ringClassName: "from-[#dff4d7] via-white to-white",
+      valueClassName: "text-[26px] sm:text-[30px]"
+    },
+    {
+      label: "Total Paket",
+      value: totals.paket,
+      caption: "Paket tercatat di dashboard",
+      chip: "Logistik",
+      icon: <PackageIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#eef6ff] text-[#2d6cc4]",
+      ringClassName: "from-[#dcecff] via-white to-white",
+      valueClassName: "text-[26px] sm:text-[30px]"
+    },
+    {
+      label: "Pendapatan",
+      value: formatCurrency(totals.pendapatan),
+      caption: "Akumulasi nominal transaksi",
+      chip: "Keuangan",
+      icon: <MoneyIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#fff4df] text-[#b7791f]",
+      ringClassName: "from-[#ffedc8] via-white to-white",
+      valueClassName: "text-[22px] sm:text-[25px] leading-[1.15] tracking-[-0.03em]"
+    },
+    {
+      label: "Paket Berhasil",
+      value: totals.berhasil,
+      caption: "Status selesai atau sampai",
+      chip: "Sukses",
+      icon: <CheckIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#e7f9ee] text-[#1c8c4c]",
+      ringClassName: "from-[#d7f4e1] via-white to-white",
+      valueClassName: "text-[26px] sm:text-[30px]"
+    },
+    {
+      label: "Paket Pending",
+      value: totals.pending,
+      caption: "Menunggu proses berikutnya",
+      chip: "Perhatian",
+      icon: <HistoryIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#fff1ec] text-[#d05f38]",
+      ringClassName: "from-[#ffe0d5] via-white to-white",
+      valueClassName: "text-[26px] sm:text-[30px]"
+    },
+    {
+      label: "Sedang Dikirim",
+      value: totals.dikirim,
+      caption: "Resi dalam perjalanan aktif",
+      chip: "On Route",
+      icon: <TruckIcon className="h-5 w-5" />,
+      iconClassName: "bg-[#f0efff] text-[#5b57d9]",
+      ringClassName: "from-[#e1dfff] via-white to-white",
+      valueClassName: "text-[26px] sm:text-[30px]"
+    }
   ];
 
   return (
@@ -401,26 +477,33 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-            {summaryCards.map((card, index) => (
+          <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+            {summaryCards.map((card) => (
               <article
                 key={card.label}
-                className="rounded-[28px] bg-white/92 p-5 shadow-[0_16px_34px_rgba(145,176,127,0.14)]"
+                className={`group relative overflow-hidden rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(248,252,246,0.92)_100%)] p-5 shadow-[0_18px_40px_rgba(129,167,112,0.14)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(129,167,112,0.2)]`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#eef9e8] ${card.tone}`}>
+                <div className={`pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,var(--tw-gradient-stops))] opacity-90 ${card.ringClassName}`} />
+                <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(154,192,138,0.65),rgba(255,255,255,0))]" />
+                <div className="relative flex items-start justify-between gap-3">
+                  <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] ${card.iconClassName}`}>
                     {card.icon}
                   </span>
-                  {index === 0 ? (
-                    <span className="rounded-full bg-[#dff9d6] px-2.5 py-1 text-[11px] font-bold text-[#4ca650]">
-                      +12%
-                    </span>
-                  ) : null}
+                  <span className="rounded-full border border-white/80 bg-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#6f7d72] shadow-[0_8px_18px_rgba(152,182,138,0.08)]">
+                    {card.chip}
+                  </span>
                 </div>
-                <p className="mt-4 text-sm text-[#859084]">{card.label}</p>
-                <p className="mt-2 text-[34px] font-extrabold tracking-[-0.04em] text-[#273228]">
+                <div className="relative mt-8">
+                  <p className="text-[13px] font-semibold uppercase tracking-[0.16em] text-[#7a877d]">
+                    {card.label}
+                  </p>
+                  <p className={`mt-3 font-extrabold text-[#223126] ${card.valueClassName || "text-[26px] sm:text-[30px] leading-none tracking-[-0.04em]"}`}>
                   {typeof card.value === "number" ? card.value.toLocaleString("id-ID") : card.value}
-                </p>
+                  </p>
+                  <p className="mt-3 text-[12px] leading-5 text-[#6f7b71]">
+                    {card.caption}
+                  </p>
+                </div>
               </article>
             ))}
           </div>
@@ -452,7 +535,7 @@ export function AdminDashboard() {
             <div className="mt-6 grid h-[240px] grid-cols-7 items-end gap-3">
               {chartMetrics.weeklyPackages.map((value, index) => {
                 const max = Math.max(...chartMetrics.weeklyPackages);
-                const height = `${(value / max) * 100}%`;
+                const height = max > 0 ? `${(value / max) * 100}%` : "0%";
                 const isPeak = value === max && value > 0;
                 return (
                   <div key={longDayLabels[index]} className="flex h-full flex-col justify-end">
@@ -487,7 +570,7 @@ export function AdminDashboard() {
                 </p>
               </div>
               <span className="rounded-full bg-[#dff8d7] px-3 py-1 text-[11px] font-bold text-[#4ba14e]">
-                Rp {Math.max(...chartMetrics.weeklyRevenue).toFixed(2)}M Puncak
+                Puncak {formatCompactCurrency(Math.max(...chartMetrics.weeklyRevenue))}
               </span>
             </div>
 
@@ -606,7 +689,17 @@ export function AdminDashboard() {
                         />
                       </label>
                     </div>
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStartDate("");
+                          setEndDate("");
+                        }}
+                        className="rounded-full border border-[#dfe7dd] px-3 py-2 text-[12px] font-semibold text-[#566156]"
+                      >
+                        Reset
+                      </button>
                       <button
                         type="button"
                         onClick={() => setIsDatePickerOpen(false)}
