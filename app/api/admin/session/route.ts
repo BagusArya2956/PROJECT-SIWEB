@@ -6,7 +6,15 @@ import {
   ADMIN_SESSION_IDENTITY_COOKIE,
   ADMIN_SESSION_ROLE_COOKIE
 } from "@/lib/auth";
-import { findAdminByLogin } from "@/lib/server/admin-auth";
+import { pool } from "@/lib/db";
+
+type AdminLoginRow = {
+  id: string;
+  username: string | null;
+  email: string;
+  role: string | null;
+  password_hash: string | null;
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,14 +27,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Login dan password wajib diisi." }, { status: 400 });
     }
 
-    const admin = await findAdminByLogin(login);
-    if (!admin?.passwordHash) {
+    const userResult = await pool.query<AdminLoginRow>(
+      `
+        SELECT id, username, email, role, password_hash
+        FROM shipin_users
+        WHERE LOWER(email) = $1
+          OR LOWER(COALESCE(username, '')) = $1
+        LIMIT 1
+      `,
+      [login.toLowerCase()]
+    );
+    const admin = userResult.rows[0];
+
+    if (!admin?.password_hash) {
       return NextResponse.json({ message: "Username atau password admin tidak sesuai." }, { status: 401 });
     }
 
-    const isValid = await bcrypt.compare(password, admin.passwordHash);
+    const isValid = await bcrypt.compare(password, admin.password_hash);
     if (!isValid) {
       return NextResponse.json({ message: "Username atau password admin tidak sesuai." }, { status: 401 });
+    }
+
+    if ((admin.role || "").toUpperCase() !== "ADMIN") {
+      return NextResponse.json({ message: "Akun ini tidak memiliki akses Admin." }, { status: 403 });
     }
 
     const maxAge = remember ? 60 * 60 * 24 * 7 : 60 * 60 * 6;

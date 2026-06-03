@@ -31,11 +31,14 @@ type ShipmentRow = {
   id: string;
   itemName?: string;
   itemCategory?: string;
+  itemNote?: string;
   sender: string;
   senderPhone?: string;
   senderCity: string;
   receiver: string;
+  receiverPhone?: string;
   receiverCity: string;
+  weightKg?: number;
   lengthCm?: number;
   widthCm?: number;
   heightCm?: number;
@@ -54,10 +57,6 @@ const statusOptions = ["Semua", "Dikirim", "Selesai", "Pending"] as const;
 const paymentOptions = ["Semua", "Lunas", "Menunggu"] as const;
 const serviceOptions = ["Semua", "Reguler", "Same-Day", "Ekspres"] as const;
 const ITEMS_PER_PAGE = 5;
-
-function sensitiveBlurClass(isRevealed: boolean) {
-  return isRevealed ? "" : "blur-[4px] select-none";
-}
 
 function toDayStart(value: string) {
   return value ? new Date(`${value}T00:00:00`).getTime() : null;
@@ -102,6 +101,15 @@ function formatDateRangeLabel(startDate: string, endDate: string) {
 
 function formatCurrency(amount: number) {
   return `Rp ${amount.toLocaleString("id-ID")}`;
+}
+
+function escapeHtml(value: string | number | null | undefined) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function statusBadgeTone(status: ShipmentStatus) {
@@ -153,11 +161,14 @@ function mapShipmentRows(rows: ShipmentRecord[]): ShipmentRow[] {
       id: row.id,
       itemName: row.itemName,
       itemCategory: row.itemCategory,
+      itemNote: row.itemNote,
       sender: row.sender,
       senderPhone: row.senderPhone,
       senderCity: row.originCity || extractCityFromAddress(row.senderAddress),
       receiver: row.receiver,
+      receiverPhone: row.receiverPhone,
       receiverCity: row.destinationCity || extractCityFromAddress(row.receiverAddress),
+      weightKg: row.weightKg,
       lengthCm: row.lengthCm,
       widthCm: row.widthCm,
       heightCm: row.heightCm,
@@ -209,8 +220,8 @@ export function AdminDashboard() {
   const [endDate, setEndDate] = useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [revealedRows, setRevealedRows] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let active = true;
@@ -283,6 +294,19 @@ export function AdminDashboard() {
     }
   }, [currentPage, totalPages]);
 
+  useEffect(() => {
+    if (!isDetailModalOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsDetailModalOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isDetailModalOpen]);
+
   const chartMetrics = useMemo(() => {
     const packageSeries = Array.from({ length: 7 }, () => 0);
     const revenueSeries = Array.from({ length: 7 }, () => 0);
@@ -327,41 +351,384 @@ export function AdminDashboard() {
     setSelectedShipmentId(id);
   }
 
-  function toggleSensitiveRow(id: string) {
-    setRevealedRows((current) => ({
-      ...current,
-      [id]: !current[id]
-    }));
-  }
-
   function printShipmentLabel() {
     const target = selectedShipment ?? filteredShipments[0];
 
     if (!target) return;
 
-    const printWindow = window.open("", "_blank", "width=720,height=860");
+    const printedAt = new Date().toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const createdAt = new Date(target.createdAt).toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const dimension = `${target.lengthCm || 0} x ${target.widthCm || 0} x ${target.heightCm || 0} cm`;
+    const weight = `${(target.weightKg || 0).toFixed(2)} kg`;
+    const barcodeBars = target.id
+      .split("")
+      .map((char, index) => {
+        const width = ((char.charCodeAt(0) + index) % 4) + 2;
+        return `<span style="width:${width}px"></span>`;
+      })
+      .join("");
+
+    const receipt = {
+      id: escapeHtml(target.id),
+      sender: escapeHtml(target.sender),
+      senderCity: escapeHtml(target.senderCity),
+      senderPhone: escapeHtml(target.senderPhone || "-"),
+      receiver: escapeHtml(target.receiver),
+      receiverCity: escapeHtml(target.receiverCity),
+      receiverPhone: escapeHtml(target.receiverPhone || "-"),
+      service: escapeHtml(target.service),
+      status: escapeHtml(target.status),
+      payment: escapeHtml(target.payment),
+      amount: escapeHtml(formatCurrency(target.amount)),
+      itemName: escapeHtml(target.itemName || "-"),
+      itemCategory: escapeHtml(target.itemCategory || "-"),
+      itemNote: escapeHtml(target.itemNote || "-"),
+      dimension: escapeHtml(dimension),
+      weight: escapeHtml(weight),
+      createdAt: escapeHtml(createdAt),
+      printedAt: escapeHtml(printedAt)
+    };
+
+    const printWindow = window.open("", "_blank", "width=840,height=980");
     if (!printWindow) return;
 
     printWindow.document.write(`
-      <html>
+      <!doctype html>
+      <html lang="id">
         <head>
-          <title>Cetak Resi ${target.id}</title>
+          <title>Cetak Resi ${receipt.id}</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 32px; color: #1b4332; }
-            .card { border: 2px solid #1b4332; border-radius: 24px; padding: 24px; }
-            h1 { margin: 0 0 12px; }
-            p { margin: 8px 0; font-size: 16px; }
+            * { box-sizing: border-box; }
+            body {
+              margin: 0;
+              background: #e8efe5;
+              color: #172118;
+              font-family: Inter, Arial, Helvetica, sans-serif;
+              padding: 28px;
+            }
+            .receipt {
+              width: 760px;
+              margin: 0 auto;
+              overflow: hidden;
+              border: 1px solid #cfdccc;
+              border-radius: 22px;
+              background: #ffffff;
+              box-shadow: 0 18px 54px rgba(30, 54, 34, 0.16);
+            }
+            .top {
+              display: grid;
+              grid-template-columns: 1.2fr 0.8fr;
+              gap: 20px;
+              padding: 26px 28px;
+              color: #ffffff;
+              background: linear-gradient(135deg, #123d26 0%, #1a7f3f 100%);
+            }
+            .brand {
+              margin: 0;
+              font-size: 30px;
+              line-height: 1;
+              font-weight: 900;
+              letter-spacing: 0.08em;
+            }
+            .tagline {
+              margin: 8px 0 0;
+              font-size: 12px;
+              letter-spacing: 0.16em;
+              text-transform: uppercase;
+              color: rgba(255, 255, 255, 0.72);
+            }
+            .meta {
+              text-align: right;
+              font-size: 12px;
+              line-height: 1.7;
+              color: rgba(255, 255, 255, 0.84);
+            }
+            .meta strong {
+              display: block;
+              color: #ffffff;
+              font-size: 18px;
+              line-height: 1.2;
+            }
+            .hero {
+              display: grid;
+              grid-template-columns: 1fr 220px;
+              gap: 20px;
+              padding: 22px 28px;
+              border-bottom: 1px dashed #cfdccc;
+              background: #fbfdf9;
+            }
+            .label {
+              margin: 0;
+              color: #78847b;
+              font-size: 10px;
+              font-weight: 800;
+              letter-spacing: 0.22em;
+              text-transform: uppercase;
+            }
+            .resi {
+              margin: 7px 0 0;
+              color: #102017;
+              font-size: 31px;
+              font-weight: 900;
+              letter-spacing: 0.04em;
+            }
+            .chip-row {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              margin-top: 14px;
+            }
+            .chip {
+              border-radius: 999px;
+              background: #eaf8ee;
+              color: #13723c;
+              padding: 7px 11px;
+              font-size: 11px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.08em;
+            }
+            .barcode {
+              height: 76px;
+              display: flex;
+              align-items: stretch;
+              justify-content: center;
+              gap: 3px;
+              border: 1px solid #dce6d8;
+              border-radius: 14px;
+              background: #ffffff;
+              padding: 12px;
+            }
+            .barcode span {
+              display: block;
+              min-width: 2px;
+              background: #172118;
+              border-radius: 2px;
+            }
+            .barcode-text {
+              margin-top: 8px;
+              text-align: center;
+              color: #667269;
+              font-size: 10px;
+              font-weight: 800;
+              letter-spacing: 0.16em;
+            }
+            .content {
+              padding: 24px 28px 28px;
+            }
+            .route {
+              display: grid;
+              grid-template-columns: 1fr 70px 1fr;
+              gap: 16px;
+              align-items: stretch;
+            }
+            .party, .box {
+              border: 1px solid #e4ece2;
+              border-radius: 18px;
+              background: #f7faf4;
+              padding: 17px;
+            }
+            .party h2, .box h2 {
+              margin: 0 0 12px;
+              color: #708078;
+              font-size: 11px;
+              font-weight: 900;
+              letter-spacing: 0.18em;
+              text-transform: uppercase;
+            }
+            .name {
+              margin: 0;
+              color: #172118;
+              font-size: 18px;
+              font-weight: 900;
+            }
+            .muted {
+              margin: 6px 0 0;
+              color: #5f6d63;
+              font-size: 13px;
+              line-height: 1.5;
+            }
+            .arrow {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #147a3a;
+              font-size: 26px;
+              font-weight: 900;
+            }
+            .grid {
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 12px;
+              margin-top: 16px;
+            }
+            .box {
+              min-height: 94px;
+            }
+            .box p {
+              margin: 0;
+              color: #172118;
+              font-size: 14px;
+              font-weight: 800;
+              line-height: 1.4;
+            }
+            .summary {
+              display: grid;
+              grid-template-columns: 1fr 230px;
+              gap: 16px;
+              margin-top: 16px;
+            }
+            .note {
+              border: 1px solid #e4ece2;
+              border-radius: 18px;
+              padding: 17px;
+            }
+            .total {
+              border-radius: 18px;
+              background: #172118;
+              color: #ffffff;
+              padding: 18px;
+            }
+            .total .label {
+              color: rgba(255, 255, 255, 0.62);
+            }
+            .total strong {
+              display: block;
+              margin-top: 8px;
+              font-size: 24px;
+              line-height: 1;
+            }
+            .footer {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              padding: 18px 28px;
+              border-top: 1px dashed #cfdccc;
+              color: #69766d;
+              font-size: 11px;
+              line-height: 1.5;
+              background: #fbfdf9;
+            }
+            .footer strong {
+              color: #172118;
+            }
+            @media print {
+              body {
+                background: #ffffff;
+                padding: 0;
+              }
+              .receipt {
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                border: 0;
+              }
+              @page {
+                margin: 12mm;
+              }
+            }
           </style>
         </head>
         <body>
-          <div class="card">
-            <h1>SHIPIN GO</h1>
-            <p><strong>Resi:</strong> ${target.id}</p>
-            <p><strong>Pengirim:</strong> ${target.sender} (${target.senderCity})</p>
-            <p><strong>Penerima:</strong> ${target.receiver} (${target.receiverCity})</p>
-            <p><strong>Layanan:</strong> ${target.service}</p>
-            <p><strong>Status:</strong> ${target.status}</p>
-            <p><strong>Total:</strong> ${formatCurrency(target.amount)}</p>
+          <div class="receipt">
+            <section class="top">
+              <div>
+                <h1 class="brand">SHIPIN GO</h1>
+                <p class="tagline">Professional Shipping Receipt</p>
+              </div>
+              <div class="meta">
+                Dicetak<br />
+                <strong>${receipt.printedAt}</strong>
+                Tanggal transaksi: ${receipt.createdAt}
+              </div>
+            </section>
+
+            <section class="hero">
+              <div>
+                <p class="label">Nomor Resi</p>
+                <p class="resi">${receipt.id}</p>
+                <div class="chip-row">
+                  <span class="chip">${receipt.service}</span>
+                  <span class="chip">${receipt.status}</span>
+                  <span class="chip">${receipt.payment}</span>
+                </div>
+              </div>
+              <div>
+                <div class="barcode">${barcodeBars}</div>
+                <div class="barcode-text">${receipt.id}</div>
+              </div>
+            </section>
+
+            <main class="content">
+              <section class="route">
+                <div class="party">
+                  <h2>Pengirim</h2>
+                  <p class="name">${receipt.sender}</p>
+                  <p class="muted">${receipt.senderCity}</p>
+                  <p class="muted">${receipt.senderPhone}</p>
+                </div>
+                <div class="arrow">-&gt;</div>
+                <div class="party">
+                  <h2>Penerima</h2>
+                  <p class="name">${receipt.receiver}</p>
+                  <p class="muted">${receipt.receiverCity}</p>
+                  <p class="muted">${receipt.receiverPhone}</p>
+                </div>
+              </section>
+
+              <section class="grid">
+                <div class="box">
+                  <h2>Nama Barang</h2>
+                  <p>${receipt.itemName}</p>
+                </div>
+                <div class="box">
+                  <h2>Jenis Barang</h2>
+                  <p>${receipt.itemCategory}</p>
+                </div>
+                <div class="box">
+                  <h2>Berat</h2>
+                  <p>${receipt.weight}</p>
+                </div>
+                <div class="box">
+                  <h2>Dimensi</h2>
+                  <p>${receipt.dimension}</p>
+                </div>
+              </section>
+
+              <section class="summary">
+                <div class="note">
+                  <p class="label">Catatan Barang</p>
+                  <p class="muted">${receipt.itemNote}</p>
+                </div>
+                <div class="total">
+                  <p class="label">Total Biaya</p>
+                  <strong>${receipt.amount}</strong>
+                </div>
+              </section>
+            </main>
+
+            <section class="footer">
+              <div>
+                <strong>Instruksi pengiriman</strong><br />
+                Simpan struk ini sebagai bukti transaksi. Pastikan nomor resi sesuai saat pelacakan.
+              </div>
+              <div>
+                <strong>SHIPIN GO Admin</strong><br />
+                Dokumen ini dibuat otomatis oleh sistem operasional SHIPIN GO.
+              </div>
+            </section>
           </div>
         </body>
       </html>
@@ -369,6 +736,11 @@ export function AdminDashboard() {
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
+  }
+
+  function openShipmentDetail(id: string) {
+    setSelectedShipmentId(id);
+    setIsDetailModalOpen(true);
   }
 
   const sparkline = buildSparkline(chartMetrics.weeklyRevenue);
@@ -448,7 +820,7 @@ export function AdminDashboard() {
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(185,250,165,0.5),_transparent_28%),linear-gradient(180deg,#f7fbf3_0%,#f0f7eb_100%)] p-4 sm:p-5 lg:p-6">
       <div className="mx-auto max-w-7xl space-y-5">
-        <section className="rounded-[34px] bg-[radial-gradient(circle_at_top_left,_rgba(180,251,166,0.52),_transparent_30%),linear-gradient(180deg,#effbe9_0%,#e8f7e2_100%)] p-5 shadow-[0_24px_60px_rgba(175,209,157,0.22)] sm:p-6 lg:p-8">
+        <section className="admin-dashboard-hero rounded-[34px] bg-[radial-gradient(circle_at_top_left,_rgba(180,251,166,0.52),_transparent_30%),linear-gradient(180deg,#effbe9_0%,#e8f7e2_100%)] p-5 shadow-[0_24px_60px_rgba(175,209,157,0.22)] sm:p-6 lg:p-8">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#6aa05f]">
@@ -481,7 +853,7 @@ export function AdminDashboard() {
             {summaryCards.map((card) => (
               <article
                 key={card.label}
-                className={`group relative overflow-hidden rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(248,252,246,0.92)_100%)] p-5 shadow-[0_18px_40px_rgba(129,167,112,0.14)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(129,167,112,0.2)]`}
+                className={`admin-summary-card group relative overflow-hidden rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(248,252,246,0.92)_100%)] p-5 shadow-[0_18px_40px_rgba(129,167,112,0.14)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(129,167,112,0.2)]`}
               >
                 <div className={`pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,var(--tw-gradient-stops))] opacity-90 ${card.ringClassName}`} />
                 <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(154,192,138,0.65),rgba(255,255,255,0))]" />
@@ -510,7 +882,7 @@ export function AdminDashboard() {
         </section>
 
         <section className="grid gap-5 lg:grid-cols-[1.45fr_0.85fr]">
-          <article className="rounded-[34px] bg-white p-5 shadow-[0_18px_44px_rgba(155,184,143,0.18)] sm:p-6">
+          <article className="admin-chart-card rounded-[34px] bg-white p-5 shadow-[0_18px_44px_rgba(155,184,143,0.18)] sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-[24px] font-bold tracking-[-0.03em] text-[#2a332b]">
@@ -559,7 +931,7 @@ export function AdminDashboard() {
             </div>
           </article>
 
-          <article className="rounded-[34px] bg-white p-5 shadow-[0_18px_44px_rgba(155,184,143,0.18)] sm:p-6">
+          <article className="admin-chart-card rounded-[34px] bg-white p-5 shadow-[0_18px_44px_rgba(155,184,143,0.18)] sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-[24px] font-bold tracking-[-0.03em] text-[#2a332b]">
@@ -735,25 +1107,25 @@ export function AdminDashboard() {
                         <button
                           type="button"
                           onClick={() => setSelectedShipmentId(shipment.id)}
-                          className={`font-bold text-[#2b8b45] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}
+                          className="font-bold text-[#2b8b45] transition hover:text-[#176b31]"
                         >
                           {shipment.id}
                         </button>
                       </td>
                       <td className="px-6 py-5">
-                        <p className={`font-semibold text-[#2a332b] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}>{shipment.sender}</p>
-                        <p className={`text-sm text-[#8a938a] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}>{shipment.senderCity}</p>
+                        <p className="font-semibold text-[#2a332b] transition">{shipment.sender}</p>
+                        <p className="text-sm text-[#8a938a] transition">{shipment.senderCity}</p>
                       </td>
                       <td className="px-6 py-5">
                         <span
-                          className={`inline-block text-sm text-[#556055] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}
+                          className="inline-block text-sm text-[#556055] transition"
                         >
                           {shipment.senderPhone || "-"}
                         </span>
                       </td>
                       <td className="px-6 py-5">
-                        <p className={`font-semibold text-[#2a332b] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}>{shipment.receiver}</p>
-                        <p className={`text-sm text-[#8a938a] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}>{shipment.receiverCity}</p>
+                        <p className="font-semibold text-[#2a332b] transition">{shipment.receiver}</p>
+                        <p className="text-sm text-[#8a938a] transition">{shipment.receiverCity}</p>
                       </td>
                       <td className="px-6 py-5">
                         <select
@@ -761,22 +1133,22 @@ export function AdminDashboard() {
                           onChange={(event) =>
                             updateShipmentStatus(shipment.id, event.target.value as ShipmentStatus)
                           }
-                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold outline-none transition ${statusBadgeTone(shipment.status)} ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}
+                          className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold outline-none transition ${statusBadgeTone(shipment.status)}`}
                         >
                           <option value="Dikirim">Dikirim</option>
                           <option value="Selesai">Selesai</option>
                           <option value="Pending">Pending</option>
                         </select>
                       </td>
-                      <td className={`px-6 py-5 font-semibold text-[#444d44] transition ${sensitiveBlurClass(Boolean(revealedRows[shipment.id]))}`}>
+                      <td className="px-6 py-5 font-semibold text-[#444d44] transition">
                         {formatCurrency(shipment.amount)}
                       </td>
                       <td className="px-6 py-5">
                         <button
                           type="button"
-                          onClick={() => toggleSensitiveRow(shipment.id)}
+                          onClick={() => openShipmentDetail(shipment.id)}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#eef9e8] text-[#2f9344]"
-                          aria-label={revealedRows[shipment.id] ? "Sembunyikan data sensitif" : "Tampilkan data sensitif"}
+                          aria-label="Tampilkan detail barang"
                         >
                           <EyeIcon className="h-4 w-4" />
                         </button>
@@ -824,59 +1196,105 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          {selectedShipment ? (
-            <article className="rounded-[28px] bg-white p-5 shadow-[0_14px_32px_rgba(155,184,143,0.16)]">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#7e8d7f]">
-                    Detail Resi
-                  </p>
-                  <h3 className="mt-2 text-2xl font-extrabold text-[#283128]">{selectedShipment.id}</h3>
+          {isDetailModalOpen && selectedShipment ? (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-[#172118]/45 px-4 py-6 backdrop-blur-sm"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="shipment-detail-title"
+              onClick={() => setIsDetailModalOpen(false)}
+            >
+              <article
+                className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-[0_28px_80px_rgba(21,38,25,0.28)]"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <div className="flex flex-col gap-4 border-b border-[#edf1ea] bg-[#fbfdf9] px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#7e8d7f]">
+                      Detail Resi
+                    </p>
+                    <h3 id="shipment-detail-title" className="mt-2 text-[26px] font-extrabold tracking-[-0.03em] text-[#223126]">
+                      {selectedShipment.id}
+                    </h3>
+                    <p className="mt-1 text-sm font-semibold text-[#748076]">
+                      {selectedShipment.itemName || "Barang"} - {selectedShipment.service}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={printShipmentLabel}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#9df28f] px-4 py-3 text-sm font-semibold text-[#175e35]"
+                    >
+                      <PrinterIcon className="h-4 w-4" />
+                      Cetak Resi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDetailModalOpen(false)}
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#dfe7dd] bg-white text-[#5d6a60] transition hover:bg-[#f4f8f1]"
+                      aria-label="Tutup detail barang"
+                    >
+                      <span className="text-2xl leading-none">&times;</span>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={printShipmentLabel}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#9df28f] px-4 py-3 text-sm font-semibold text-[#175e35]"
-                >
-                  <PrinterIcon className="h-4 w-4" />
-                  Cetak Resi Terpilih
-                </button>
-              </div>
-              <div className="mt-5 grid gap-4 md:grid-cols-3">
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Pengirim</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">{selectedShipment.sender}</p>
-                  <p className="text-sm text-[#7e887f]">{selectedShipment.senderCity}</p>
-                  <p className="text-sm text-[#7e887f]">{selectedShipment.senderPhone || "-"}</p>
+
+                <div className="max-h-[calc(92vh-118px)] overflow-y-auto px-5 py-5 sm:px-6">
+                  <div className="grid gap-4 lg:grid-cols-3">
+                    <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Pengirim</p>
+                      <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedShipment.sender}</p>
+                      <p className="mt-1 text-sm text-[#667269]">{selectedShipment.senderCity}</p>
+                      <p className="text-sm text-[#667269]">{selectedShipment.senderPhone || "-"}</p>
+                    </div>
+                    <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Penerima</p>
+                      <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedShipment.receiver}</p>
+                      <p className="mt-1 text-sm text-[#667269]">{selectedShipment.receiverCity}</p>
+                      <p className="text-sm text-[#667269]">{selectedShipment.receiverPhone || "-"}</p>
+                    </div>
+                    <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Layanan & Biaya</p>
+                      <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedShipment.service}</p>
+                      <p className="mt-1 text-sm font-bold text-[#1f8f4e]">{formatCurrency(selectedShipment.amount)}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 rounded-[22px] border border-[#e8eee5] bg-white p-4">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8e988f]">Detail Barang</p>
+                        <h4 className="mt-2 text-xl font-extrabold text-[#223126]">
+                          {selectedShipment.itemName || "-"}
+                        </h4>
+                      </div>
+                      <span className="w-fit rounded-full bg-[#eaf8ee] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1d7f33]">
+                        {selectedShipment.status}
+                      </span>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                      {[
+                        ["Jenis Barang", selectedShipment.itemCategory || "-"],
+                        ["Berat", `${(selectedShipment.weightKg || 0).toFixed(2)} kg`],
+                        [
+                          "Dimensi",
+                          `${selectedShipment.lengthCm || 0} x ${selectedShipment.widthCm || 0} x ${selectedShipment.heightCm || 0} cm`
+                        ],
+                        ["Pembayaran", selectedShipment.payment],
+                        ["Catatan Barang", selectedShipment.itemNote || "-"]
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-[16px] bg-[#f4f8f1] px-4 py-3">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8e988f]">{label}</p>
+                          <p className="mt-2 text-sm font-bold text-[#273228]">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Penerima</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">{selectedShipment.receiver}</p>
-                  <p className="text-sm text-[#7e887f]">{selectedShipment.receiverCity}</p>
-                </div>
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Layanan</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">{selectedShipment.service}</p>
-                  <p className="text-sm text-[#7e887f]">{formatCurrency(selectedShipment.amount)}</p>
-                </div>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-3">
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Nama Barang</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">{selectedShipment.itemName || "-"}</p>
-                </div>
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Jenis Barang</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">{selectedShipment.itemCategory || "-"}</p>
-                </div>
-                <div className="rounded-[22px] bg-[#f4f8f1] p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-[#8e988f]">Dimensi</p>
-                  <p className="mt-2 font-semibold text-[#2a332b]">
-                    {selectedShipment.lengthCm || 0} x {selectedShipment.widthCm || 0} x {selectedShipment.heightCm || 0} cm
-                  </p>
-                </div>
-              </div>
-            </article>
+              </article>
+            </div>
           ) : null}
         </section>
       </div>

@@ -81,8 +81,8 @@ function normalizeResiInput(value: string) {
 
 function validateResiInput(value: string) {
   const normalized = normalizeResiInput(value);
-  if (!normalized) return "Nomor resi tidak boleh kosong";
-  if (!/^SPG-[A-Z0-9]{3,}-ID$/.test(normalized)) return "Format nomor resi tidak valid";
+  if (!normalized) return "Nomor resi tidak boleh kosong.";
+  if (!/^SPG-[A-Z0-9]{3,}-ID$/.test(normalized)) return "Format nomor resi tidak valid.";
   return "";
 }
 
@@ -110,6 +110,8 @@ export function LacakPaketPage() {
   const [resiInput, setResiInput] = useState("");
   const [activeResi, setActiveResi] = useState("");
   const [isNotFound, setIsNotFound] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchState, setSearchState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [rows, setRows] = useState<ShipmentRecord[]>([]);
   const [checkpoints, setCheckpoints] = useState<CheckpointRecord[]>([]);
   const [fieldError, setFieldError] = useState("");
@@ -122,7 +124,8 @@ export function LacakPaketPage() {
         setRows([]);
         setActiveResi("");
         setIsNotFound(true);
-        setFieldError("Nomor resi tidak ditemukan");
+        setSearchState("error");
+        setFieldError("Nomor resi tidak ditemukan.");
         setCheckpoints([]);
         return;
       }
@@ -132,14 +135,20 @@ export function LacakPaketPage() {
       setResiInput(data.shipment.id);
       setFieldError("");
       setIsNotFound(false);
+      setSearchState("success");
       setCheckpoints(
         (data.checkpoints || []).map((checkpoint) => ({
           ...checkpoint,
           waktu: new Date(checkpoint.waktu)
         }))
       );
-    } catch {
-      setToastMessage("Gagal mengambil data, silakan coba lagi");
+    } catch (error) {
+      setRows([]);
+      setActiveResi("");
+      setIsNotFound(false);
+      setSearchState("error");
+      setCheckpoints([]);
+      setFieldError(error instanceof Error ? error.message : "Gagal mengambil data, silakan coba lagi.");
     }
   }
 
@@ -169,7 +178,8 @@ export function LacakPaketPage() {
           setActiveResi("");
           setResiInput(resiFromQuery);
           setIsNotFound(true);
-          setFieldError("Nomor resi tidak ditemukan");
+          setSearchState("error");
+          setFieldError("Nomor resi tidak ditemukan.");
           setCheckpoints([]);
           return;
         }
@@ -179,6 +189,7 @@ export function LacakPaketPage() {
         setResiInput(data.shipment.id);
         setIsNotFound(false);
         setFieldError("");
+        setSearchState("success");
         setCheckpoints(
           (data.checkpoints || []).map((checkpoint) => ({
             ...checkpoint,
@@ -187,12 +198,16 @@ export function LacakPaketPage() {
         );
       } catch {
         if (active) {
-          setToastMessage("Gagal mengambil data, silakan coba lagi");
+          setSearchState("error");
+          setFieldError("Gagal mengambil data, silakan coba lagi.");
         }
       }
     }
 
-    hydrate().catch(() => setToastMessage("Gagal mengambil data, silakan coba lagi"));
+    hydrate().catch(() => {
+      setSearchState("error");
+      setFieldError("Gagal mengambil data, silakan coba lagi.");
+    });
 
     return () => {
       active = false;
@@ -300,13 +315,22 @@ export function LacakPaketPage() {
     if (validationMessage) {
       setFieldError(validationMessage);
       setIsNotFound(false);
+      setSearchState("error");
       return;
     }
 
     setFieldError("");
     setToastMessage("");
-    await runProgressCheck().catch(() => null);
-    await loadTracking(normalized);
+    setIsSearching(true);
+    setSearchState("loading");
+    setIsNotFound(false);
+
+    try {
+      await runProgressCheck().catch(() => null);
+      await loadTracking(normalized);
+    } finally {
+      setIsSearching(false);
+    }
   }
 
   return (
@@ -330,6 +354,8 @@ export function LacakPaketPage() {
               value={resiInput}
               onChange={(event) => {
                 setResiInput(event.target.value);
+                setIsNotFound(false);
+                if (searchState === "success") setSearchState("idle");
                 if (fieldError) {
                   setFieldError(validateResiInput(event.target.value));
                 }
@@ -346,29 +372,35 @@ export function LacakPaketPage() {
             <button
               type="button"
               onClick={handleSearch}
+              disabled={isSearching}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-shipin-deep px-6 text-sm font-semibold text-white hover:bg-[#12572f]"
             >
               <SearchIcon className="h-4 w-4" />
-              Cari Resi
+              {isSearching ? "Mencari..." : "Cari Resi"}
             </button>
           </div>
 
           {fieldError ? <p className="mt-2 text-[13px] font-medium text-[#b42318]">{fieldError}</p> : null}
 
-          {isNotFound ? (
-            <div className="mt-4 rounded-[16px] border border-[#f0d6d6] bg-[#fff4f4] px-4 py-3 text-[13px] font-semibold text-[#bf3b3b]">
-              Nomor resi tidak ditemukan
+          {searchState === "loading" ? (
+            <div className="mt-4 rounded-[16px] border border-[#dfe8df] bg-[#f8faf7] px-4 py-3 text-[13px] font-semibold text-[#536158]">
+              Mencari data resi...
             </div>
           ) : null}
 
-          {!activeShipment ? (
-            <div className="mt-6 rounded-[24px] border border-dashed border-[#d9e1d8] bg-[#f8faf7] px-5 py-8 text-center">
-              <p className="text-[16px] font-bold text-[#314036]">Masukkan nomor resi untuk mulai melacak</p>
-              <p className="mt-2 text-[13px] text-[#748076]">
-                Data pengiriman akan muncul setelah nomor resi yang valid dicari.
-              </p>
+          {isNotFound ? (
+            <div className="mt-4 rounded-[16px] border border-[#f0d6d6] bg-[#fff4f4] px-4 py-3 text-[13px] font-semibold text-[#bf3b3b]">
+              Nomor resi tidak ditemukan.
             </div>
-          ) : (
+          ) : null}
+
+          {searchState === "success" && activeShipment ? (
+            <div className="mt-4 rounded-[16px] border border-[#cfead4] bg-[#f0fbf1] px-4 py-3 text-[13px] font-semibold text-[#19733d]">
+              Data resi berhasil ditemukan.
+            </div>
+          ) : null}
+
+          {activeShipment ? (
             <div className="mt-7 grid gap-5 lg:items-start lg:grid-cols-[0.9fr_1.1fr]">
               <article className="hover-lift rounded-[28px] border border-[#e5eae3] bg-[#f9faf8] p-5 shadow-[0_18px_34px_rgba(174,183,169,0.18)]">
                 <div className="rounded-[16px] border border-[#e3e8e1] bg-white px-4 py-3">
@@ -506,7 +538,14 @@ export function LacakPaketPage() {
                 </div>
               </article>
             </div>
-          )}
+          ) : searchState !== "loading" ? (
+            <div className="mt-6 rounded-[24px] border border-dashed border-[#d9e1d8] bg-[#f8faf7] px-5 py-8 text-center">
+              <p className="text-[16px] font-bold text-[#314036]">Masukkan nomor resi untuk mulai melacak</p>
+              <p className="mt-2 text-[13px] text-[#748076]">
+                Data pengiriman akan muncul setelah nomor resi yang valid dicari.
+              </p>
+            </div>
+          ) : null}
 
           <div className="mt-5 flex flex-col gap-3 rounded-[20px] border border-[#dff0df] bg-[#ebf9ea] p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">

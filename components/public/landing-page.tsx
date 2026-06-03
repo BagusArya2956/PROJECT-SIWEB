@@ -21,6 +21,7 @@ import {
 } from "@/components/icons";
 import { PrimaryButton } from "@/components/ui/primary-button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { FooterThemeControl } from "@/components/ui/app-preferences";
 
 const features = [
   {
@@ -419,7 +420,7 @@ export function LandingPage() {
 
       <footer id="kontak" className="mt-10 bg-white/85">
         <div className="shell py-12">
-          <div className="grid gap-10 border-b border-[#e8ebe4] pb-10 md:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr]">
+          <div className="grid gap-10 border-b border-[#e8ebe4] pb-10 md:grid-cols-2 lg:grid-cols-[1.25fr_0.7fr_0.7fr_1fr]">
             <div>
               <p className="text-[18px] font-extrabold tracking-[-0.03em] text-shipin-deep">SHIPIN GO</p>
               <p className="mt-5 max-w-[360px] text-[15px] leading-8 text-shipin-text">
@@ -443,6 +444,7 @@ export function LandingPage() {
                 <li>Kebijakan Privasi</li>
               </ul>
             </div>
+            <FooterThemeControl />
           </div>
           <div className="flex flex-col gap-4 pt-7 text-[14px] text-shipin-text sm:flex-row sm:items-center sm:justify-between">
             <p>© 2024 SHIPIN GO. Hak Cipta Dilindungi.</p>

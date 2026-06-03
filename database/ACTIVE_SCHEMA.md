@@ -22,6 +22,8 @@ Skema akhir yang aktif dipakai aplikasi per 31 Mei 2026:
   Event tracking untuk progres pengiriman dan tampilan peta/lacak.
 - `shipin_reviews`
   Sumber rating pengirim yang dibaca dinamis di halaman profile admin, admin ulasan, dan halaman ulasan publik.
+- `shipin_admin_codes`
+  Kode undangan admin yang disimpan sebagai hash/fingerprint server-side dan ditandai terpakai setelah satu admin berhasil register.
 - `riwayat_pengiriman`
   Timeline checkpoint histori untuk detail pelacakan.
 

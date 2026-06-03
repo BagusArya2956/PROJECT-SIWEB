@@ -878,7 +878,7 @@ function AdminKirimPaketContent() {
             </BlockCard>
           </div>
 
-          <aside className="rounded-[34px] border border-[#95e198] bg-[linear-gradient(180deg,#9cf09b_0%,#95eb92_35%,#90e58f_100%)] p-8 text-[#143f25] shadow-[0_22px_45px_rgba(107,188,121,0.3)] xl:sticky xl:top-6">
+          <aside className="admin-cost-sidebar rounded-[34px] border border-[#95e198] bg-[linear-gradient(180deg,#9cf09b_0%,#95eb92_35%,#90e58f_100%)] p-8 text-[#143f25] shadow-[0_22px_45px_rgba(107,188,121,0.3)] xl:sticky xl:top-6">
             <h2 className="text-[28px] font-extrabold leading-none tracking-[-0.05em] text-[#133d24] sm:text-[31px]">
               Ringkasan Biaya
             </h2>
@@ -917,12 +917,12 @@ function AdminKirimPaketContent() {
               </p>
             ) : null}
 
-            <div className="mt-8 rounded-[32px] bg-[radial-gradient(circle_at_top,_rgba(236,255,232,0.95),rgba(210,247,201,0.88))] px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
+            <div className="admin-qris-panel mt-8 rounded-[32px] bg-[radial-gradient(circle_at_top,_rgba(236,255,232,0.95),rgba(210,247,201,0.88))] px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
               <p className="text-center text-[12px] font-extrabold uppercase tracking-[0.08em] text-[#18482d] sm:text-[13px]">
                 Metode Pembayaran: QRIS
               </p>
 
-              <div className="mt-6 rounded-[30px] bg-white px-5 py-4 shadow-[0_14px_34px_rgba(111,174,111,0.16)]">
+              <div className="admin-qris-box mt-6 rounded-[30px] bg-white px-5 py-4 shadow-[0_14px_34px_rgba(111,174,111,0.16)]">
                 {hasCoreData ? (
                   <div className="mx-auto flex h-[120px] max-w-[270px] items-center gap-3 rounded-[10px] border border-[#d7d9db] bg-[linear-gradient(180deg,#f3f3f5_0%,#ededf0_100%)] px-3 text-[#5f6661] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.02)]">
                     <div className="grid h-[84px] w-[84px] grid-cols-7 gap-[2px] rounded bg-white p-[4px]">
@@ -949,7 +949,7 @@ function AdminKirimPaketContent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="mx-auto flex h-[84px] max-w-[270px] items-center justify-center rounded-[10px] border border-dashed border-[#c8d8c6] bg-[#f4faf2] text-center text-[11px] font-semibold tracking-[0.04em] text-[#6a806e]">
+                  <div className="admin-qris-empty mx-auto flex h-[84px] max-w-[270px] items-center justify-center rounded-[10px] border border-dashed border-[#c8d8c6] bg-[#f4faf2] text-center text-[11px] font-semibold tracking-[0.04em] text-[#6a806e]">
                     QRIS akan muncul setelah data inti lengkap
                   </div>
                 )}
@@ -978,7 +978,7 @@ function AdminKirimPaketContent() {
               </p>
             ) : null}
 
-            <div className="mt-6 flex items-start gap-3 rounded-[999px] bg-[linear-gradient(180deg,rgba(203,250,191,0.82),rgba(181,242,171,0.82))] px-5 py-4 text-[12px] leading-6 text-[#2d6843] shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
+            <div className="admin-secure-note mt-6 flex items-start gap-3 rounded-[999px] bg-[linear-gradient(180deg,rgba(203,250,191,0.82),rgba(181,242,171,0.82))] px-5 py-4 text-[12px] leading-6 text-[#2d6843] shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
               <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#daf7d1] text-[#1e713c]">
                 <ShieldIcon className="h-4 w-4" />
               </span>

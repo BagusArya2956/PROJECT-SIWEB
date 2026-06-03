@@ -58,6 +58,17 @@ type TrackingRow = {
   occurred_at: string;
 };
 
+function normalizeResiInput(value: string) {
+  return value.toUpperCase().replace(/[^A-Z0-9-]/g, "").trim();
+}
+
+function validateResiInput(value: string) {
+  const normalized = normalizeResiInput(value);
+  if (!normalized) return "Nomor resi tidak boleh kosong.";
+  if (!/^SPG-[A-Z0-9]{3,}-ID$/.test(normalized)) return "Format nomor resi tidak valid.";
+  return "";
+}
+
 function toShipmentStatus(status: ShipmentRow["shipment_status"]) {
   if (status === "DALAM_PERJALANAN") return "DALAM PERJALANAN";
   if (status === "SAMPAI") return "SELESAI";
@@ -177,9 +188,14 @@ function getSyncedRowSnapshot(row: ShipmentRow) {
 }
 
 export async function GET(request: NextRequest) {
-  const resi = (request.nextUrl.searchParams.get("resi") || "").trim();
-  if (!resi) {
-    return NextResponse.json({ shipment: null, checkpoints: [] });
+  const resi = normalizeResiInput(request.nextUrl.searchParams.get("resi") || "");
+  const validationMessage = validateResiInput(resi);
+
+  if (validationMessage) {
+    return NextResponse.json(
+      { shipment: null, checkpoints: [], message: validationMessage },
+      { status: 400 }
+    );
   }
 
   try {
@@ -241,7 +257,10 @@ export async function GET(request: NextRequest) {
 
     const row = shipmentResult.rows[0];
     if (!row) {
-      return NextResponse.json({ shipment: null, checkpoints: [] });
+      return NextResponse.json(
+        { shipment: null, checkpoints: [], message: "Nomor resi tidak ditemukan." },
+        { status: 404 }
+      );
     }
 
     await syncShipmentCheckpoints({

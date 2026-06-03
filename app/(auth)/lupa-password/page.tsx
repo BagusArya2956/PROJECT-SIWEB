@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -36,6 +37,7 @@ export default function LupaPasswordPage() {
   const [message, setMessage] = useState("");
   const [tone, setTone] = useState<"error" | "success">("success");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   function setFieldError<K extends keyof FieldErrors>(key: K, value: FieldErrors[K]) {
@@ -93,9 +95,10 @@ export default function LupaPasswordPage() {
       setLogin("");
       setNewPassword("");
       setConfirmPassword("");
+      setIsRedirecting(true);
       window.setTimeout(() => {
         router.push("/login");
-      }, 2000);
+      }, 850);
     } catch {
       setTone("error");
       setMessage("Terjadi kesalahan, silakan coba beberapa saat lagi");
@@ -106,7 +109,23 @@ export default function LupaPasswordPage() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top,_rgba(175,244,170,0.22),transparent_42%),#f3f7f1] px-4">
-      <div className="w-full max-w-[520px] rounded-[28px] border border-[#e3eadf] bg-white p-6 shadow-[0_24px_60px_rgba(95,128,101,0.22)] sm:p-7">
+      <div className="admin-auth-panel relative w-full max-w-[520px] rounded-[28px] border border-[#e3eadf] bg-white p-6 shadow-[0_24px_60px_rgba(95,128,101,0.22)] sm:p-7">
+        {isRedirecting ? (
+          <div className="absolute inset-0 z-20 grid place-items-center rounded-[28px] bg-white/86 px-6 backdrop-blur-md">
+            <div className="w-full max-w-[320px] rounded-[20px] border border-[#dfe8da] bg-white p-6 text-center shadow-[0_24px_58px_rgba(38,70,47,0.18)]">
+              <Image
+                src="/images/shipin-go-logo-transparent.png"
+                alt="Logo Shipin Go"
+                width={72}
+                height={48}
+                className="mx-auto h-auto w-[64px] object-contain"
+              />
+              <div className="mx-auto mt-5 h-10 w-10 animate-spin rounded-full border-2 border-[#dfe8da] border-t-shipin-deep" />
+              <p className="mt-5 text-sm font-extrabold text-shipin-ink">Menyimpan password baru...</p>
+              <p className="mt-2 text-xs leading-5 text-shipin-text">Mengalihkan ke login</p>
+            </div>
+          </div>
+        ) : null}
         <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#5f7c68]">Admin Recovery</p>
         <h1 className="mt-2 text-[32px] font-extrabold leading-none text-[#1f3427] sm:text-[38px]">
           Lupa Password
@@ -179,7 +198,7 @@ export default function LupaPasswordPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isRedirecting}
             className="mt-1 inline-flex h-11 w-full items-center justify-center rounded-full bg-[#1a7332] px-7 text-[14px] font-semibold text-white"
           >
             {isSubmitting ? "Menyimpan..." : "Simpan Password Baru"}

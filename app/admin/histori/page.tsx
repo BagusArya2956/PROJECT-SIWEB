@@ -61,10 +61,6 @@ function TrashIcon() {
 
 const ITEMS_PER_PAGE = 5;
 
-function sensitiveBlurClass(isRevealed: boolean) {
-  return isRevealed ? "" : "blur-[4px] select-none";
-}
-
 function LoadingFallback() {
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#f2f5f1] px-4 py-5 sm:px-6 lg:px-8">
@@ -84,7 +80,7 @@ function AdminHistoriContent() {
   const [messageTone, setMessageTone] = useState<"info" | "success">("info");
   const [vehicles, setVehicles] = useState<VehicleOption[]>([]);
   const [loading, setLoading] = useState(true);
-  const [revealedRows, setRevealedRows] = useState<Record<string, boolean>>({});
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   async function hydrateShipments() {
     const current = await fetchShipmentsFromDatabase();
@@ -170,6 +166,19 @@ function AdminHistoriContent() {
     }
   }, [currentPage, totalPages]);
 
+  useEffect(() => {
+    if (!isDetailModalOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsDetailModalOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isDetailModalOpen]);
+
   async function handleUpdateShipment(id: string, patch: Partial<ShipmentRecord>) {
     try {
       const updated = await updateShipmentInDatabase(id, patch);
@@ -203,11 +212,9 @@ function AdminHistoriContent() {
     }
   }
 
-  function toggleSensitiveRow(id: string) {
-    setRevealedRows((current) => ({
-      ...current,
-      [id]: !current[id]
-    }));
+  function openDetailModal(id: string) {
+    setSelectedId(id);
+    setIsDetailModalOpen(true);
   }
 
   return (
@@ -277,23 +284,23 @@ function AdminHistoriContent() {
                       <button
                         type="button"
                         onClick={() => setSelectedId(row.id)}
-                        className={`text-[13px] font-extrabold text-[#148a31] whitespace-nowrap transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}
+                        className="text-[13px] font-extrabold text-[#148a31] whitespace-nowrap transition hover:text-[#0f6e27]"
                       >
                         #{row.id}
                       </button>
-                      <p className={`text-[10px] uppercase tracking-[0.05em] text-[#6a756c] transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>{row.type}</p>
+                      <p className="text-[10px] uppercase tracking-[0.05em] text-[#6a756c] transition">{row.type}</p>
                     </td>
 
                     <td className="px-3 py-3">
-                      <p className={`text-[13px] font-bold text-[#243526] whitespace-nowrap transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>{row.sender}</p>
-                      <p className={`text-[11px] text-[#5e695f] whitespace-nowrap transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>ke {row.receiver}</p>
+                      <p className="text-[13px] font-bold text-[#243526] whitespace-nowrap transition">{row.sender}</p>
+                      <p className="text-[11px] text-[#5e695f] whitespace-nowrap transition">ke {row.receiver}</p>
                     </td>
 
-                    <td className={`px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>{row.destination}</td>
-                    <td className={`px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>{row.date}</td>
+                    <td className="px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap transition">{row.destination}</td>
+                    <td className="px-3 py-3 text-[12px] text-[#2b362c] whitespace-nowrap transition">{row.date}</td>
 
                     <td className="px-3 py-3">
-                      <div className={`flex flex-col gap-1 transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>
+                      <div className="flex flex-col gap-1 transition">
                         <select
                           value={row.payment}
                           onChange={(event) =>
@@ -317,7 +324,7 @@ function AdminHistoriContent() {
                     </td>
 
                     <td className="px-3 py-3">
-                      <div className={`transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>
+                      <div className="transition">
                         <select
                           value={row.itemStatus || "DIPROSES"}
                           onChange={(event) => handleUpdateShipment(row.id, { itemStatus: event.target.value })}
@@ -336,7 +343,7 @@ function AdminHistoriContent() {
                     </td>
 
                     <td className="px-3 py-3">
-                      <div className={`transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>
+                      <div className="transition">
                         <select
                           value={row.vehicleId ? String(row.vehicleId) : ""}
                           onChange={(event) => handleUpdateShipment(row.id, { vehicleId: Number(event.target.value) })}
@@ -353,7 +360,7 @@ function AdminHistoriContent() {
                     </td>
 
                     <td className="px-3 py-3">
-                      <div className={`transition ${sensitiveBlurClass(Boolean(revealedRows[row.id]))}`}>
+                      <div className="transition">
                         <input
                           value={String(row.total)}
                           readOnly
@@ -368,9 +375,9 @@ function AdminHistoriContent() {
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={() => toggleSensitiveRow(row.id)}
+                          onClick={() => openDetailModal(row.id)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f4ef] text-[#47604f] transition-colors hover:bg-[#e4ebe3]"
-                          aria-label={revealedRows[row.id] ? "Sembunyikan data" : "Tampilkan data"}
+                          aria-label="Tampilkan detail data"
                         >
                           <EyeIcon className="h-3.5 w-3.5" />
                         </button>
@@ -433,6 +440,125 @@ function AdminHistoriContent() {
           </div>
           )}
         </section>
+
+        {isDetailModalOpen && selectedRow ? (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#172118]/45 px-4 py-6 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="history-detail-title"
+            onClick={() => setIsDetailModalOpen(false)}
+          >
+            <article
+              className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-[0_28px_80px_rgba(21,38,25,0.28)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex flex-col gap-4 border-b border-[#edf1ea] bg-[#fbfdf9] px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:px-6">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#7e8d7f]">
+                    Detail Histori Pengiriman
+                  </p>
+                  <h2 id="history-detail-title" className="mt-2 text-[26px] font-extrabold tracking-[-0.03em] text-[#223126]">
+                    {selectedRow.id}
+                  </h2>
+                  <p className="mt-1 text-sm font-semibold text-[#748076]">
+                    {selectedRow.itemName || selectedRow.itemCategory || selectedRow.type} - {selectedRow.date}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] ${
+                    selectedRow.shipment === "SELESAI" || selectedRow.shipment === "SAMPAI"
+                      ? "bg-[#e7f9ee] text-[#1c8c4c]"
+                      : selectedRow.shipment === "DALAM PERJALANAN"
+                      ? "bg-[#fff4df] text-[#b7791f]"
+                      : "bg-[#eef6ff] text-[#2d6cc4]"
+                  }`}>
+                    {selectedRow.shipment}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsDetailModalOpen(false)}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#dfe7dd] bg-white text-[#5d6a60] transition hover:bg-[#f4f8f1]"
+                    aria-label="Tutup detail histori"
+                  >
+                    <span className="text-2xl leading-none">&times;</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="max-h-[calc(92vh-118px)] overflow-y-auto px-5 py-5 sm:px-6">
+                <div className="grid gap-4 lg:grid-cols-3">
+                  <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Pengirim</p>
+                    <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedRow.sender}</p>
+                    <p className="mt-1 text-sm text-[#667269]">{selectedRow.senderPhone || "-"}</p>
+                    <p className="mt-1 text-sm leading-5 text-[#667269]">{selectedRow.senderAddress || selectedRow.originCity || "-"}</p>
+                  </div>
+                  <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Penerima</p>
+                    <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedRow.receiver}</p>
+                    <p className="mt-1 text-sm text-[#667269]">{selectedRow.receiverPhone || "-"}</p>
+                    <p className="mt-1 text-sm leading-5 text-[#667269]">{selectedRow.receiverAddress || selectedRow.destinationCity || selectedRow.destination}</p>
+                  </div>
+                  <div className="rounded-[20px] border border-[#e8eee5] bg-[#f7faf4] p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8e988f]">Rute</p>
+                    <p className="mt-3 text-[17px] font-extrabold text-[#223126]">{selectedRow.originCity || "-"}</p>
+                    <p className="mt-1 text-sm font-semibold text-[#148a31]">menuju</p>
+                    <p className="mt-1 text-[17px] font-extrabold text-[#223126]">{selectedRow.destinationCity || selectedRow.destination}</p>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+                  <section className="rounded-[22px] border border-[#e8eee5] bg-white p-4">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8e988f]">Detail Barang</p>
+                        <h3 className="mt-2 text-xl font-extrabold text-[#223126]">{selectedRow.itemName || "-"}</h3>
+                      </div>
+                      <span className="w-fit rounded-full bg-[#eaf8ee] px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#1d7f33]">
+                        {selectedRow.itemStatus || "DIPROSES"}
+                      </span>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      {[
+                        ["Jenis Barang", selectedRow.itemCategory || "-"],
+                        ["Berat", `${(selectedRow.weightKg || 0).toFixed(2)} kg`],
+                        [
+                          "Dimensi",
+                          `${selectedRow.lengthCm || 0} x ${selectedRow.widthCm || 0} x ${selectedRow.heightCm || 0} cm`
+                        ],
+                        ["Catatan", selectedRow.itemNote || "-"]
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-[16px] bg-[#f4f8f1] px-4 py-3">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8e988f]">{label}</p>
+                          <p className="mt-2 text-sm font-bold text-[#273228]">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  <section className="rounded-[22px] border border-[#e8eee5] bg-white p-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8e988f]">Operasional</p>
+                    <div className="mt-4 space-y-3">
+                      {[
+                        ["Layanan", selectedRow.service || selectedRow.type],
+                        ["Kendaraan", selectedRow.vehicleName ? `${selectedRow.vehicleName} - ${selectedRow.plateNumber || "-"}` : "-"],
+                        ["Pembayaran", selectedRow.payment],
+                        ["Total", formatCurrency(selectedRow.total)]
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex items-start justify-between gap-4 border-b border-[#edf1ea] pb-3 last:border-b-0 last:pb-0">
+                          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-[#8e988f]">{label}</p>
+                          <p className="text-right text-sm font-extrabold text-[#223126]">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </article>
+          </div>
+        ) : null}
 
         {selectedRow ? (
           <section className="mt-4 rounded-[24px] border border-[#e5ebe5] bg-white overflow-hidden shadow-[0_10px_30px_rgba(25,45,33,0.06)]">
