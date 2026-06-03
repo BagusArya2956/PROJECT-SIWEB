@@ -138,8 +138,12 @@ function AutoBounds({
     if (origin) points.push([origin.lat, origin.lng]);
     if (destination) points.push([destination.lat, destination.lng]);
     if (latest) points.push([latest.lat, latest.lng]);
-    if (points.length > 0) {
-      map.fitBounds(points as [number, number][], { padding: [60, 60] });
+    if (points.length === 1) {
+      map.flyTo(points[0], 13, { duration: 0.85 });
+      return;
+    }
+    if (points.length > 1) {
+      map.fitBounds(points as [number, number][], { padding: [60, 60], animate: true });
     }
   }, [map, origin, destination, latest]);
   return null;

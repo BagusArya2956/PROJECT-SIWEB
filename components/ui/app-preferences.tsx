@@ -65,25 +65,59 @@ export function FooterThemeControl() {
   const isDark = theme === "dark";
 
   return (
-    <div className="rounded-[22px] border border-[#dce8da] bg-[#f7fbf5] p-4">
-      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#69766d]">
-        Tema Tampilan
-      </p>
+    <div className="group w-full max-w-[240px] rounded-[18px] border border-[#dce8da] bg-white/72 p-3.5 shadow-[0_14px_34px_rgba(27,67,50,0.08)] backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-shipin-deep/25 hover:shadow-[0_18px_42px_rgba(27,67,50,0.12)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-shipin-deep/80">
+          Tema
+        </p>
+        <p className="text-[12px] font-semibold text-shipin-text">
+          {isDark ? "Gelap" : "Terang"}
+        </p>
+      </div>
       <button
         type="button"
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className={`mt-2 flex h-10 w-full items-center rounded-full border p-1 transition ${
+        className={`relative flex h-10 w-full items-center overflow-hidden rounded-full border p-1 transition duration-300 active:scale-[0.98] ${
           isDark
-            ? "justify-end border-[#9df28f] bg-[#173322]"
-            : "justify-start border-[#cfded0] bg-white"
+            ? "border-[#31513d] bg-[#101f16] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+            : "border-[#cfded0] bg-[#f7faf5] shadow-[inset_0_1px_0_rgba(255,255,255,0.82)]"
         }`}
         aria-pressed={isDark}
         aria-label={isDark ? "Nonaktifkan mode gelap" : "Aktifkan mode gelap"}
       >
-        <span className="inline-flex h-8 min-w-[112px] items-center justify-center rounded-full bg-[#1b7a37] px-4 text-[12px] font-bold text-white shadow-[0_8px_18px_rgba(27,122,55,0.2)]">
-          {isDark ? "Mode Gelap" : "Mode Terang"}
+        <span className="pointer-events-none absolute inset-y-1 left-1 right-1 grid grid-cols-2">
+          <span className={`inline-flex items-center justify-center transition duration-300 ${isDark ? "text-[#8a958d]" : "text-white"}`}>
+            <SunIcon className="h-4 w-4" />
+          </span>
+          <span className={`inline-flex items-center justify-center transition duration-300 ${isDark ? "text-white" : "text-shipin-text"}`}>
+            <MoonIcon className="h-4 w-4" />
+          </span>
+        </span>
+        <span
+          className={`relative h-8 w-1/2 rounded-full bg-shipin-deep shadow-[0_10px_24px_rgba(23,106,58,0.26)] transition duration-300 ease-out ${
+            isDark ? "translate-x-full" : "translate-x-0"
+          }`}
+        >
+          <span className="absolute inset-0 rounded-full bg-[linear-gradient(135deg,rgba(255,255,255,0.18),transparent_55%)]" />
         </span>
       </button>
     </div>
+  );
+}
+
+function SunIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.8v2.4M12 18.8v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" />
+    </svg>
+  );
+}
+
+function MoonIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className}>
+      <path d="M20.2 14.7A7.8 7.8 0 0 1 9.3 3.8 8.7 8.7 0 1 0 20.2 14.7Z" />
+    </svg>
   );
 }

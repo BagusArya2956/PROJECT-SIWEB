@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   ChatBubbleIcon,
@@ -13,7 +13,7 @@ import {
 import { PublicFooter } from "@/components/public/footer";
 import { PublicToast } from "@/components/ui/public-toast";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { OFFICE_PARTNERS } from "@/lib/shipping-pricing";
+import { OFFICE_PARTNERS, resolveAreaCoordinate } from "@/lib/shipping-pricing";
 
 const TrackingMap = dynamic(
   () => import("@/components/public/tracking-map").then((mod) => mod.TrackingMap),
@@ -58,6 +58,33 @@ export function KontakPage() {
   const [isSent, setIsSent] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [toastMessage, setToastMessage] = useState("");
+  const [activePartnerName, setActivePartnerName] = useState(OFFICE_PARTNERS[0]?.name ?? "");
+
+  const activePartner = useMemo(
+    () => OFFICE_PARTNERS.find((partner) => partner.name === activePartnerName) || OFFICE_PARTNERS[0],
+    [activePartnerName]
+  );
+
+  const activePartnerPoint = useMemo(() => {
+    if (!activePartner) {
+      return {
+        lat: -6.2088,
+        lng: 106.8456,
+        label: "SHIPIN GO HQ - Sudirman, Jakarta"
+      };
+    }
+
+    const cityName = activePartner.name.replace(/^Mitra Hub\s+/i, "");
+    const coordinate = resolveAreaCoordinate({
+      city: cityName,
+      province: activePartner.area
+    });
+
+    return {
+      ...coordinate,
+      label: `${activePartner.name} - ${activePartner.address}`
+    };
+  }, [activePartner]);
 
   function validateName(value: string) {
     if (!value.trim()) return "Nama tidak boleh kosong";
@@ -246,11 +273,7 @@ export function KontakPage() {
             <article className="reveal-on-scroll hover-lift relative self-start overflow-hidden rounded-[24px] border border-[#e2e7e1] bg-[#4f8f86] p-4 shadow-[0_18px_34px_rgba(114,148,138,0.22)]">
               <div className="relative overflow-hidden rounded-[18px] border border-white/40">
                 <TrackingMap
-                  latest={{
-                    lat: -6.2088,
-                    lng: 106.8456,
-                    label: "SHIPIN GO HQ - Sudirman, Jakarta"
-                  }}
+                  latest={activePartnerPoint}
                   heightClassName="h-[320px] sm:h-[380px] lg:h-[520px]"
                   zoom={13}
                   scrollWheelZoom={false}
@@ -265,9 +288,10 @@ export function KontakPage() {
                   <MapPinIcon className="mt-0.5 h-4 w-4 text-[#1b8248]" />
                   <div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#405047]">
-                      Alamat Utama
+                      Lokasi Dipilih
                     </p>
-                    <p>Jl. Jend. Sudirman Kav 52-53, Jakarta 12190</p>
+                    <p className="font-semibold text-[#294033]">{activePartner?.name || "SHIPIN GO HQ"}</p>
+                    <p>{activePartner ? `${activePartner.area} | ${activePartner.address}` : "Jl. Jend. Sudirman Kav 52-53, Jakarta 12190"}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -294,11 +318,22 @@ export function KontakPage() {
                 </div>
                 <ul className="mt-2 grid max-h-[230px] gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
                   {OFFICE_PARTNERS.map((partner) => (
-                    <li key={partner.name} className="rounded-[10px] border border-[#e6ece6] bg-white px-3 py-2">
-                      <p className="text-[12px] font-bold text-[#294033]">{partner.name}</p>
-                      <p className="text-[11px] text-[#5d6d61]">
-                        {partner.area} | {partner.address}
-                      </p>
+                    <li key={partner.name}>
+                      <button
+                        type="button"
+                        onClick={() => setActivePartnerName(partner.name)}
+                        aria-pressed={partner.name === activePartner?.name}
+                        className={`w-full rounded-[10px] border px-3 py-2 text-left transition duration-300 hover:-translate-y-0.5 ${
+                          partner.name === activePartner?.name
+                            ? "border-[#1b8248] bg-[#eaf8e8] shadow-[0_12px_24px_rgba(27,130,72,0.14)]"
+                            : "border-[#e6ece6] bg-white hover:border-[#bdddc1] hover:bg-[#f7fbf5]"
+                        }`}
+                      >
+                        <p className="text-[12px] font-bold text-[#294033]">{partner.name}</p>
+                        <p className="text-[11px] text-[#5d6d61]">
+                          {partner.area} | {partner.address}
+                        </p>
+                      </button>
                     </li>
                   ))}
                 </ul>
