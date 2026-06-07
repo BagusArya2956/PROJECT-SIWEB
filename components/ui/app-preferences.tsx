@@ -60,49 +60,35 @@ export function useAppPreferences() {
   return context;
 }
 
-export function FooterThemeControl() {
+export function ThemeModeButton({ className = "" }: { className?: string }) {
   const { theme, setTheme } = useAppPreferences();
   const isDark = theme === "dark";
 
   return (
-    <div className="group w-full max-w-[240px] rounded-[18px] border border-[#dce8da] bg-white/72 p-3.5 shadow-[0_14px_34px_rgba(27,67,50,0.08)] backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-shipin-deep/25 hover:shadow-[0_18px_42px_rgba(27,67,50,0.12)]">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-shipin-deep/80">
-          Tema
-        </p>
-        <p className="text-[12px] font-semibold text-shipin-text">
-          {isDark ? "Gelap" : "Terang"}
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
-        className={`relative flex h-10 w-full items-center overflow-hidden rounded-full border p-1 transition duration-300 active:scale-[0.98] ${
-          isDark
-            ? "border-[#31513d] bg-[#101f16] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-            : "border-[#cfded0] bg-[#f7faf5] shadow-[inset_0_1px_0_rgba(255,255,255,0.82)]"
-        }`}
-        aria-pressed={isDark}
-        aria-label={isDark ? "Nonaktifkan mode gelap" : "Aktifkan mode gelap"}
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className={`group inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-[0_12px_26px_rgba(27,67,50,0.12)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(27,67,50,0.16)] active:scale-95 ${
+        isDark
+          ? "border-[#31513d] bg-[#101f16] text-[#d8f8dd]"
+          : "border-[#dce8da] bg-white text-[#f59e0b]"
+      } ${className}`}
+      aria-pressed={isDark}
+      aria-label={isDark ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+      title={isDark ? "Mode gelap" : "Mode terang"}
+    >
+      <span
+        key={theme}
+        className="inline-flex transition duration-300 group-hover:rotate-12 group-hover:scale-110"
       >
-        <span className="pointer-events-none absolute inset-y-1 left-1 right-1 grid grid-cols-2">
-          <span className={`inline-flex items-center justify-center transition duration-300 ${isDark ? "text-[#8a958d]" : "text-white"}`}>
-            <SunIcon className="h-4 w-4" />
-          </span>
-          <span className={`inline-flex items-center justify-center transition duration-300 ${isDark ? "text-white" : "text-shipin-text"}`}>
-            <MoonIcon className="h-4 w-4" />
-          </span>
-        </span>
-        <span
-          className={`relative h-8 w-1/2 rounded-full bg-shipin-deep shadow-[0_10px_24px_rgba(23,106,58,0.26)] transition duration-300 ease-out ${
-            isDark ? "translate-x-full" : "translate-x-0"
-          }`}
-        >
-          <span className="absolute inset-0 rounded-full bg-[linear-gradient(135deg,rgba(255,255,255,0.18),transparent_55%)]" />
-        </span>
-      </button>
-    </div>
+        {isDark ? <MoonIcon className="h-5 w-5" /> : <SunIcon className="h-5 w-5" />}
+      </span>
+    </button>
   );
+}
+
+export function FooterThemeControl() {
+  return <ThemeModeButton />;
 }
 
 function SunIcon({ className = "" }: { className?: string }) {

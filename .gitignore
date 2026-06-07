@@ -1,6 +1,7 @@
 node_modules/
 .next/
 dev-server.log
+dev-server.err.log
 dev-server-error.log
 .codex-register-dev.log
 npm-debug.log*

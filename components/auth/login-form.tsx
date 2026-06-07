@@ -299,7 +299,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   onBlur={(event) => setFieldError("fullName", validateFullName(event.target.value))}
                   placeholder="Masukkan nama lengkap"
                   icon={<UserIcon className="h-[18px] w-[18px]" />}
-                  required
                 />
                 {fieldErrors.fullName ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.fullName}</p> : null}
               </div>
@@ -315,7 +314,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   onBlur={(event) => setFieldError("username", validateUsername(event.target.value))}
                   placeholder="Masukkan username"
                   icon={<UserIcon className="h-[18px] w-[18px]" />}
-                  required
                 />
                 {fieldErrors.username ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.username}</p> : null}
               </div>
@@ -332,7 +330,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   onBlur={(event) => setFieldError("email", validateEmail(event.target.value))}
                   placeholder="nama@email.com"
                   icon={<UserIcon className="h-[18px] w-[18px]" />}
-                  required
                 />
                 {fieldErrors.email ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.email}</p> : null}
               </div>
@@ -348,7 +345,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   onBlur={(event) => setFieldError("adminCode", validateAdminCode(event.target.value))}
                   placeholder="Masukkan kode admin"
                   icon={<LockIcon className="h-[18px] w-[18px]" />}
-                  required
                 />
                 {fieldErrors.adminCode ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.adminCode}</p> : null}
                 <p className="mt-2 text-xs leading-5 text-shipin-text">
@@ -356,30 +352,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                 </p>
               </div>
 
-              <div className="admin-auth-note rounded-[18px] border border-[#dfe8da] bg-[#f7faf5] p-4 text-sm text-shipin-text sm:col-span-2">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-shipin-deep">
-                    Persyaratan Admin
-                  </p>
-                  <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-shipin-text">
-                    Kode wajib
-                  </span>
-                </div>
-                <ul className="mt-3 grid gap-2 leading-6 sm:grid-cols-3">
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-shipin-green" />
-                    Kode Admin resmi.
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-shipin-green" />
-                    Data akun valid.
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-shipin-green" />
-                    Untuk operasional.
-                  </li>
-                </ul>
-              </div>
             </>
           ) : (
             <div>
@@ -393,7 +365,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                 onBlur={(event) => setFieldError("login", validateLogin(event.target.value))}
                 placeholder="nama@email.com"
                 icon={<UserIcon className="h-[18px] w-[18px]" />}
-                required
               />
               {fieldErrors.login ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.login}</p> : null}
             </div>
@@ -435,7 +406,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                   )}
                 </button>
               }
-              required
             />
             {fieldErrors.password ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.password}</p> : null}
           </div>
@@ -469,7 +439,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                     )}
                   </button>
                 }
-                required
               />
               {fieldErrors.confirmPassword ? (
                 <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.confirmPassword}</p>

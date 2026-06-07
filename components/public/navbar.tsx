@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { ThemeModeButton } from "@/components/ui/app-preferences";
+
 const menuItems = [
   { href: "/#beranda", label: "Beranda" },
   { href: "/cek-ongkir", label: "Cek Ongkir" },
@@ -37,6 +39,7 @@ export function PublicNavbar() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
+          <ThemeModeButton />
           <Link
             href="/login"
             className="rounded-full border border-shipin-deep/15 px-4 py-2 text-sm font-semibold text-shipin-deep hover:border-shipin-deep/30 hover:bg-white"
@@ -88,7 +91,8 @@ export function PublicNavbar() {
                 </Link>
               ))}
             </nav>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 grid grid-cols-[auto_1fr_1fr] gap-2">
+              <ThemeModeButton className="h-10 w-10" />
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}

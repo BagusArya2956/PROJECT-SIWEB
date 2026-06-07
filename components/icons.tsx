@@ -177,6 +177,35 @@ export function BulbIcon(props: IconProps) {
   );
 }
 
+export function InstagramIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="5" />
+      <circle cx="12" cy="12" r="3.4" />
+      <path d="M16.8 7.2h.01" />
+    </svg>
+  );
+}
+
+export function LinkedinIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M6.8 8.8H3.9v11h2.9v-11Z" />
+      <path d="M5.4 4a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Z" />
+      <path d="M20.1 13.7c0-3-1.6-4.3-3.8-4.3a3.2 3.2 0 0 0-2.9 1.6V8.8h-2.8v11h2.9v-5.5c0-1.4.6-2.3 1.8-2.3s1.8.8 1.8 2.4v5.4h2.9v-6.1Z" />
+    </svg>
+  );
+}
+
+export function XIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="2.1" {...props}>
+      <path d="M5 5l14 14" />
+      <path d="M19 5 5 19" />
+    </svg>
+  );
+}
+
 export function ClipboardIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
