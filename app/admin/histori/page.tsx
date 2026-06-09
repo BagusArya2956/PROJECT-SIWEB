@@ -266,7 +266,93 @@ function AdminHistoriContent() {
               <p className="text-[13px] font-semibold text-[#5f6d63]">Belum ada data yang cocok.</p>
             </div>
           ) : (
-          <div className="overflow-x-auto rounded-xl border border-[#edf1ea]">
+          <div className="rounded-xl border border-[#edf1ea]">
+            <div className="grid gap-3 p-3 md:hidden">
+              {paginatedRows.map((row) => (
+                <article key={row.id} className="rounded-3xl border border-[#e5ebe5] bg-[#fbfdf9] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(row.id)}
+                        className="text-[15px] font-extrabold text-[#148a31]"
+                      >
+                        #{row.id}
+                      </button>
+                      <p className="mt-1 text-xs font-semibold text-[#6a756c]">{row.type} | {row.date}</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => openDetailModal(row.id)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f4ef] text-[#47604f]"
+                        aria-label="Tampilkan detail data"
+                      >
+                        <EyeIcon className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(row.id)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fde9e7] text-[#b9473f]"
+                        aria-label="Hapus data"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 text-sm">
+                    <div className="rounded-2xl bg-white/70 p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#879188]">Pihak Terlibat</p>
+                      <p className="mt-1 font-bold text-[#243526]">{row.sender}</p>
+                      <p className="text-xs text-[#647066]">ke {row.receiver}</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/70 p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#879188]">Tujuan</p>
+                      <p className="mt-1 text-xs font-semibold text-[#2b362c]">{row.destination}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <select
+                      value={row.payment}
+                      onChange={(event) => handleUpdateShipment(row.id, { payment: event.target.value as PaymentStatus })}
+                      className={`rounded-full px-3 py-2 text-[10px] font-bold ${badgeStyles[row.payment]} outline-none`}
+                    >
+                      <option value="LUNAS">LUNAS</option>
+                      <option value="BELUM BAYAR">BELUM BAYAR</option>
+                    </select>
+                    <select
+                      value={row.shipment}
+                      onChange={(event) => handleUpdateStatus(row.id, event.target.value as ShipmentStatus)}
+                      className={`rounded-full px-3 py-2 text-[10px] font-bold ${badgeStyles[row.shipment]} outline-none`}
+                    >
+                      <option value="DIJADWALKAN">DIJADWALKAN</option>
+                      <option value="DALAM PERJALANAN">DALAM PERJALANAN</option>
+                      <option value="SAMPAI">SELESAI</option>
+                    </select>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-[#f6f8f4] px-3 py-2">
+                    <span className="text-xs font-bold text-[#5f6d63]">{formatCurrency(row.total)}</span>
+                    <select
+                      value={row.vehicleId ? String(row.vehicleId) : ""}
+                      onChange={(event) => handleUpdateShipment(row.id, { vehicleId: Number(event.target.value) })}
+                      className="max-w-[170px] rounded-lg border border-[#d8e0d8] bg-white px-2 py-1.5 text-[10px] text-[#2a372f] outline-none"
+                    >
+                      <option value="">Pilih kendaraan</option>
+                      {vehicles.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                          {vehicle.vehicle_name} - {vehicle.plate_number}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
             <table className="min-w-[1200px] w-full">
               <thead>
                 <tr className="border-b border-[#edf1ea] bg-[#f8faf8]">
@@ -395,6 +481,7 @@ function AdminHistoriContent() {
                 ))}
               </tbody>
             </table>
+            </div>
             <div className="mt-4 flex flex-col items-center gap-3 border-t border-[#edf1ea] pt-4 text-[12px] font-semibold text-[#5f6d63] sm:flex-row sm:justify-between">
               <p>Menampilkan {paginatedRows.length} dari {filteredRows.length} data</p>
               <div className="flex items-center gap-1.5">

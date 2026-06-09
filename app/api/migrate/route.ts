@@ -1,9 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-// Migration: add unique constraint to riwayat_pengiriman table
-// This ensures ON CONFLICT DO NOTHING works correctly
+function isMigrationAuthorized(request: NextRequest) {
+  const secret = process.env.SHIPIN_MIGRATION_SECRET;
+  const providedSecret = request.headers.get("x-migration-secret") || request.nextUrl.searchParams.get("secret");
 
-export async function POST() {
+  return Boolean(secret && providedSecret && providedSecret === secret);
+}
+
+function unauthorizedMigrationResponse() {
+  return NextResponse.json({ message: "Akses migrasi tidak diizinkan." }, { status: 403 });
+}
+
+export async function POST(request: NextRequest) {
+  if (!isMigrationAuthorized(request)) {
+    return unauthorizedMigrationResponse();
+  }
+
   try {
     const { db } = await import("@/lib/db");
 
@@ -44,8 +56,11 @@ export async function POST() {
   }
 }
 
-// Also expose GET to check migration status
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!isMigrationAuthorized(request)) {
+    return unauthorizedMigrationResponse();
+  }
+
   try {
     const { db } = await import("@/lib/db");
 

@@ -878,12 +878,12 @@ function AdminKirimPaketContent() {
             </BlockCard>
           </div>
 
-          <aside className="admin-cost-sidebar rounded-[34px] border border-[#95e198] bg-[linear-gradient(180deg,#9cf09b_0%,#95eb92_35%,#90e58f_100%)] p-8 text-[#143f25] shadow-[0_22px_45px_rgba(107,188,121,0.3)] xl:sticky xl:top-6">
-            <h2 className="text-[28px] font-extrabold leading-none tracking-[-0.05em] text-[#133d24] sm:text-[31px]">
+          <aside className="admin-cost-sidebar rounded-[28px] border border-[#95e198] bg-[linear-gradient(180deg,#9cf09b_0%,#95eb92_35%,#90e58f_100%)] p-5 text-[#143f25] shadow-[0_22px_45px_rgba(107,188,121,0.3)] sm:p-6 xl:sticky xl:top-6 xl:p-8">
+            <h2 className="text-[24px] font-extrabold leading-none tracking-[-0.04em] text-[#133d24] sm:text-[29px]">
               Ringkasan Biaya
             </h2>
 
-            <div className="mt-8 space-y-4 text-[14px] text-[#275238] sm:text-[15px]">
+            <div className="mt-5 space-y-3 text-[13px] text-[#275238] sm:mt-7 sm:text-[15px]">
               <div className="rounded-2xl bg-[#d7f6d3] px-3 py-2 text-[12px] font-semibold text-[#245739]">
                 Rute: {senderCity || "-"}{" -> "}{receiverCity || "-"}{" | "}{pricing.distanceKm} km
               </div>
@@ -901,13 +901,13 @@ function AdminKirimPaketContent() {
               </div>
             </div>
 
-            <hr className="my-5 border-[#7fda86]" />
+            <hr className="my-4 border-[#7fda86] sm:my-5" />
 
-            <div className="flex items-center justify-between gap-5">
-              <p className="text-[18px] font-bold leading-[1.15] text-[#173c27]">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-[15px] font-bold leading-[1.15] text-[#173c27] sm:text-[18px]">
                 Total Pembayaran
               </p>
-              <p className="shrink-0 whitespace-nowrap text-[28px] font-black leading-none tracking-[-0.04em] text-[#0f341f] sm:text-[32px] xl:text-[36px]">
+              <p className="shrink-0 whitespace-nowrap text-[22px] font-black leading-none tracking-[-0.03em] text-[#0f341f] sm:text-[30px] xl:text-[36px]">
                 {hasCoreData ? `Rp ${totalCost.toLocaleString("id-ID")}` : "-"}
               </p>
             </div>
@@ -917,12 +917,12 @@ function AdminKirimPaketContent() {
               </p>
             ) : null}
 
-            <div className="admin-qris-panel mt-8 rounded-[32px] bg-[radial-gradient(circle_at_top,_rgba(236,255,232,0.95),rgba(210,247,201,0.88))] px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
+            <div className="admin-qris-panel mt-6 rounded-[26px] bg-[radial-gradient(circle_at_top,_rgba(236,255,232,0.95),rgba(210,247,201,0.88))] px-4 py-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] sm:mt-8 sm:px-6 sm:py-8">
               <p className="text-center text-[12px] font-extrabold uppercase tracking-[0.08em] text-[#18482d] sm:text-[13px]">
                 Metode Pembayaran: QRIS
               </p>
 
-              <div className="admin-qris-box mt-6 rounded-[30px] bg-white px-5 py-4 shadow-[0_14px_34px_rgba(111,174,111,0.16)]">
+              <div className="admin-qris-box mt-4 rounded-[24px] bg-white px-4 py-4 shadow-[0_14px_34px_rgba(111,174,111,0.16)] sm:mt-6 sm:rounded-[30px] sm:px-5">
                 {hasCoreData ? (
                   <div className="mx-auto flex h-[120px] max-w-[270px] items-center gap-3 rounded-[10px] border border-[#d7d9db] bg-[linear-gradient(180deg,#f3f3f5_0%,#ededf0_100%)] px-3 text-[#5f6661] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.02)]">
                     <div className="grid h-[84px] w-[84px] grid-cols-7 gap-[2px] rounded bg-white p-[4px]">

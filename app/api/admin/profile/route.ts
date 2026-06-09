@@ -48,9 +48,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Sesi admin tidak valid." }, { status: 401 });
     }
 
-    const dbNow = await pool.query<{ now: string }>("SELECT NOW()::text AS now");
-    console.log("Neon connection check /api/admin/profile GET:", dbNow.rows[0]?.now);
-
     const stats = await loadStats(admin.id);
 
     return NextResponse.json({

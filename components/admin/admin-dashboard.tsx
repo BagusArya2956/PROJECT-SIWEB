@@ -1087,7 +1087,71 @@ export function AdminDashboard() {
           </div>
 
           <div className="overflow-hidden rounded-[32px] bg-white shadow-[0_18px_44px_rgba(155,184,143,0.18)]">
-            <div className="overflow-x-auto">
+            <div className="grid gap-3 p-3 md:hidden">
+              {paginatedShipments.map((shipment) => (
+                <article
+                  key={shipment.id}
+                  className="rounded-3xl border border-[#e5ece2] bg-[#fbfdf9] p-4 shadow-[0_10px_24px_rgba(155,184,143,0.12)]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedShipmentId(shipment.id)}
+                        className="text-[15px] font-extrabold text-[#208640]"
+                      >
+                        {shipment.id}
+                      </button>
+                      <p className="mt-1 text-xs font-semibold text-[#788378]">
+                        {shipment.service} | {formatCurrency(shipment.amount)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openShipmentDetail(shipment.id)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eef9e8] text-[#2f9344]"
+                      aria-label="Tampilkan detail barang"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 text-sm">
+                    <div className="rounded-2xl bg-white/70 p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#8a938a]">Pengirim</p>
+                      <p className="mt-1 font-bold text-[#26332a]">{shipment.sender}</p>
+                      <p className="text-xs text-[#707b71]">{shipment.senderCity} | {shipment.senderPhone || "-"}</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/70 p-3">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#8a938a]">Penerima</p>
+                      <p className="mt-1 font-bold text-[#26332a]">{shipment.receiver}</p>
+                      <p className="text-xs text-[#707b71]">{shipment.receiverCity}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#7c877d]">Status</span>
+                    <select
+                      value={shipment.status}
+                      onChange={(event) => updateShipmentStatus(shipment.id, event.target.value as ShipmentStatus)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-bold outline-none ${statusBadgeTone(shipment.status)}`}
+                    >
+                      <option value="Dikirim">Dikirim</option>
+                      <option value="Selesai">Selesai</option>
+                      <option value="Pending">Pending</option>
+                    </select>
+                  </div>
+                </article>
+              ))}
+
+              {paginatedShipments.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-[#d9e3d8] p-6 text-center text-sm font-semibold text-[#7f887f]">
+                  Belum ada transaksi yang cocok.
+                </div>
+              ) : null}
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="min-w-full text-left">
                 <thead className="border-b border-[#edf0ea] text-[12px] uppercase tracking-[0.18em] text-[#97a196]">
                   <tr>
