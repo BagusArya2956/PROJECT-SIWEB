@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
+
 type ProfileData = {
   id: string;
   fullName: string;
@@ -84,6 +86,7 @@ export function AdminTopNavbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <AdminLogoutButton variant="icon" />
           <Link
             href="/admin/profile"
             aria-label="Profil Admin"
@@ -132,5 +135,3 @@ export function AdminTopNavbar() {
     </header>
   );
 }
-
-

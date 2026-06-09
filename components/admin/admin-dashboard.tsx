@@ -13,7 +13,6 @@ import {
   SearchIcon,
   TruckIcon
 } from "@/components/icons";
-import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import {
   fetchShipmentsFromDatabase,
   PaymentStatus as HistoryPaymentStatus,
@@ -183,22 +182,30 @@ function mapShipmentRows(rows: ShipmentRecord[]): ShipmentRow[] {
 }
 
 function buildSparkline(values: number[]) {
-  const width = 220;
-  const height = 120;
+  const width = 260;
+  const height = 130;
+  const paddingX = 10;
+  const paddingY = 16;
   const max = Math.max(...values);
   const min = Math.min(...values);
   const range = Math.max(1, max - min);
-  const step = width / (values.length - 1);
+  const step = (width - paddingX * 2) / (values.length - 1);
 
-  const points = values
-    .map((value, index) => {
-      const x = index * step;
-      const y = height - ((value - min) / range) * (height - 16) - 8;
-      return `${x},${y}`;
-    })
-    .join(" ");
+  const pointItems = values.map((value, index) => {
+    const x = paddingX + index * step;
+    const y = height - paddingY - ((value - min) / range) * (height - paddingY * 2);
+    return { x, y, value };
+  });
+  const points = pointItems.map((point) => `${point.x},${point.y}`).join(" ");
+  const areaPath = [
+    `M ${pointItems[0].x} ${height - paddingY}`,
+    ...pointItems.map((point, index) => `${index === 0 ? "L" : "L"} ${point.x} ${point.y}`),
+    `L ${pointItems[pointItems.length - 1].x} ${height - paddingY}`,
+    "Z"
+  ].join(" ");
+  const gridLines = [0.25, 0.5, 0.75].map((ratio) => paddingY + ratio * (height - paddingY * 2));
 
-  return { points, width, height };
+  return { areaPath, gridLines, points, pointItems, width, height };
 }
 
 function formatCompactCurrency(amount: number) {
@@ -738,6 +745,290 @@ export function AdminDashboard() {
     printWindow.print();
   }
 
+  function printDashboardReport() {
+    const printedAt = new Date().toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    const reportRows = filteredShipments
+      .map((shipment, index) => {
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td><strong>${escapeHtml(shipment.id)}</strong><br /><span>${escapeHtml(shipment.service)}</span></td>
+            <td>${escapeHtml(shipment.sender)}<br /><span>${escapeHtml(shipment.senderCity)}</span></td>
+            <td>${escapeHtml(shipment.receiver)}<br /><span>${escapeHtml(shipment.receiverCity)}</span></td>
+            <td>${escapeHtml(shipment.status)}</td>
+            <td>${escapeHtml(shipment.payment)}</td>
+            <td class="money">${escapeHtml(formatCurrency(shipment.amount))}</td>
+          </tr>
+        `;
+      })
+      .join("");
+    const weeklyRows = longDayLabels
+      .map((day, index) => {
+        return `
+          <tr>
+            <td>${escapeHtml(day)}</td>
+            <td>${chartMetrics.weeklyPackages[index].toLocaleString("id-ID")}</td>
+            <td class="money">${escapeHtml(formatCurrency(chartMetrics.weeklyRevenue[index]))}</td>
+          </tr>
+        `;
+      })
+      .join("");
+    const activeFilters = [
+      `Pencarian: ${search.trim() || "Semua"}`,
+      `Status: ${statusFilter}`,
+      `Pembayaran: ${paymentFilter}`,
+      `Layanan: ${serviceFilter}`,
+      `Tanggal: ${formatDateRangeLabel(startDate, endDate)}`
+    ];
+    const cards = [
+      { label: "Total Transaksi", value: totals.transaksi.toLocaleString("id-ID"), note: "Semua resi pada filter aktif" },
+      { label: "Total Paket", value: totals.paket.toLocaleString("id-ID"), note: "Paket tercatat di dashboard" },
+      { label: "Pendapatan", value: formatCurrency(totals.pendapatan), note: "Akumulasi nominal transaksi" },
+      { label: "Paket Berhasil", value: totals.berhasil.toLocaleString("id-ID"), note: "Status selesai atau sampai" },
+      { label: "Paket Pending", value: totals.pending.toLocaleString("id-ID"), note: "Menunggu proses berikutnya" },
+      { label: "Sedang Dikirim", value: totals.dikirim.toLocaleString("id-ID"), note: "Resi dalam perjalanan aktif" }
+    ];
+
+    const printWindow = window.open("", "_blank", "width=1120,height=900");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!doctype html>
+      <html lang="id">
+        <head>
+          <title>Cetak Laporan Dashboard SHIPIN GO</title>
+          <style>
+            * { box-sizing: border-box; }
+            body {
+              margin: 0;
+              background: #eef5eb;
+              color: #18251d;
+              font-family: Inter, Arial, Helvetica, sans-serif;
+              padding: 28px;
+            }
+            .report {
+              max-width: 1040px;
+              margin: 0 auto;
+              border: 1px solid #cfdccc;
+              border-radius: 24px;
+              background: #ffffff;
+              overflow: hidden;
+              box-shadow: 0 18px 54px rgba(30, 54, 34, 0.14);
+            }
+            .top {
+              display: grid;
+              grid-template-columns: 1fr auto;
+              gap: 22px;
+              padding: 28px 30px;
+              color: #ffffff;
+              background: linear-gradient(135deg, #123d26 0%, #1a7f3f 100%);
+            }
+            h1, h2, p { margin: 0; }
+            h1 {
+              font-size: 30px;
+              line-height: 1;
+              letter-spacing: -0.03em;
+            }
+            .meta {
+              text-align: right;
+              font-size: 12px;
+              line-height: 1.7;
+              color: rgba(255,255,255,0.78);
+            }
+            .meta strong {
+              display: block;
+              color: #ffffff;
+              font-size: 15px;
+            }
+            .content { padding: 26px 30px 30px; }
+            .filters {
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 10px;
+              margin-bottom: 18px;
+            }
+            .filter, .card {
+              border: 1px solid #e1eadf;
+              border-radius: 16px;
+              background: #f7faf4;
+              padding: 13px;
+            }
+            .filter {
+              color: #5d6d61;
+              font-size: 11px;
+              font-weight: 800;
+              line-height: 1.45;
+            }
+            .cards {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 12px;
+            }
+            .card .label {
+              color: #708078;
+              font-size: 10px;
+              font-weight: 900;
+              letter-spacing: 0.18em;
+              text-transform: uppercase;
+            }
+            .card strong {
+              display: block;
+              margin-top: 10px;
+              color: #102017;
+              font-size: 25px;
+              line-height: 1;
+            }
+            .card span {
+              display: block;
+              margin-top: 8px;
+              color: #607065;
+              font-size: 12px;
+              line-height: 1.45;
+            }
+            .grid {
+              display: grid;
+              grid-template-columns: 0.8fr 1.2fr;
+              gap: 16px;
+              margin-top: 20px;
+            }
+            .section {
+              border: 1px solid #e1eadf;
+              border-radius: 18px;
+              overflow: hidden;
+            }
+            .section h2 {
+              padding: 14px 16px;
+              border-bottom: 1px solid #e1eadf;
+              background: #f7faf4;
+              color: #172118;
+              font-size: 15px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 12px;
+            }
+            th {
+              background: #fbfdf9;
+              color: #6d7b70;
+              font-size: 10px;
+              letter-spacing: 0.12em;
+              text-align: left;
+              text-transform: uppercase;
+            }
+            th, td {
+              border-bottom: 1px solid #e7eee5;
+              padding: 10px 12px;
+              vertical-align: top;
+            }
+            td span {
+              color: #748076;
+              font-size: 11px;
+            }
+            .money {
+              white-space: nowrap;
+              font-weight: 800;
+              color: #153528;
+            }
+            .empty {
+              padding: 18px;
+              color: #748076;
+              font-size: 13px;
+              font-weight: 700;
+              text-align: center;
+            }
+            .footer {
+              margin-top: 20px;
+              color: #6b766d;
+              font-size: 11px;
+              line-height: 1.6;
+            }
+            @media print {
+              body { background: #ffffff; padding: 0; }
+              .report { border-radius: 0; box-shadow: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <main class="report">
+            <section class="top">
+              <div>
+                <h1>Laporan Dashboard SHIPIN GO</h1>
+                <p style="margin-top:8px;color:rgba(255,255,255,0.78);font-size:13px;">Ringkasan operasional pengiriman berdasarkan filter dashboard aktif.</p>
+              </div>
+              <div class="meta">
+                <strong>${escapeHtml(printedAt)}</strong>
+                Admin Area<br />SHIPIN GO
+              </div>
+            </section>
+            <section class="content">
+              <div class="filters">
+                ${activeFilters.map((item) => `<div class="filter">${escapeHtml(item)}</div>`).join("")}
+              </div>
+              <div class="cards">
+                ${cards
+                  .map(
+                    (card) => `
+                      <div class="card">
+                        <p class="label">${escapeHtml(card.label)}</p>
+                        <strong>${escapeHtml(card.value)}</strong>
+                        <span>${escapeHtml(card.note)}</span>
+                      </div>
+                    `
+                  )
+                  .join("")}
+              </div>
+              <div class="grid">
+                <section class="section">
+                  <h2>Tren Mingguan</h2>
+                  <table>
+                    <thead>
+                      <tr><th>Hari</th><th>Paket</th><th>Pendapatan</th></tr>
+                    </thead>
+                    <tbody>${weeklyRows}</tbody>
+                  </table>
+                </section>
+                <section class="section">
+                  <h2>Daftar Transaksi</h2>
+                  ${
+                    reportRows
+                      ? `<table>
+                          <thead>
+                            <tr>
+                              <th>No</th>
+                              <th>Resi</th>
+                              <th>Pengirim</th>
+                              <th>Penerima</th>
+                              <th>Status</th>
+                              <th>Bayar</th>
+                              <th>Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>${reportRows}</tbody>
+                        </table>`
+                      : `<div class="empty">Belum ada transaksi yang cocok dengan filter aktif.</div>`
+                  }
+                </section>
+              </div>
+              <p class="footer">
+                Laporan ini dibuat otomatis oleh sistem operasional SHIPIN GO berdasarkan data dashboard yang sedang aktif.
+              </p>
+            </section>
+          </main>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  }
+
   function openShipmentDetail(id: string) {
     setSelectedShipmentId(id);
     setIsDetailModalOpen(true);
@@ -747,8 +1038,8 @@ export function AdminDashboard() {
 
   const quickActions = [
     {
-      label: "Cetak Resi",
-      onClick: printShipmentLabel,
+      label: "Cetak Laporan",
+      onClick: printDashboardReport,
       icon: <PrinterIcon className="h-4 w-4" />,
       className: "bg-white text-[#495249]"
     }
@@ -783,7 +1074,8 @@ export function AdminDashboard() {
       icon: <MoneyIcon className="h-5 w-5" />,
       iconClassName: "bg-[#fff4df] text-[#b7791f]",
       ringClassName: "from-[#ffedc8] via-white to-white",
-      valueClassName: "text-[22px] sm:text-[25px] leading-[1.15] tracking-[-0.03em]"
+      valueClassName: "text-[22px] sm:text-[25px] leading-none tracking-[-0.03em]",
+      isCurrency: true
     },
     {
       label: "Paket Berhasil",
@@ -845,7 +1137,6 @@ export function AdminDashboard() {
                   {action.label}
                 </button>
               ))}
-              <AdminLogoutButton />
             </div>
           </div>
 
@@ -870,7 +1161,12 @@ export function AdminDashboard() {
                     {card.label}
                   </p>
                   <p className={`mt-3 font-extrabold text-[#223126] ${card.valueClassName || "text-[26px] sm:text-[30px] leading-none tracking-[-0.04em]"}`}>
-                  {typeof card.value === "number" ? card.value.toLocaleString("id-ID") : card.value}
+                  {card.isCurrency ? (
+                    <span className="inline-flex max-w-full items-baseline gap-1.5 whitespace-nowrap">
+                      <span>Rp</span>
+                      <span className="text-[20px] sm:text-[22px]">{totals.pendapatan.toLocaleString("id-ID")}</span>
+                    </span>
+                  ) : typeof card.value === "number" ? card.value.toLocaleString("id-ID") : card.value}
                   </p>
                   <p className="mt-3 text-[12px] leading-5 text-[#6f7b71]">
                     {card.caption}
@@ -888,9 +1184,6 @@ export function AdminDashboard() {
                 <h2 className="text-[24px] font-bold tracking-[-0.03em] text-[#2a332b]">
                   Tren Pendapatan & Paket
                 </h2>
-                <p className="mt-1 text-sm text-[#7b847b]">
-                  Statistik otomatis mengikuti update status resi
-                </p>
               </div>
               <div className="flex items-center gap-4 text-xs font-semibold text-[#67a55f]">
                 <span className="inline-flex items-center gap-1">
@@ -937,29 +1230,65 @@ export function AdminDashboard() {
                 <h2 className="text-[24px] font-bold tracking-[-0.03em] text-[#2a332b]">
                   Tren Pendapatan Harian
                 </h2>
-                <p className="mt-1 text-sm text-[#7b847b]">
-                  Visualisasi performa keuangan berdasarkan daftar resi aktif
-                </p>
               </div>
               <span className="rounded-full bg-[#dff8d7] px-3 py-1 text-[11px] font-bold text-[#4ba14e]">
                 Puncak {formatCompactCurrency(Math.max(...chartMetrics.weeklyRevenue))}
               </span>
             </div>
 
-            <div className="mt-8">
-              <svg viewBox={`0 0 ${sparkline.width} ${sparkline.height}`} className="w-full">
+            <div className="mt-8 rounded-[24px] border border-[#edf2e9] bg-[linear-gradient(180deg,#fbfdf9_0%,#f7fbf5_100%)] px-3 py-4">
+              <svg viewBox={`0 0 ${sparkline.width} ${sparkline.height}`} className="h-[190px] w-full">
+                <defs>
+                  <linearGradient id="revenueLineGradient" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0%" stopColor="#22c55e" />
+                    <stop offset="100%" stopColor="#116b35" />
+                  </linearGradient>
+                  <linearGradient id="revenueAreaGradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity="0.22" />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0.02" />
+                  </linearGradient>
+                  <filter id="revenueLineShadow" x="-10%" y="-20%" width="120%" height="150%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="#15803d" floodOpacity="0.18" />
+                  </filter>
+                </defs>
+                <g>
+                  {sparkline.gridLines.map((line) => (
+                    <line
+                      key={line}
+                      className="admin-chart-grid-line"
+                      x1="10"
+                      x2={sparkline.width - 10}
+                      y1={line}
+                      y2={line}
+                      stroke="#e6eee4"
+                      strokeDasharray="4 7"
+                      strokeWidth="1"
+                    />
+                  ))}
+                </g>
                 <g className="admin-chart-line-float">
+                  <path className="admin-chart-area-fill" d={sparkline.areaPath} fill="url(#revenueAreaGradient)" />
                   <polyline
+                    className="admin-chart-line-draw"
                     fill="none"
-                    stroke="#1c7b33"
-                    strokeWidth="4"
+                    stroke="url(#revenueLineGradient)"
+                    strokeWidth="3.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     points={sparkline.points}
+                    filter="url(#revenueLineShadow)"
                   />
+                  {sparkline.pointItems.map((point, index) => (
+                    <g key={`${point.x}-${point.y}`} className="admin-chart-dot" style={{ animationDelay: `${index * 90 + 420}ms` }}>
+                      <circle cx={point.x} cy={point.y} r={index === 0 ? "4.8" : "4"} fill="#ffffff" stroke="#15803d" strokeWidth="2.4" />
+                      {point.value === Math.max(...chartMetrics.weeklyRevenue) && point.value > 0 ? (
+                        <circle cx={point.x} cy={point.y} r="7" fill="none" stroke="#22c55e" strokeOpacity="0.18" strokeWidth="4" />
+                      ) : null}
+                    </g>
+                  ))}
                 </g>
               </svg>
-              <div className="mt-3 flex justify-between px-1 text-[11px] font-semibold text-[#9aa39b]">
+              <div className="mt-2 flex justify-between px-1 text-[11px] font-semibold text-[#8d9a91]">
                 {dayLabels.map((day, index) => (
                   <span key={`${day}-${index}`}>{day}</span>
                 ))}

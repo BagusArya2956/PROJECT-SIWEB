@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 
 import { ShieldIcon, StarIcon, TruckIcon, UserIcon } from "@/components/icons";
-import { AdminLogoutButton } from "@/components/admin/admin-logout-button";
 import { useAppPreferences } from "@/components/ui/app-preferences";
 
 type ProfilePayload = {
@@ -14,6 +13,12 @@ type ProfilePayload = {
   status: string;
   totalShipments: number;
   rating: number;
+};
+
+type PasswordErrors = {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
 };
 
 const profileCopy = {
@@ -33,8 +38,7 @@ const profileCopy = {
   newPassword: "Kata Sandi Baru",
   confirmPassword: "Konfirmasi Kata Sandi Baru",
   passwordHint: "Minimal 8 karakter dengan kombinasi angka",
-  saveChanges: "Simpan Perubahan",
-  forgotPassword: "Lupa kata sandi?"
+  saveChanges: "Simpan Perubahan"
 };
 
 function RowLabel({ children }: { children: React.ReactNode }) {
@@ -47,7 +51,8 @@ function PasswordField({
   onChange,
   show,
   onToggle,
-  hint
+  hint,
+  error
 }: {
   label: string;
   value: string;
@@ -55,6 +60,7 @@ function PasswordField({
   show: boolean;
   onToggle: () => void;
   hint?: string;
+  error?: string;
 }) {
   return (
     <div>
@@ -64,7 +70,10 @@ function PasswordField({
           type={show ? "text" : "password"}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="h-12 w-full rounded-xl border border-[#e0e6df] bg-[#f2f5ef] px-4 pr-12 text-[15px] tracking-[0.2em] text-[#253a33] outline-none"
+          aria-invalid={Boolean(error)}
+          className={`h-12 w-full rounded-xl border bg-[#f2f5ef] px-4 pr-12 text-[15px] tracking-[0.2em] text-[#253a33] outline-none ${
+            error ? "border-[#d94841] shadow-[0_0_0_3px_rgba(217,72,65,0.12)]" : "border-[#e0e6df]"
+          }`}
         />
         <button
           type="button"
@@ -87,7 +96,8 @@ function PasswordField({
           )}
         </button>
       </div>
-      {hint ? <p className="mt-1 text-[11px] text-[#98a29d]">{hint}</p> : null}
+      {error ? <p className="mt-1.5 text-[11px] font-semibold text-[#c43d36]">{error}</p> : null}
+      {!error && hint ? <p className="mt-1 text-[11px] text-[#98a29d]">{hint}</p> : null}
     </div>
   );
 }
@@ -114,15 +124,37 @@ function AdminProfilContent() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({});
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"error" | "success" | "info">("info");
   const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
 
   const stats = [
-    { label: "TOTAL PENGIRIMAN", value: String(profile?.totalShipments ?? 0), tone: "bg-[#d9f2d6]", icon: "truck" },
-    { label: "RATING PENGIRIM", value: (profile?.rating ?? 0).toFixed(1), tone: "bg-[#e3e7df]", icon: "star" },
-    { label: "STATUS AKUN", value: profile?.status || "AKTIF", tone: "bg-[#d9f2d6]", icon: "shield" }
+    {
+      label: "Total Pengiriman",
+      value: String(profile?.totalShipments ?? 0),
+      caption: "Resi tercatat",
+      icon: "truck",
+      accent: "text-[#16804a]",
+      iconTone: "bg-[#e8f8ec]"
+    },
+    {
+      label: "Rating Pengirim",
+      value: (profile?.rating ?? 0).toFixed(1),
+      caption: "Rata-rata ulasan",
+      icon: "star",
+      accent: "text-[#50605a]",
+      iconTone: "bg-[#eef1ec]"
+    },
+    {
+      label: "Status Akun",
+      value: profile?.status || "AKTIF",
+      caption: "Akses operasional",
+      icon: "shield",
+      accent: "text-[#16804a]",
+      iconTone: "bg-[#e8f8ec]"
+    }
   ];
 
   useEffect(() => {
@@ -200,22 +232,29 @@ function AdminProfilContent() {
   }
 
   async function saveSecurity() {
-    if (!currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()) {
-      setMessageTone("error");
-      setMessage("Lengkapi semua kolom kata sandi.");
-      return;
+    const nextErrors: PasswordErrors = {};
+
+    if (!currentPassword.trim()) {
+      nextErrors.currentPassword = "Kata sandi saat ini wajib diisi.";
     }
-    if (newPassword.length < 8) {
-      setMessageTone("error");
-      setMessage("Kata sandi baru minimal 8 karakter.");
-      return;
+    if (!newPassword.trim()) {
+      nextErrors.newPassword = "Kata sandi baru wajib diisi.";
+    } else if (newPassword.length < 8 || !/\d/.test(newPassword)) {
+      nextErrors.newPassword = "Minimal 8 karakter dan mengandung angka.";
     }
-    if (newPassword !== confirmPassword) {
-      setMessageTone("error");
-      setMessage("Konfirmasi kata sandi tidak cocok.");
+    if (!confirmPassword.trim()) {
+      nextErrors.confirmPassword = "Konfirmasi kata sandi wajib diisi.";
+    } else if (newPassword && newPassword !== confirmPassword) {
+      nextErrors.confirmPassword = "Konfirmasi kata sandi tidak cocok.";
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setPasswordErrors(nextErrors);
+      setMessage("");
       return;
     }
 
+    setPasswordErrors({});
     setIsPasswordSaving(true);
     try {
       const response = await fetch("/api/admin/profile", {
@@ -236,11 +275,25 @@ function AdminProfilContent() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      setPasswordErrors({});
       setMessageTone("success");
       setMessage(data.message || "Perubahan keamanan berhasil disimpan.");
     } catch (error) {
-      setMessageTone("error");
-      setMessage(error instanceof Error ? error.message : "Gagal memperbarui kata sandi.");
+      const errorMessage = error instanceof Error ? error.message : "Gagal memperbarui kata sandi.";
+
+      if (errorMessage.toLowerCase().includes("saat ini")) {
+        setPasswordErrors({ currentPassword: errorMessage });
+        setMessage("");
+      } else if (errorMessage.toLowerCase().includes("konfirmasi")) {
+        setPasswordErrors({ confirmPassword: errorMessage });
+        setMessage("");
+      } else if (errorMessage.toLowerCase().includes("baru")) {
+        setPasswordErrors({ newPassword: errorMessage });
+        setMessage("");
+      } else {
+        setMessageTone("error");
+        setMessage(errorMessage);
+      }
     } finally {
       setIsPasswordSaving(false);
     }
@@ -249,14 +302,13 @@ function AdminProfilContent() {
   return (
     <main className={`min-h-[calc(100vh-80px)] px-4 py-5 sm:px-6 lg:px-8 ${isDark ? "bg-[#101711]" : "bg-[#f2f5f1]"}`}>
       <div className="mx-auto max-w-[1540px]">
-        <section className="flex flex-wrap items-start justify-between gap-3">
+        <section>
           <div>
             <h1 className={`text-[34px] font-extrabold leading-none md:text-[50px] ${isDark ? "text-[#9df28f]" : "text-[#185338]"}`}>{copy.title}</h1>
             <p className={`mt-2 text-[13px] md:text-[16px] ${isDark ? "text-[#b9c7bd]" : "text-[#445149]"}`}>
               {copy.subtitle}
             </p>
           </div>
-          <AdminLogoutButton />
         </section>
 
         {message ? (
@@ -340,18 +392,34 @@ function AdminProfilContent() {
 
             <div className="grid gap-3 sm:grid-cols-3">
               {stats.map((item) => (
-                <article key={item.label} className={`${item.tone} rounded-[24px] px-5 py-4`}>
-                  <div className="mb-2">
-                    {item.icon === "truck" && <TruckIcon className="h-6 w-6 text-[#1d7a43]" />}
+                <article
+                  key={item.label}
+                  className={`rounded-[22px] border px-5 py-4 shadow-[0_12px_28px_rgba(25,45,33,0.06)] ${
+                    isDark ? "border-[#27352b] bg-[#172118]" : "border-[#e3ebe1] bg-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${item.iconTone} ${item.accent}`}>
+                      {item.icon === "truck" && <TruckIcon className="h-5 w-5" />}
                     {item.icon === "star" && (
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#5f665f]">
-                        <StarIcon className="h-3.5 w-3.5 text-[#5f665f]" />
-                      </span>
+                        <StarIcon className="h-5 w-5" />
                     )}
-                    {item.icon === "shield" && <ShieldIcon className="h-6 w-6 text-[#0e7d3f]" />}
+                      {item.icon === "shield" && <ShieldIcon className="h-5 w-5" />}
+                    </span>
+                    <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${
+                      isDark ? "bg-[#1d2a22] text-[#9bd7aa]" : "bg-[#f3f8f1] text-[#607067]"
+                    }`}>
+                      {item.caption}
+                    </span>
                   </div>
-                  <p className="text-[42px] font-black leading-none text-[#185338]">{item.value}</p>
-                  <p className="mt-1 text-[12px] font-bold tracking-wide text-[#29443b]">{item.label}</p>
+                  <p className={`mt-5 text-[38px] font-black leading-none tracking-[-0.04em] ${item.accent}`}>
+                    {item.value}
+                  </p>
+                  <p className={`mt-2 text-[11px] font-extrabold uppercase tracking-[0.16em] ${
+                    isDark ? "text-[#b9c7bd]" : "text-[#29443b]"
+                  }`}>
+                    {item.label}
+                  </p>
                 </article>
               ))}
             </div>
@@ -374,26 +442,38 @@ function AdminProfilContent() {
               <PasswordField
                 label={copy.currentPassword}
                 value={currentPassword}
-                onChange={setCurrentPassword}
+                onChange={(value) => {
+                  setCurrentPassword(value);
+                  setPasswordErrors((current) => ({ ...current, currentPassword: undefined }));
+                }}
                 show={showCurrentPassword}
                 onToggle={() => setShowCurrentPassword((prev) => !prev)}
+                error={passwordErrors.currentPassword}
               />
 
               <PasswordField
                 label={copy.newPassword}
                 value={newPassword}
-                onChange={setNewPassword}
+                onChange={(value) => {
+                  setNewPassword(value);
+                  setPasswordErrors((current) => ({ ...current, newPassword: undefined }));
+                }}
                 show={showNewPassword}
                 onToggle={() => setShowNewPassword((prev) => !prev)}
                 hint={copy.passwordHint}
+                error={passwordErrors.newPassword}
               />
 
               <PasswordField
                 label={copy.confirmPassword}
                 value={confirmPassword}
-                onChange={setConfirmPassword}
+                onChange={(value) => {
+                  setConfirmPassword(value);
+                  setPasswordErrors((current) => ({ ...current, confirmPassword: undefined }));
+                }}
                 show={showConfirmPassword}
                 onToggle={() => setShowConfirmPassword((prev) => !prev)}
+                error={passwordErrors.confirmPassword}
               />
             </div>
 
@@ -409,16 +489,6 @@ function AdminProfilContent() {
                 <path d="M7 3v5h8" />
               </svg>
               {isPasswordSaving ? copy.saving : copy.saveChanges}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMessageTone("info");
-                setMessage("Silakan hubungi super admin untuk reset kata sandi.");
-              }}
-              className="mt-4 w-full text-center text-[14px] text-[#5d6962]"
-            >
-              {copy.forgotPassword}
             </button>
           </article>
         </section>

@@ -592,12 +592,32 @@ select {
   }
 
   .admin-chart-line-float {
-    animation: chart-line-float 2.8s ease-in-out infinite;
+    animation: chart-line-float 4.2s ease-in-out infinite;
     transform-origin: center;
   }
 
+  .admin-chart-grid-line {
+    animation: chart-grid-fade 0.7s ease-out both;
+  }
+
+  .admin-chart-area-fill {
+    animation: chart-area-rise 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+    transform-origin: bottom center;
+  }
+
+  .admin-chart-line-draw {
+    stroke-dasharray: 620;
+    stroke-dashoffset: 620;
+    animation: chart-line-draw 1.12s cubic-bezier(0.22, 1, 0.36, 1) 0.28s forwards;
+  }
+
   .admin-chart-dot {
-    animation: chart-dot-pulse 1.9s ease-in-out infinite;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation:
+      chart-dot-enter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both,
+      chart-dot-pulse 2.6s ease-in-out 1.1s infinite;
   }
 }
 
@@ -662,6 +682,52 @@ select {
   }
 }
 
+@keyframes chart-grid-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes chart-area-rise {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.86);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes chart-line-draw {
+  0% {
+    stroke-dashoffset: 620;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes chart-dot-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -695,6 +761,9 @@ select {
   .admin-chart-bar,
   .admin-chart-line,
   .admin-chart-line-float,
+  .admin-chart-grid-line,
+  .admin-chart-area-fill,
+  .admin-chart-line-draw,
   .admin-chart-dot,
   .marquee-track {
     animation: none !important;

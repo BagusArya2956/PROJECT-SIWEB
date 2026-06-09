@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 
 import { EyeIcon } from "@/components/icons";
 import {
-  deleteShipmentFromDatabase,
   fetchShipmentsFromDatabase,
   fetchVehiclesFromDatabase,
   getWaypointsFromShipment,
@@ -45,18 +44,6 @@ const badgeStyles: Record<string, string> = {
 
 function formatCurrency(amount: number) {
   return `Rp ${amount.toLocaleString("id-ID")}`;
-}
-
-function TrashIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-      <path d="M3 6h18" />
-      <path d="M8 6V4h8v2" />
-      <path d="M6.8 6 8 20h8l1.2-14" />
-      <path d="M10 10v6" />
-      <path d="M14 10v6" />
-    </svg>
-  );
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -197,21 +184,6 @@ function AdminHistoriContent() {
     handleUpdateShipment(id, { shipment: status, payment });
   }
 
-  async function handleDelete(id: string) {
-    try {
-      const updated = await deleteShipmentFromDatabase(id);
-      setRows(updated);
-      setMessageTone("success");
-      setMessage(`Data ${id} berhasil dihapus dari database.`);
-      if (selectedId === id) {
-        setSelectedId(updated[0]?.id ?? null);
-      }
-    } catch (error) {
-      setMessageTone("info");
-      setMessage(error instanceof Error ? error.message : "Data gagal dihapus.");
-    }
-  }
-
   function openDetailModal(id: string) {
     setSelectedId(id);
     setIsDetailModalOpen(true);
@@ -223,7 +195,7 @@ function AdminHistoriContent() {
         <section>
           <h1 className="text-[34px] font-extrabold leading-none text-[#185338] md:text-[46px]">Histori Paket</h1>
           <p className="mt-2 text-[13px] text-[#445149] md:text-[16px]">
-            Kelola, perbarui, dan hapus data pengiriman dari dashboard admin.
+            Kelola dan perbarui data pengiriman dari dashboard admin.
           </p>
         </section>
 
@@ -289,14 +261,6 @@ function AdminHistoriContent() {
                         aria-label="Tampilkan detail data"
                       >
                         <EyeIcon className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(row.id)}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fde9e7] text-[#b9473f]"
-                        aria-label="Hapus data"
-                      >
-                        <TrashIcon />
                       </button>
                     </div>
                   </div>
@@ -466,14 +430,6 @@ function AdminHistoriContent() {
                           aria-label="Tampilkan detail data"
                         >
                           <EyeIcon className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(row.id)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#fde9e7] text-[#b9473f] transition-colors hover:bg-[#fbd5d2]"
-                          aria-label="Hapus data"
-                        >
-                          <TrashIcon />
                         </button>
                       </div>
                     </td>

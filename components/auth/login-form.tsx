@@ -24,8 +24,23 @@ type FieldErrors = {
   adminTerms?: string;
 };
 
+type AuthPopup = {
+  title: string;
+  message: string;
+  tone: "info" | "error";
+  actionLabel: string;
+};
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DIGIT_PATTERN = /\d/;
+const DEFAULT_ADMIN_REDIRECT = "/admin/dashboard";
+
+function getSafeAdminRedirect(value: string | null) {
+  if (!value || !value.startsWith("/admin/")) return DEFAULT_ADMIN_REDIRECT;
+  if (value.startsWith("/admin/login")) return DEFAULT_ADMIN_REDIRECT;
+  if (value.startsWith("//")) return DEFAULT_ADMIN_REDIRECT;
+  return value;
+}
 
 export function LoginForm({ mode = "login" }: LoginFormProps) {
   const router = useRouter();
@@ -42,8 +57,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
+  const [authPopup, setAuthPopup] = useState<AuthPopup | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -52,8 +66,23 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
-    if (!isRegister && params.get("reason") === "expired") {
-      setNotice("Sesi Anda telah berakhir, silakan login kembali.");
+    const reason = params.get("reason");
+
+    if (!isRegister && reason === "protected") {
+      setAuthPopup({
+        title: "Login Admin Diperlukan",
+        message: "Anda harus login sebagai admin untuk membuka halaman tersebut.",
+        tone: "info",
+        actionLabel: "Lanjutkan Login"
+      });
+    }
+    if (!isRegister && reason === "expired") {
+      setAuthPopup({
+        title: "Sesi Admin Berakhir",
+        message: "Sesi Anda telah berakhir. Silakan login kembali.",
+        tone: "info",
+        actionLabel: "Lanjutkan Login"
+      });
     }
   }, [isRegister]);
 
@@ -65,8 +94,18 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
   }
 
   function clearGlobalMessages() {
-    setError("");
-    setNotice("");
+    setAuthPopup(null);
+  }
+
+  function showAuthPopup(message: string, tone: AuthPopup["tone"] = "error") {
+    const isAccessError = message.toLowerCase().includes("akses admin");
+
+    setAuthPopup({
+      title: tone === "error" ? (isAccessError ? "Akses Admin Tidak Valid" : "Proses Gagal") : "Informasi Login",
+      message,
+      tone,
+      actionLabel: tone === "error" ? "Tutup" : "Lanjutkan Login"
+    });
   }
 
   function validateFullName(value: string) {
@@ -138,17 +177,20 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
       const data = (await response.json().catch(() => null)) as { message?: string } | null;
 
       if (!response.ok) {
-        setError(data?.message || "Username atau password salah");
+        showAuthPopup(data?.message || "Username atau password salah");
         return;
       }
 
       setIsRedirecting(true);
+      const redirectTo = typeof window === "undefined"
+        ? DEFAULT_ADMIN_REDIRECT
+        : getSafeAdminRedirect(new URLSearchParams(window.location.search).get("next"));
       window.setTimeout(() => {
-        router.push("/admin/dashboard");
+        router.push(redirectTo);
         router.refresh();
       }, 850);
     } catch {
-      setError("Terjadi kesalahan, silakan coba beberapa saat lagi");
+      showAuthPopup("Terjadi kesalahan, silakan coba beberapa saat lagi");
     } finally {
       setIsSubmitting(false);
     }
@@ -205,7 +247,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
         if (data?.field && data?.message) {
           setFieldError(data.field, data.message);
         } else {
-          setError(data?.message || "Gagal menyimpan data, coba lagi");
+          showAuthPopup(data?.message || "Gagal menyimpan data, coba lagi");
         }
         return;
       }
@@ -216,7 +258,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
         router.refresh();
       }, 850);
     } catch {
-      setError("Terjadi kesalahan, silakan coba beberapa saat lagi");
+      showAuthPopup("Terjadi kesalahan, silakan coba beberapa saat lagi");
     } finally {
       setIsSubmitting(false);
     }
@@ -236,6 +278,45 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
 
   return (
     <section className="admin-auth-panel relative w-full rounded-[22px] border border-[#dfe7dc] bg-white px-5 py-6 shadow-[0_24px_70px_rgba(38,70,47,0.14)] sm:px-7 sm:py-7">
+      {authPopup ? (
+        <div className="absolute inset-0 z-30 grid place-items-center rounded-[22px] bg-[#172118]/18 px-5">
+          <div className="w-full max-w-[360px] rounded-[24px] border border-[#dfe8da] bg-white p-6 text-center shadow-[0_28px_68px_rgba(23,33,24,0.24)]">
+            <div
+              className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${
+                authPopup.tone === "error" ? "bg-[#fde9e7] text-[#c43d36]" : "bg-[#eaf8ee] text-shipin-deep"
+              }`}
+            >
+              {authPopup.tone === "error" ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-6 w-6">
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                  <path d="M10.3 3.6 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-6 w-6">
+                  <path d="M12 3 5 7v5c0 4.2 2.8 8 7 9 4.2-1 7-4.8 7-9V7l-7-4Z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+              )}
+            </div>
+            <h2 className="mt-5 text-[22px] font-extrabold tracking-[-0.03em] text-shipin-ink">
+              {authPopup.title}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-shipin-text">{authPopup.message}</p>
+            <button
+              type="button"
+              onClick={() => setAuthPopup(null)}
+              className={`mt-6 inline-flex h-11 w-full items-center justify-center rounded-full px-5 text-sm font-semibold transition ${
+                authPopup.tone === "error"
+                  ? "bg-[#c43d36] text-white hover:bg-[#aa312b]"
+                  : "bg-shipin-deep text-white hover:bg-[#12572f]"
+              }`}
+            >
+              {authPopup.actionLabel}
+            </button>
+          </div>
+        </div>
+      ) : null}
       {isRedirecting ? (
         <div className="absolute inset-0 z-20 grid place-items-center rounded-[22px] bg-white/86 px-6 backdrop-blur-md">
           <div className="w-full max-w-[320px] rounded-[20px] border border-[#dfe8da] bg-white p-6 text-center shadow-[0_24px_58px_rgba(38,70,47,0.18)]">
@@ -250,7 +331,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
             <p className="mt-5 text-sm font-extrabold text-shipin-ink">
               {isRegister ? "Mendaftarkan akses admin..." : "Memverifikasi akses admin..."}
             </p>
-            <p className="mt-2 text-xs leading-5 text-shipin-text">Mengalihkan ke dashboard</p>
+            <p className="mt-2 text-xs leading-5 text-shipin-text">Mengalihkan ke halaman admin</p>
           </div>
         </div>
       ) : null}
@@ -276,9 +357,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                 ? "Buat akun khusus untuk akses operasional admin SHIPIN GO."
                 : "Masuk dengan akun yang sudah memiliki akses Admin."}
             </p>
-          </div>
-          <div className="hidden shrink-0 rounded-full border border-[#dfe8da] bg-[#f7faf5] px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-shipin-deep sm:inline-flex">
-            Akses Terbatas
           </div>
         </div>
 
@@ -498,9 +576,6 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
           >
             {isRegister ? "Daftar Sekarang" : "Masuk Sekarang"}
           </PrimaryButton>
-
-          {error ? <p className={`text-sm font-medium text-[#b42318] ${isRegister ? "sm:col-span-2" : ""}`}>{error}</p> : null}
-          {notice ? <p className={`text-sm font-medium text-[#1f7a44] ${isRegister ? "sm:col-span-2" : ""}`}>{notice}</p> : null}
 
           <p className={`text-center text-sm text-shipin-text ${isRegister ? "sm:col-span-2" : ""}`}>
             {isRegister ? "Sudah punya akun?" : "Belum punya akun?"}{" "}
