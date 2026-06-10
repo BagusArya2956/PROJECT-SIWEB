@@ -486,14 +486,14 @@ function AdminHistoriContent() {
 
         {isDetailModalOpen && selectedRow ? (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#172118]/45 px-4 py-6 backdrop-blur-sm"
+            className="fixed inset-0 z-[2000] flex items-start justify-center overflow-y-auto bg-[#172118]/45 px-4 py-6 backdrop-blur-sm"
             role="dialog"
             aria-modal="true"
             aria-labelledby="history-detail-title"
             onClick={() => setIsDetailModalOpen(false)}
           >
             <article
-              className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-[0_28px_80px_rgba(21,38,25,0.28)]"
+              className="relative my-auto max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-[0_28px_80px_rgba(21,38,25,0.28)]"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex flex-col gap-4 border-b border-[#edf1ea] bg-[#fbfdf9] px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:px-6">

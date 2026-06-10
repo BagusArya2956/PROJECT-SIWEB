@@ -94,7 +94,7 @@ export type CreateShipmentPayload = {
   itemName: string;
   itemCategory: string;
   itemNote?: string;
-  deliveryType?: "BIASA" | "CEPAT" | "VVIP";
+  deliveryType?: "BIASA" | "CEPAT";
   vehicleId?: number;
   originLat?: number;
   originLng?: number;

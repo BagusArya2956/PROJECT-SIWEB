@@ -27,6 +27,8 @@ const serviceOptions = [
 
 const DRAFT_STORAGE_KEY = "shipin_admin_kirim_paket_draft";
 
+type DeliveryType = "BIASA" | "CEPAT";
+
 type ShipmentFieldErrorKey =
   | "senderName"
   | "senderPhone"
@@ -88,7 +90,7 @@ function AdminKirimPaketContent() {
   const [itemName, setItemName] = useState("");
   const [itemCategory, setItemCategory] = useState("");
   const [itemNote, setItemNote] = useState("");
-  const [deliveryType, setDeliveryType] = useState<"BIASA" | "CEPAT" | "VVIP">("BIASA");
+  const [deliveryType, setDeliveryType] = useState<DeliveryType>("BIASA");
   const [vehicleId, setVehicleId] = useState("");
   const [vehicles, setVehicles] = useState<VehicleOption[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -378,7 +380,7 @@ function AdminKirimPaketContent() {
       setItemName(draft.itemName || "");
       setItemCategory(draft.itemCategory || "");
       setItemNote(draft.itemNote || "");
-      setDeliveryType(draft.deliveryType === "VVIP" || draft.deliveryType === "CEPAT" ? draft.deliveryType : "BIASA");
+      setDeliveryType(draft.deliveryType === "CEPAT" ? "CEPAT" : "BIASA");
       setVehicleId(draft.vehicleId || "");
       setSelectedService(draft.selectedService === "ekspres" ? "ekspres" : "reguler");
       setDraftInfo("Draft sebelumnya berhasil dimuat.");
@@ -767,14 +769,13 @@ function AdminKirimPaketContent() {
                     className={inputClass}
                     value={deliveryType}
                     onChange={(event) => {
-                      const next = event.target.value as "BIASA" | "CEPAT" | "VVIP";
+                      const next = event.target.value as DeliveryType;
                       setDeliveryType(next);
                       setSelectedService(next === "BIASA" ? "reguler" : "ekspres");
                     }}
                   >
                     <option value="BIASA">Biasa</option>
                     <option value="CEPAT">Cepat</option>
-                    <option value="VVIP">Vvip</option>
                   </select>
                 </Field>
                 <Field label="Kendaraan">

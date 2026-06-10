@@ -253,7 +253,7 @@ export function TrackingMap({
   }, [origin, animatedPos, destination]);
 
   return (
-    <div className="relative" style={{ minHeight: heightClassName }}>
+    <div className="relative z-0 isolate overflow-hidden" style={{ minHeight: heightClassName }}>
       <MapContainer
         center={
           origin
@@ -265,7 +265,7 @@ export function TrackingMap({
         zoom={zoom}
         scrollWheelZoom={scrollWheelZoom}
         className={`${heightClassName} w-full`}
-        style={{ borderRadius: 0, minHeight: heightClassName }}
+        style={{ borderRadius: 0, minHeight: heightClassName, zIndex: 0 }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -344,7 +344,7 @@ export function TrackingMap({
 
       {!isSimpleLocationMode ? (
         <>
-          <div className="absolute top-3 left-3 z-[500] min-w-[160px] rounded-2xl border border-[#e5ebe5] bg-white/95 px-4 py-3 shadow-xl backdrop-blur-sm pointer-events-none">
+          <div className="absolute top-3 left-3 z-10 min-w-[160px] rounded-2xl border border-[#e5ebe5] bg-white/95 px-4 py-3 shadow-xl backdrop-blur-sm pointer-events-none">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" width="18" height="18">
@@ -382,7 +382,7 @@ export function TrackingMap({
             </div>
           </div>
 
-          <div className="absolute bottom-3 right-3 z-[1000] rounded-2xl border border-[#e5ebe5] bg-white/95 px-3 py-2.5 shadow-xl backdrop-blur-sm">
+          <div className="absolute bottom-3 right-3 z-10 rounded-2xl border border-[#e5ebe5] bg-white/95 px-3 py-2.5 shadow-xl backdrop-blur-sm">
             <p className="mb-2 text-[9px] font-extrabold uppercase tracking-widest text-[#9ca39f]">Legenda</p>
             <div className="mb-1.5 flex items-center gap-2">
               <div className="flex h-5 w-4 items-center justify-center rounded-sm bg-blue-600 shadow-sm">
@@ -404,7 +404,7 @@ export function TrackingMap({
             </div>
           </div>
 
-          <div className="absolute bottom-3 left-3 z-[1000] rounded-2xl border border-[#e5ebe5] bg-white/95 px-3 py-2 shadow-xl backdrop-blur-sm">
+          <div className="absolute bottom-3 left-3 z-10 rounded-2xl border border-[#e5ebe5] bg-white/95 px-3 py-2 shadow-xl backdrop-blur-sm">
             <div className="flex items-center gap-2">
               <div className="h-0.5 w-6 rounded-full bg-orange-500"></div>
               <span className="text-[10px] font-semibold text-[#475569]">Sudah ditempuh</span>

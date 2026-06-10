@@ -249,7 +249,7 @@ function generateResi() {
 function serviceIdFromType(value: string) {
   const normalized = value.toUpperCase();
   if (normalized === "CEPAT" || normalized === "EKSPRES") return 2;
-  if (normalized === "VVIP" || normalized === "SAME_DAY") return 4;
+  if (normalized === "SAME_DAY") return 4;
   return 1;
 }
 

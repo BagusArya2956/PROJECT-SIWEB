@@ -56,11 +56,11 @@ function formatRupiah(value: number) {
 }
 
 export function CekOngkirPage() {
-  const [originProvince, setOriginProvince] = useState(AREA_TREE[0]?.province || "");
-  const [originCity, setOriginCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
-  const [destinationProvince, setDestinationProvince] = useState(AREA_TREE[0]?.province || "");
-  const [destinationCity, setDestinationCity] = useState(AREA_TREE[0]?.cities[0]?.city || "");
-  const [weight, setWeight] = useState("2.5");
+  const [originProvince, setOriginProvince] = useState("");
+  const [originCity, setOriginCity] = useState("");
+  const [destinationProvince, setDestinationProvince] = useState("");
+  const [destinationCity, setDestinationCity] = useState("");
+  const [weight, setWeight] = useState("");
   const [length, setLength] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
@@ -82,10 +82,8 @@ export function CekOngkirPage() {
     destinationDetail.trim() &&
     numericWeight > 0;
 
-  const originProvinceNode =
-    AREA_TREE.find((item) => item.province === originProvince) || AREA_TREE[0];
-  const destinationProvinceNode =
-    AREA_TREE.find((item) => item.province === destinationProvince) || AREA_TREE[0];
+  const originProvinceNode = AREA_TREE.find((item) => item.province === originProvince);
+  const destinationProvinceNode = AREA_TREE.find((item) => item.province === destinationProvince);
   const originCities = originProvinceNode?.cities || [];
   const destinationCities = destinationProvinceNode?.cities || [];
 
@@ -160,7 +158,9 @@ export function CekOngkirPage() {
 
   function handleCalculate() {
     const nextErrors = {
+      originProvince: validateRequired(originProvince, "Provinsi asal tidak boleh kosong"),
       originCity: validateOriginCity(originCity),
+      destinationProvince: validateRequired(destinationProvince, "Provinsi tujuan tidak boleh kosong"),
       destinationCity: validateDestinationCity(destinationCity),
       originDetail: validateRequired(originDetail, "Alamat detail asal tidak boleh kosong"),
       destinationDetail: validateRequired(destinationDetail, "Alamat detail tujuan tidak boleh kosong"),
@@ -178,7 +178,7 @@ export function CekOngkirPage() {
 
     try {
       setCalculated(true);
-      setSelectedService("reguler");
+      setSelectedService(null);
       setToastMessage("");
       setMessage("Estimasi ongkir berhasil dihitung. Silakan pilih layanan.");
     } catch {
@@ -220,19 +220,24 @@ export function CekOngkirPage() {
                     value={originProvince}
                     onChange={(event) => {
                       const nextProvince = event.target.value;
-                      const nextProvinceNode =
-                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
                       setOriginProvince(nextProvince);
-                      setOriginCity(nextProvinceNode?.cities[0]?.city || "");
+                      setOriginCity("");
+                      if (fieldErrors.originProvince) {
+                        setFieldError("originProvince", validateRequired(nextProvince, "Provinsi asal tidak boleh kosong"));
+                      }
                     }}
                     className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
                   >
+                    <option value="">Pilih provinsi asal</option>
                     {AREA_TREE.map((item) => (
                       <option key={item.province} value={item.province}>
                         {item.province}
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.originProvince ? (
+                    <p className="mt-2 text-[12px] font-medium text-[#b42318]">{fieldErrors.originProvince}</p>
+                  ) : null}
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
@@ -241,6 +246,7 @@ export function CekOngkirPage() {
                   <SearchableSelect
                     value={originCity}
                     options={originCities.map((item) => item.city)}
+                    placeholder={originProvince ? "Pilih kota/kab asal" : "Pilih provinsi dulu"}
                     className="mt-0"
                     onChange={(value) => {
                       setOriginCity(value);
@@ -262,19 +268,24 @@ export function CekOngkirPage() {
                     value={destinationProvince}
                     onChange={(event) => {
                       const nextProvince = event.target.value;
-                      const nextProvinceNode =
-                        AREA_TREE.find((item) => item.province === nextProvince) || AREA_TREE[0];
                       setDestinationProvince(nextProvince);
-                      setDestinationCity(nextProvinceNode?.cities[0]?.city || "");
+                      setDestinationCity("");
+                      if (fieldErrors.destinationProvince) {
+                        setFieldError("destinationProvince", validateRequired(nextProvince, "Provinsi tujuan tidak boleh kosong"));
+                      }
                     }}
                     className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
                   >
+                    <option value="">Pilih provinsi tujuan</option>
                     {AREA_TREE.map((item) => (
                       <option key={item.province} value={item.province}>
                         {item.province}
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.destinationProvince ? (
+                    <p className="mt-2 text-[12px] font-medium text-[#b42318]">{fieldErrors.destinationProvince}</p>
+                  ) : null}
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4c534e]">
@@ -283,6 +294,7 @@ export function CekOngkirPage() {
                   <SearchableSelect
                     value={destinationCity}
                     options={destinationCities.map((item) => item.city)}
+                    placeholder={destinationProvince ? "Pilih kota/kab tujuan" : "Pilih provinsi dulu"}
                     className="mt-0"
                     onChange={(value) => {
                       setDestinationCity(value);
@@ -353,7 +365,7 @@ export function CekOngkirPage() {
                   }}
                   onBlur={(event) => setFieldError("weight", validateWeight(event.target.value))}
                   className="mt-2 h-[46px] w-full rounded-[10px] border border-[#e5e9e2] bg-[#f1f3ef] px-4 text-[13px] text-[#3f4a43] outline-none"
-                  placeholder="2.50"
+                  placeholder="Masukkan berat paket"
                 />
                 {fieldErrors.weight ? (
                   <p className="mt-2 text-[12px] font-medium text-[#b42318]">{fieldErrors.weight}</p>
@@ -444,8 +456,12 @@ export function CekOngkirPage() {
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[#5f665f]">
                           <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.eta}</span>
                           <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.feature}</span>
-                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.distanceKm} km</span>
-                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">{option.billableWeight} kg tagih</span>
+                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">
+                            {calculated ? `${option.distanceKm} km` : "-"}
+                          </span>
+                          <span className="rounded-full bg-[#f1f4ef] px-2 py-1">
+                            {calculated ? `${option.billableWeight} kg tagih` : "-"}
+                          </span>
                         </div>
                       </div>
                     </div>

@@ -28,9 +28,9 @@ const TrackingMap = dynamic(
 const contactCards = [
   {
     title: "WhatsApp",
-    description: "Chat cepat untuk cek status paket.",
+    description: "Chat cepat untuk cek status paket atau meminta Kode Akses Admin resmi.",
     value: "+6281353823867",
-    href: "https://wa.me/6281353823867",
+    href: "https://wa.me/6281353823867?text=Halo%20SHIPIN%20GO%2C%20saya%20ingin%20meminta%20Kode%20Akses%20Admin%20resmi.",
     icon: ChatBubbleIcon
   },
   {

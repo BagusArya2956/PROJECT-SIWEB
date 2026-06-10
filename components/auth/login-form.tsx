@@ -421,7 +421,7 @@ export function LoginForm({ mode = "login" }: LoginFormProps) {
                     if (fieldErrors.adminCode) setFieldError("adminCode", validateAdminCode(event.target.value));
                   }}
                   onBlur={(event) => setFieldError("adminCode", validateAdminCode(event.target.value))}
-                  placeholder="Masukkan kode admin"
+                  placeholder="Contoh: #S110"
                   icon={<LockIcon className="h-[18px] w-[18px]" />}
                 />
                 {fieldErrors.adminCode ? <p className="mt-2 text-sm text-[#b42318]">{fieldErrors.adminCode}</p> : null}
